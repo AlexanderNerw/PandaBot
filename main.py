@@ -1,8 +1,8 @@
 from aiogram import Bot, Dispatcher, executor, types
-import logging, handlers.uslovie
+import logging #, handlers.uslovie
 from config import dp, bot, ADMIN
 from sqlhighter import SQHighter
-from handlers import keyboards as kb, tests as ts, setting as st
+from handlers import keyboards as kb, tests as ts, setting as st, uslovie as us
 from handlers.dialogs import slovaRu, slovaEn, slovaUk
 
 # соединение с БД

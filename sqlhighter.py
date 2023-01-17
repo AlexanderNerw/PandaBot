@@ -1,7 +1,7 @@
 import pymysql
 from config import host, user, password, db_name
 
-class SQHighter:
+class SQHighter: 
 
     try:
         def __init__(self):
