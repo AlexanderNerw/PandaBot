@@ -9,8 +9,8 @@ Token = ['5357393783:AAEz0T0qhn-Ph6YD-NdQQFxB_NhxCt7vXUk']
 bot = Bot(token='5357393783:AAEz0T0qhn-Ph6YD-NdQQFxB_NhxCt7vXUk')
 dp = Dispatcher(bot)
 
-host = 'arn:aws:rds:eu-north-1:490943922602:db:pandabase'
+host = '212.87.182.157/32'
 user = 'alexnerw'
 password = 'alexnerw'
-db_name = 'pandabase'
+db_name = 'Pandas'
 port = 3306
