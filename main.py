@@ -1,13 +1,12 @@
 from aiogram import Bot, Dispatcher, executor, types
-import logging #, handlers.uslovie
+import logging, handlers.uslovie
 from config import dp, bot, ADMIN
-from sqlhighter import SQHighter
-from handlers import keyboards as kb, tests as ts, setting as st, uslovie as us
+from querry_db import QuerryDB
+from handlers import keyboards as kb, tests as ts, setting as st
 from handlers.dialogs import slovaRu, slovaEn, slovaUk
 
 # соединение с БД
-db = SQHighter()
-
+db = QuerryDB()
 
 # уровень логов
 logging.basicConfig(level=logging.INFO)
@@ -19,13 +18,15 @@ logging.basicConfig(level=logging.INFO)
 async def welcome(message): ################### СТАРТ МЕНЮ ######################
     global msg
     msg = message
+    print(message)
     try:
         if(not db.subsex(message.from_user.id)): # Пользователя нет в БД
 
             name_start = str(message.from_user.first_name)
             language = str(message.from_user.language_code)
             db.add_subs(message.from_user.id) # / Добавление пользователя в БД
-            db.adding(message.from_user.id, 'name', name_start)
+            db.adding(message.from_user.id, 'username', name_start)
+            
 
             if language == 'ru': #                                 Если при старте русский язык
                 db.adding(message.from_user.id, 'language', 'ru')
@@ -41,7 +42,7 @@ async def welcome(message): ################### СТАРТ МЕНЮ ############
 
         else: # Пользователь есть в БД
             global name
-            name = db.getting(message.from_user.id, 'name')
+            name = db.getting(message.from_user.id, 'username')
             if (db.getting(message.from_user.id, 'language') == 'ru'): # Русский
                 await message.answer("Привет, <b>" + name + "</b>! Приятно увидеть тебя снова :)", parse_mode='html')
             else:                                                      # Украинский
@@ -273,6 +274,11 @@ async def inline_menu_game(call:types.CallbackQuery):
         await call.message.answer("Тут нихера нет")
     except Exception as ex:
         print("Шо то не так с call_menu_game: ", ex)
+
+
+def register_uslovie(dp : Dispatcher):
+    dp.register_message_handler(welcome, content_types=['command'])
+    #dp.register_message_handler(input_name, content_types=['man'])
 
 if __name__ == '__main__':
     #************************************ ЗАПУСК *************************************
