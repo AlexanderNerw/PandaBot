@@ -11,6 +11,6 @@ dp = Dispatcher(bot)
 
 host = 'localhost'
 user = 'root'
-password = ''#'6s35q1s8mvjlk'
-db_name = 'ezyro_33403178_pandabase'
+password = 'sanik888'
+db_name = 'sakila'
 port = 3306
