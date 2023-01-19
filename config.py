@@ -12,5 +12,5 @@ dp = Dispatcher(bot)
 host = 'localhost'
 user = 'root'
 password = 'sanik888'
-db_name = 'sakila'
+db_name = 'subscribers'
 port = 3306
