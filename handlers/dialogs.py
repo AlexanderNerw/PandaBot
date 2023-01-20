@@ -17,3 +17,14 @@ uk = {
 en = {
             'error' : "Sorry, but this bot does not support your language 😔.\nYou can choose one of the available:"
         } 
+
+
+hi = { 'ru' : "Привет,", 
+       'uk' : "Привiт," } 
+
+hi_start =  {   'ru' : '\nЯ твой новый друг :)\nВыбери язык комфортный для тебя: ',
+                'uk' : '\nЯ твій новий друг :)\nОбери мову комфортну для тебе: ',
+                'en' : "Sorry, but this bot does not support your language 😔.\nYou can choose one of the available:"}
+
+again_hi_start = {  'ru' : 'Приятно увидеть тебя снова :)',
+                    'uk' : 'Приємно побачити тебе знову :)' }

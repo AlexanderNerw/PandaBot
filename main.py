@@ -4,7 +4,7 @@ import callback_querry
 from config import dp, bot, ADMIN
 from querry_db import QuerryDB
 from handlers import keyboards as kb, tests as ts, setting as st
-from handlers.dialogs import ru, en, uk
+from handlers.dialogs import *
 
 # соединение с БД
 db = QuerryDB()
@@ -19,39 +19,28 @@ logging.basicConfig(level=logging.INFO)
 async def welcome(message): ################### СТАРТ МЕНЮ ######################
     global msg
     msg = message
-    print(message)
+
     try:
         if(not db.subsex(message.from_user.id)): # Пользователя нет в БД
 
             name_start = str(message.from_user.first_name)
             language = str(message.from_user.language_code)
-            db.add_subs(message.from_user.id) # / Добавление пользователя в БД
+            db.add_subs(message.from_user.id)
             db.adding(message.from_user.id, 'username', name_start)
-            await bot.send_message(ADMIN[0], f'Появился новый пользователь: {name_start} - {message.from_user.id} ')
 
-            if language == 'ru': #                                 Если при старте русский язык
-                db.adding(message.from_user.id, 'language', 'ru')
-                await message.answer("Привет, <b>" + name_start + "</b>! 😉" + ru['hi_start'], parse_mode='html', reply_markup=kb.languageB)
-
-            elif language == 'uk': #                              Если при старте украинский язык
-                db.adding(message.from_user.id, 'language', 'uk')
-                db.adding(message.from_user.id,'language', language) ######################/ Добавление языка и имени
-                await message.answer("Привiт, <b>" + name_start + "</b>! 😉" + uk['hi_start'], parse_mode='html', reply_markup=kb.languageB)
-
-            else:              # Сообщение на англ. что бот не поддерживает их язык
-                await message.answer(en["error"], parse_mode='html', reply_markup=kb.languageB)
+            db.adding(message.from_user.id, 'language', language)
+            await message.answer(f" {hi[language]} <b>{name_start}</b>! 😉 {hi_start[language]}" , parse_mode='html', reply_markup=kb.languageB)
 
         else: # Пользователь есть в БД
             global name
             name = db.getting(message.from_user.id, 'username')
             language = db.getting(message.from_user.id, 'language')
+            await message.answer(f" {hi[language]} <b>{name}</b>! {again_hi_start[language]}", parse_mode='html')
 
-            if (language == 'ru'): # Русский
-                await message.answer("Привет, <b>" + name + "</b>! Приятно увидеть тебя снова :)", parse_mode='html')
-            else:                                                      # Украинский
-                await message.answer("Привіт, <b>" + name + "</b>! Приємно побачити тебе знову :)",parse_mode='html')
     except Exception as ex:
-        print('Ошибка старт-меню:', ex)
+        print('[INFO] Error of start-menu: ', ex)
+
+#------------------------------------------------  
 
 @dp.message_handler(commands=['menu'])
 async def toMenu(message): #******************* ГЛАВНОЕ МЕНЮ *********************
@@ -68,7 +57,6 @@ async def toMenu(message): #******************* ГЛАВНОЕ МЕНЮ ********
     except Exception as ex:
         print('Ошибка главного меню: ', ex)
 
-
 #******************************* АДМИНИСТРИРОВАНИЕ *******************************
 
 @dp.message_handler(commands=['help'])
@@ -77,6 +65,7 @@ async def help_panel(message):
     msg = message
     await message.answer('Here:\n/start - Старт, общий запуск\n/poh - Пнуть Админа\n/ask - Сообщение админу ( /ask text )"\n/feedback - Связь с автором')
   
+#------------------------------------------------  
 
 @dp.message_handler(commands=['negritos'])
 async def admin_panel(message):
@@ -92,6 +81,8 @@ async def admin_panel(message):
     except Exception as ex:
         print('Ошибка панели админа: ', ex)
 
+#------------------------------------------------  
+
 @dp.message_handler(commands=['mega_sending'])
 async def mega_sending(message):
     global msg
@@ -103,6 +94,8 @@ async def mega_sending(message):
     except Exception as ex:
         print("mega_sending не нормас: ", ex)
 
+#------------------------------------------------  
+
 @dp.message_handler(commands=['sending'])
 async def sending(message):
     global msg
@@ -113,6 +106,8 @@ async def sending(message):
     except Exception as ex:
         print("mega_sending не нормас: ", ex)
 
+#------------------------------------------------  
+
 @dp.message_handler(commands=['ask'])
 async def ask(message):
     global msg, name
@@ -122,6 +117,8 @@ async def ask(message):
         await bot.send_message(ADMIN[0], f'{name} - id: {message.from_user.id}, @{message.from_user.username}\nMessage: {message.text[5:]}')
     except Exception as ex:
         print("mega_sending не нормас: ", ex)
+
+#------------------------------------------------  
 
 @dp.message_handler(commands=["feedback"])
 async def feedback(message): 
@@ -136,6 +133,8 @@ async def feedback(message):
     except Exception as ex:
         print('Ошибка feedback начала: ', ex)
 
+#------------------------------------------------  
+
 @dp.message_handler(commands=['poh'])
 async def poh(message):
     global msg
@@ -149,6 +148,8 @@ async def poh(message):
     except Exception as ex:
         print("poh не нормас: ", ex)
 
+#------------------------------------------------  
+
 @dp.message_handler(commands=['pizda'])
 async def pizda(message):
     global msg
@@ -158,18 +159,22 @@ async def pizda(message):
     except Exception as ex:
         print("pizda не нормас: ", ex)
 
+#------------------------------------------------  
+
 @dp.message_handler(commands=['restart'])
 async def restart(message):
     global msg
     msg = message
-
+    await bot.send_message(message.chat.id, '_')
     #print(type(msg))
     #await message.answer("Обновление бота..")
+
+#------------------------------------------------  
 
 def register_uslovie(dp : Dispatcher):
     dp.register_message_handler(welcome, content_types=['command'])
     dp.register_message_handler(toMenu, content_types=['command'])
 
 if __name__ == '__main__':
-    #************************************ ЗАПУСК *************************************
+    #************************************ ЗАПУСК *************************************    
     executor.start_polling(dp, skip_updates=True)

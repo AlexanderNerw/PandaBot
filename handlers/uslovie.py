@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher, executor, types
 import main
-from config import dp
+from config import dp, bot, ADMIN
 from querry_db import QuerryDB
 from handlers import keyboards as kb
 
@@ -18,7 +18,7 @@ async def input_name(message):
 async def reaction(message):
 
 # РУССКОЕ #############################################################################################################################################
-
+    
     if (db.getting(message.from_user.id, 'language') == 'ru'):
 
         ## РЕГИСТРАЦИЯ ******************************************************************
@@ -38,11 +38,13 @@ async def reaction(message):
             elif message.text == "Я парень 🧔🏽‍♂️" or message.text == "Я парень":
                 db.adding(message.from_user.id, 'gender', 'Male')
                 await message.answer('Отлично! Перенаправляю тебя в главное меню.', reply_markup=types.ReplyKeyboardRemove())
+                await bot.send_message(ADMIN[0], f'Новый пользователь: {message.from_user.first_name} - {message.from_user.id}')
                 await main.toMenu(message)
 
             elif message.text == "Я девушка 👱🏼‍♀️" or message.text == "Я девушка":
                 db.adding(message.from_user.id, 'gender', 'Female') 
                 await message.answer('Отлично! Перенаправляю тебя в главное меню.', reply_markup=types.ReplyKeyboardRemove())
+                await bot.send_message(ADMIN[0], f'Новый пользователь: {message.from_user.first_name} - {message.from_user.id}')
                 await main.toMenu(message)
             
             else:

@@ -21,19 +21,19 @@ async def inline_menu(c):
         if (main.db.getting(c.message.chat.id, 'language') == "ru"): 
 
             await bot.edit_message_text("⚙️ Настройки:", c.message.chat.id, c.message.message_id)
-            await bot.edit_message_reply_markup(chat_id=c.message.chat.id, message_id=c.message.message_id, reply_markup=main.kb.setting_button_ru_men)
+            await bot.edit_message_reply_markup(c.message.chat.id, c.message.message_id, reply_markup=main.kb.setting_button_ru_men)
         else:
-            await bot.edit_message_text("⚙️ Налаштування:", chat_id=c.message.chat.id, message_id=c.message.message_id)
-            await bot.edit_message_reply_markup(chat_id=c.message.chat.id, message_id=c.message.message_id, reply_markup=main.kb.setting_button_uk_men)
+            await bot.edit_message_text("⚙️ Налаштування:", c.message.chat.id, c.message.message_id)
+            await bot.edit_message_reply_markup(c.message.chat.id, c.message.message_id, reply_markup=main.kb.setting_button_uk_men)
 
     elif (main.db.getting(c.message.chat.id, 'gender') == "Female"):
         if (main.db.getting(c.message.chat.id, 'language') == "ru"): 
 
             await bot.edit_message_text("⚙️ Настройки:", c.message.chat.id, c.message.message_id)
-            await bot.edit_message_reply_markup(chat_id = c.message.chat.id, message_id = c.message.message_id, reply_markup = main.kb.setting_button_ru_women)
+            await bot.edit_message_reply_markup(c.message.chat.id, c.message.message_id, reply_markup = main.kb.setting_button_ru_women)
         else:
-            await bot.edit_message_text("⚙️ Налаштування:", chat_id = c.message.chat.id, message_id = c.message.message_id)
-            await bot.edit_message_reply_markup(chat_id = c.message.chat.id, message_id = c.message.message_id, reply_markup = main.kb.setting_button_uk_women)
+            await bot.edit_message_text("⚙️ Налаштування:", c.message.chat.id, c.message.message_id)
+            await bot.edit_message_reply_markup(c.message.chat.id, c.message.message_id, reply_markup = main.kb.setting_button_uk_women)
     else:
         main.db.adding(c.message.chat.id, 'gender', "Male")
 
