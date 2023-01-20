@@ -23,7 +23,7 @@ class QuerryDB:
                 with self.connection.cursor() as cursor:
                     querry = "CREATE TABLE IF NOT EXISTS pandabase.subscribers \
                                    (id INT NOT NULL AUTO_INCREMENT, \
-                                    user_id INT NOT NULL, \
+                                    user_id VARCHAR(12) NOT NULL, \
                                     status TINYINT(1) NOT NULL DEFAULT 0, \
                                     username VARCHAR(30) NULL, \
                                     gender VARCHAR(6) NULL, \
@@ -84,8 +84,8 @@ class QuerryDB:
                 self.connection.ping()
 
                 with self.connection.cursor() as cursor:
-                    cursor.execute(f'SELECT `{info}` FROM `subscribers` WHERE `user_id` = {user_id}')
-                result = cursor.fetchall()
+                    cursor.execute(f'SELECT `{info}` FROM `subscribers` WHERE `user_id` = {user_id} LIMIT 1')
+                result = cursor.fetchone()
 
             except Exception as ex:
                 print("[Info] Error Database (getting): ", ex)
@@ -93,7 +93,7 @@ class QuerryDB:
             finally:
                 self.connection.commit()
                 self.connection.close()
-                return result[0][info]
+                return result[info]
 
 #------------------------------------------------ 
 
@@ -121,7 +121,7 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(f'SELECT * FROM `subscribers`')  # <= `{info}`
-                result = cursor.fetchall()
+                result = cursor.fetchone()
 
         except Exception as ex:
                 print("[Info] Error Database (get_all): ", ex)
@@ -129,7 +129,7 @@ class QuerryDB:
         finally:
             self.connection.commit()
             self.connection.close()
-            return result[0]['language']
+            return result
   
 #------------------------------------------------ 
 
@@ -166,7 +166,7 @@ class QuerryDB:
             self.connection.close()
 
 
-#a = QuerryDB()
-#print(a.delete_person(1082803262))
+a = QuerryDB()
+print(a.delete_person('5287350422'))
 
 #a.delete_person('1082803262')

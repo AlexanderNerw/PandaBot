@@ -27,7 +27,7 @@ async def welcome(message): ################### СТАРТ МЕНЮ ############
             language = str(message.from_user.language_code)
             db.add_subs(message.from_user.id)
             db.adding(message.from_user.id, 'username', name_start)
-
+            print(message)
             db.adding(message.from_user.id, 'language', language)
             await message.answer(f" {hi[language]} <b>{name_start}</b>! 😉 {hi_start[language]}" , parse_mode='html', reply_markup=kb.languageB)
 
