@@ -3,7 +3,7 @@ import logging, handlers.uslovie
 from config import dp, bot, ADMIN
 from querry_db import QuerryDB
 from handlers import keyboards as kb, tests as ts, setting as st
-from handlers.dialogs import slovaRu, slovaEn, slovaUk
+from handlers.dialogs import ru, en, uk
 
 # соединение с БД
 db = QuerryDB()
@@ -30,26 +30,27 @@ async def welcome(message): ################### СТАРТ МЕНЮ ############
 
             if language == 'ru': #                                 Если при старте русский язык
                 db.adding(message.from_user.id, 'language', 'ru')
-                await message.answer("Привет, <b>" + name_start + "</b>! 😉" + slovaRu['hi_start'], parse_mode='html', reply_markup=kb.languageB)
+                await message.answer("Привет, <b>" + name_start + "</b>! 😉" + ru['hi_start'], parse_mode='html', reply_markup=kb.languageB)
 
             elif language == 'uk': #                              Если при старте украинский язык
                 db.adding(message.from_user.id, 'language', 'uk')
                 db.adding(message.from_user.id,'language', language) ######################/ Добавление языка и имени
-                await message.answer("Привiт, <b>" + name_start + "</b>! 😉" + slovaUk['hi_start'], parse_mode='html', reply_markup=kb.languageB)
+                await message.answer("Привiт, <b>" + name_start + "</b>! 😉" + uk['hi_start'], parse_mode='html', reply_markup=kb.languageB)
 
             else:              # Сообщение на англ. что бот не поддерживает их язык
-                await message.answer(slovaEn["error_en"], parse_mode='html', reply_markup=kb.languageB)
+                await message.answer(en["error"], parse_mode='html', reply_markup=kb.languageB)
 
         else: # Пользователь есть в БД
             global name
             name = db.getting(message.from_user.id, 'username')
-            if (db.getting(message.from_user.id, 'language') == 'ru'): # Русский
+            language = db.getting(message.from_user.id, 'language')
+
+            if (language == 'ru'): # Русский
                 await message.answer("Привет, <b>" + name + "</b>! Приятно увидеть тебя снова :)", parse_mode='html')
             else:                                                      # Украинский
                 await message.answer("Привіт, <b>" + name + "</b>! Приємно побачити тебе знову :)",parse_mode='html')
     except Exception as ex:
         print('Ошибка старт-меню:', ex)
-
 
 @dp.message_handler(commands=['menu'])
 async def toMenu(message): #******************* ГЛАВНОЕ МЕНЮ *********************
@@ -67,8 +68,7 @@ async def toMenu(message): #******************* ГЛАВНОЕ МЕНЮ ********
         print('Ошибка главного меню: ', ex)
 
 
-#******************************* СТОП _ КОМАНДЫ *******************************
-
+#******************************* КОМАНДЫ НАСТРОЙКИ*******************************
 
 #@dp.message_handler(commands=['hyi'])
 async def hyi(message):
@@ -86,7 +86,7 @@ async def inline_menu(c):
     if (db.getting(c.message.chat.id, 'gender') == "Male"):
         if (db.getting(c.message.chat.id, 'language') == "ru"): 
 
-            await bot.edit_message_text("Настройки:", chat_id=c.message.chat.id, message_id=c.message.message_id)
+            await bot.edit_message_text("⚙️Настройки:", chat_id=c.message.chat.id, message_id=c.message.message_id)
             await bot.edit_message_reply_markup(chat_id=c.message.chat.id, message_id=c.message.message_id, reply_markup=kb.setting_button_ru_men)
         else:
             await bot.edit_message_text("Налаштування:", chat_id=c.message.chat.id, message_id=c.message.message_id)
@@ -113,7 +113,7 @@ async def setting_gender_ru(c):
         await inline_menu(c)
 
 @dp.callback_query_handler(text='setting_gender_uk')
-async def setting_gender_ru(c):
+async def setting_gender_uk(c):
     if (db.getting(c.message.chat.id, 'gender') == "Female"):
         db.adding(c.message.chat.id, 'gender', "Male")
         await inline_menu(c)
@@ -121,6 +121,23 @@ async def setting_gender_ru(c):
         db.adding(c.message.chat.id, 'gender', "Female")
         await inline_menu(c)
 
+@dp.callback_query_handler(text='setting_language_ru')
+async def setting_language_ru(c):
+    if (db.getting(c.message.chat.id, 'language') == "ru"):
+        db.adding(c.message.chat.id, 'language', "uk")
+        await inline_menu(c)
+    else:
+        db.adding(c.message.chat.id, 'language', "ru")
+        await inline_menu(c)
+
+@dp.callback_query_handler(text='setting_language_uk')
+async def setting_language_uk(c):
+    if (db.getting(c.message.chat.id, 'language') == "uk"):
+        db.adding(c.message.chat.id, 'language', "ru")
+        await inline_menu(c)
+    else:
+        db.adding(c.message.chat.id, 'language', "uk")
+        await inline_menu(c)
 
 #******************************* АДМИНИСТРИРОВАНИЕ *******************************
 

@@ -58,13 +58,13 @@ class QuerryDB:
 
 #------------------------------------------------       
 
-    def adding(self, user_id, info, inform):
+    def adding(self, user_id, info1, inform2):
             """Добавление какой-то херни"""
 
             try:
                 self.connection.ping()
                 with self.connection.cursor() as cursor:
-                    cursor.execute(f'UPDATE `subscribers` SET `{info}` = "{inform}" WHERE `user_id` = {user_id}')
+                    cursor.execute(f'UPDATE `subscribers` SET `{info1}` = "{inform2}" WHERE `user_id` = {user_id}')
 
             except Exception as ex:
                 print("[Info] Error Database (adding): ", ex)
@@ -93,7 +93,7 @@ class QuerryDB:
             finally:
                 self.connection.commit()
                 self.connection.close()
-                return result
+                return result[0][info]
 
 #------------------------------------------------ 
 
@@ -166,7 +166,7 @@ class QuerryDB:
             self.connection.close()
 
 
-a = QuerryDB()
-print(a.getting(1082803262, 'language'))
+#a = QuerryDB()
+#print(a.get_person(1082803262))
 
 #a.delete_person('1082803262')
