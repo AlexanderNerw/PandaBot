@@ -167,6 +167,6 @@ class QuerryDB:
 
 
 #a = QuerryDB()
-#print(a.get_person(1082803262))
+#print(a.delete_person(1082803262))
 
 #a.delete_person('1082803262')

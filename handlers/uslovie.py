@@ -28,12 +28,12 @@ async def reaction(message):
             if message.text == "Русский":
                 await message.answer('Хорошо!', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'ru')
-                await message.answer('А теперь выбери свой пол:', reply_markup=kb.mfBRu)
+                await message.answer('А теперь выбери свой пол:', reply_markup=kb.start_gender_butt_ru)
 
             elif message.text == "Українська":
                 await message.answer('Добре! Ви змінили мову на українську.', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'uk')
-                await message.answer('А тепер будь-ласка вибери свою стать:', reply_markup=kb.mfBUa)
+                await message.answer('А тепер будь-ласка вибери свою стать:', reply_markup=kb.start_gender_butt_uk)
             
             elif message.text == "Я парень 🧔🏽‍♂️" or message.text == "Я парень":
                 db.adding(message.from_user.id, 'gender', 'Male')
@@ -108,12 +108,12 @@ async def reaction(message):
             if message.text == "Русский":
                 await message.answer('Хорошо! Вы поменяли язык на русский.', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'ru')
-                await message.answer('А теперь выбери свой пол:', reply_markup=kb.mfBRu)
+                await message.answer('А теперь выбери свой пол:', reply_markup=kb.start_gender_butt_ru)
 
             elif message.text == "Українська":
                 await message.answer('Ви вже використовуєте бота на українській.', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'uk')
-                await message.answer('А тепер будь-ласка вибери свою стать:', reply_markup=kb.mfBUa)        
+                await message.answer('А тепер будь-ласка вибери свою стать:', reply_markup=kb.start_gender_butt_uk)        
             
             elif message.text == "Я хлопець" or message.text == "Я хлопець 🧔🏽‍♂️":
                 db.adding(message.from_user.id, 'gender', 'Male')
