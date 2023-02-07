@@ -165,8 +165,30 @@ class QuerryDB:
             self.connection.commit()
             self.connection.close()
 
+#------------------------------------------------ 
 
-a = QuerryDB()
-print(a.delete_person('5287350422'))
+    def get_update(self):
+        """ Получение всех записей user_id """
+        try:
+            self.connection.ping()
+            with self.connection.cursor() as cursor:
+                cursor.execute(f'SELECT `user_id` FROM `subscribers`')  # <= `{info}`
+                result = cursor.fetchall()
+                users = []
+                for a in result:
+                    users.append(a['user_id'])
+
+        except Exception as ex:
+                print("[Info] Error Database (get_all): ", ex)
+
+        finally:
+            self.connection.commit()
+            self.connection.close()
+            return users
+
+
+#a = QuerryDB()
+#print(a.get_update())
+#print(a.get_update())
 
 #a.delete_person('1082803262')

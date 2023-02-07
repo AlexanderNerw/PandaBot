@@ -11,6 +11,6 @@ dp = Dispatcher(bot)
 
 host = '127.0.0.1' # localhost
 user = 'root'
-password = 'sanik888'
+password = 'root'
 db_name = 'pandabase' # subscribers
 port = 3306

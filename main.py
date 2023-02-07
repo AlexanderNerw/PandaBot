@@ -11,6 +11,13 @@ db = QuerryDB()
 
 # уровень логов
 logging.basicConfig(level=logging.INFO)
+#listing = db.get_update()
+
+# def __init__(listing):
+#     print(listing)
+#     for id in listing:
+#         bot.send_message(id, 'Всё нормально')
+#     return
 
 #№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ БОТ БОТ БОТ БОТ БОТ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
@@ -46,6 +53,7 @@ async def welcome(message): ################### СТАРТ МЕНЮ ############
 async def toMenu(message): #******************* ГЛАВНОЕ МЕНЮ *********************
     global msg
     msg = message
+    print(msg)
     try:
         if (db.getting(message.from_user.id, 'language') == "ru"): #            Русский язык
             await message.answer("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
@@ -161,13 +169,15 @@ async def pizda(message):
 
 #------------------------------------------------  
 
-@dp.message_handler(commands=['restart'])
-async def restart(message):
-    global msg
-    msg = message
-    await bot.send_message(message.chat.id, '_')
-    #print(type(msg))
-    #await message.answer("Обновление бота..")
+#@dp.message_handler(commands=['restart'])
+# def restart():
+
+#     listing = db.get_update()
+#     print(listing)
+#     for id in listing:
+#         bot.send_message(id, 'Всё нормально')
+        #print(type(msg))
+        #await message.answer("Обновление бота..")
 
 #------------------------------------------------  
 
@@ -175,6 +185,7 @@ def register_uslovie(dp : Dispatcher):
     dp.register_message_handler(welcome, content_types=['command'])
     dp.register_message_handler(toMenu, content_types=['command'])
 
+
 if __name__ == '__main__':
-    #************************************ ЗАПУСК *************************************    
+    #************************************ ЗАПУСК *************************************
     executor.start_polling(dp, skip_updates=True)
