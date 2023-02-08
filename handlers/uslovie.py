@@ -1,7 +1,8 @@
 from aiogram import Bot, Dispatcher, executor, types
 from menu import toMenu
-from config import dp, bot, ADMIN, db
-from handlers import keyboards as kb
+from config import dp, bot, ADMIN
+from querry_db import db
+import keyboards as kb
 
 
 @dp.message_handler(content_types=['name'])

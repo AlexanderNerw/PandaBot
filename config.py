@@ -1,10 +1,6 @@
-from querry_db import QuerryDB
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from importing import *
-
-# Cоединение с БД
-db = QuerryDB()
+import logging
 
 # Уровень логов
 logging.basicConfig(level=logging.INFO)

@@ -1,5 +1,5 @@
 import pymysql
-from config import host, user, password, db_name
+from config import *
 
 class QuerryDB: 
 
@@ -187,7 +187,9 @@ class QuerryDB:
             return users
 
 
-a = QuerryDB()
+# Cоединение с БД
+db = QuerryDB()
+
 #print(a.get_update())
 #print(a.get_update())
 
