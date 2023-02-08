@@ -1,12 +1,12 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, Message
-import setting as st, keyboards as kb, tests as ts, menu, callback_querry
+import handlers.setting as st, handlers.keyboards as kb, handlers.tests as ts, menu, callback_querry
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from config import dp, bot, Dispatcher, ADMIN
+from handlers.config import dp, bot, Dispatcher, ADMIN
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher import FSMContext
 from aiogram import executor
-from querry_db import db
-from dialogs import *
+from handlers.querry_db import db
+from handlers.dialogs import *
 
 
 

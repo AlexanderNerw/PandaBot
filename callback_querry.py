@@ -1,8 +1,8 @@
 from aiogram import Bot, Dispatcher, executor, types
-import keyboards as kb, tests as ts, setting as st
-from config import dp, bot, ADMIN
-from querry_db import db
-from dialogs import *
+import handlers.keyboards as kb, handlers.tests as ts, handlers.setting as st
+from handlers.config import dp, bot, ADMIN
+from handlers.querry_db import db
+from handlers.dialogs import *
 import menu
 
 

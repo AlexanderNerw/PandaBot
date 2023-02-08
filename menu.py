@@ -1,9 +1,9 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineQuery
-from config import dp, bot, ADMIN
+from handlers.config import dp, bot, ADMIN
 import hashlib, random, uuid
-from querry_db import db
-import keyboards as kb, tests as ts, setting as st
-from dialogs import *
+from handlers.querry_db import db
+import handlers.keyboards as kb, handlers.tests as ts, handlers.setting as st
+from handlers.dialogs import *
 
 
 

@@ -1,5 +1,5 @@
 import pymysql
-from config import *
+from handlers.config import *
 
 class QuerryDB: 
 
