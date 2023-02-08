@@ -1,12 +1,13 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, Message
+import setting as st, keyboards as kb, tests as ts, menu, callback_querry
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from config import dp, bot, Dispatcher, ADMIN
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher import FSMContext
-from importing import *
 from aiogram import executor
-from handlers import menu
 from querry_db import db
+from dialogs import *
+
 
 
 # Машина сострояний
@@ -33,15 +34,14 @@ async def welcome(message) -> None: ################### СТАРТ МЕНЮ ####
             language = str(message.from_user.language_code)
             db.add_subs(message.from_user.id)
             db.adding(message.from_user.id, 'username', name_start)
-            print(message)
             db.adding(message.from_user.id, 'language', language)
-            await message.answer(f" {hi[language]} <b>{name_start}</b>! 😉 {hi_start[language]}" , parse_mode='html', reply_markup=kb.languageB)
+            await message.answer( f"{hi[language]} <b>{name_start}</b>! 😉 {hi_start[language]}" , parse_mode='html', reply_markup=kb.languageB)
 
         else: # Пользователь есть в БД
             global name
             name = db.getting(message.from_user.id, 'username')
             language = db.getting(message.from_user.id, 'language')
-            await message.answer(f" {hi[language]} <b>{name}</b>! {again_hi_start[language]}", parse_mode='html')
+            await message.answer( f"{hi[language]} <b>{name}</b>! {again_hi_start[language]}", parse_mode='html')
 
     except Exception as ex:
         print('[INFO] Error of start-menu: ', ex)

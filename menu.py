@@ -2,7 +2,7 @@ from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, Inl
 from config import dp, bot, ADMIN
 import hashlib, random, uuid
 from querry_db import db
-import keyboards as kb
+import keyboards as kb, tests as ts, setting as st
 from dialogs import *
 
 
