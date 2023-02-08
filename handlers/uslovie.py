@@ -1,11 +1,8 @@
 from aiogram import Bot, Dispatcher, executor, types
-import main
-from config import dp, bot, ADMIN
-from querry_db import QuerryDB
+from menu import toMenu
+from config import dp, bot, ADMIN, db
 from handlers import keyboards as kb
 
-# соединение с БД
-db = QuerryDB()
 
 @dp.message_handler(content_types=['name'])
 async def input_name(message):
@@ -39,13 +36,13 @@ async def reaction(message):
                 db.adding(message.from_user.id, 'gender', 'Male')
                 await message.answer('Отлично! Перенаправляю тебя в главное меню.', reply_markup=types.ReplyKeyboardRemove())
                 await bot.send_message(ADMIN[0], f'Новый пользователь: {message.from_user.first_name} - {message.from_user.id}')
-                await main.toMenu(message)
+                await toMenu(message)
 
             elif message.text == "Я девушка 👱🏼‍♀️" or message.text == "Я девушка":
                 db.adding(message.from_user.id, 'gender', 'Female') 
                 await message.answer('Отлично! Перенаправляю тебя в главное меню.', reply_markup=types.ReplyKeyboardRemove())
                 await bot.send_message(ADMIN[0], f'Новый пользователь: {message.from_user.first_name} - {message.from_user.id}')
-                await main.toMenu(message)
+                await toMenu(message)
             
             else:
                 await message.answer('Сначала зарегистрируйся 😉', reply_markup=kb.mfBRu)
@@ -66,32 +63,32 @@ async def reaction(message):
             elif message.text == "Русский":
                 await message.answer('Хорошо!', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'ru')              
-                await main.toMenu(message)
+                await toMenu(message)
 
             elif message.text == "Українська":
                 await message.answer('Добре! Ви змінили мову на українську.', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'uk')
-                await main.toMenu(message)
+                await toMenu(message)
 
          # ПОЛ ******************************************************************************************
 
             elif message.text == "Я парень" or message.text == "Я парень 🧔🏽‍♂️":
                 if (db.getting(message.from_user.id, 'gender') == 'Male'):
                     await message.answer('Я знаю :)', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
                 elif (db.getting(message.from_user.id, 'gender') == 'Female'):
                     db.adding(message.from_user.id, 'gender', 'Male')
                     await message.answer('Хорошо! Перенаправляю тебя в главное меню.', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
 
             elif message.text == "Я девушка" or message.text == "Я девушка 👱🏼‍♀️":
                 if (db.getting(message.from_user.id, 'gender') == 'Female'):
                     await message.answer('Я знаю :)', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
                 elif (db.getting(message.from_user.id, 'gender') == 'Male'):
                     db.adding(message.from_user.id, 'gender', 'Female')
                     await message.answer('Хорошо! Перенаправляю тебя в главное меню.', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
 
          # ПРИМОЧКИ ****************************************************************************************
 
@@ -120,12 +117,12 @@ async def reaction(message):
             elif message.text == "Я хлопець" or message.text == "Я хлопець 🧔🏽‍♂️":
                 db.adding(message.from_user.id, 'gender', 'Male')
                 await message.answer('Добре! Перенаправляю тебе на головне меню.', reply_markup=types.ReplyKeyboardRemove())
-                await main.toMenu(message)
+                await toMenu(message)
 
             elif message.text == "Я дівчина" or message.text == "Я дівчина 👱🏼‍♀️":
                 db.adding(message.from_user.id, 'gender', 'Female')
                 await message.answer('Добре! Перенаправляю тебе на головне меню.', reply_markup=types.ReplyKeyboardRemove())
-                await main.toMenu(message)
+                await toMenu(message)
 
             else:
                 await message.answer('Спочатку зареєструйся 😉')
@@ -146,12 +143,12 @@ async def reaction(message):
             elif message.text == "Русский":
                 await message.answer('Хорошо! Вы поменяли язык на русский.', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'ru')
-                await main.toMenu(message)
+                await toMenu(message)
 
             elif message.text == "Українська":
                 await message.answer('Ви вже використовуєте бота на українській.', reply_markup=types.ReplyKeyboardRemove())
                 db.adding(message.from_user.id, 'language', 'uk')       
-                await main.toMenu(message)
+                await toMenu(message)
 
 
          # ПОЛ *******************************************************************************************************
@@ -159,20 +156,20 @@ async def reaction(message):
             elif message.text == "Я хлопець" or message.text == "Я хлопець 🧔🏽‍♂️":
                 if (db.getting(message.from_user.id, 'gender') == 'Male'):
                     await message.answer('Я знаю :)', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
                 elif (db.getting(message.from_user.id, 'gender') == 'Female'):
                     db.adding(message.from_user.id, 'gender', 'Male')
                     await message.answer('Добре! Перенаправляю тебе на головне меню.', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
 
             elif message.text == "Я дівчина" or message.text == 'Я дівчина 👱🏼‍♀️':
                 if (db.getting(message.from_user.id, 'gender') == 'Female'):
                     await message.answer('Я знаю :)', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
                 elif (db.getting(message.from_user.id, 'gender') == 'Male'):
                     db.adding(message.from_user.id, 'gender', 'Female')
                     await message.answer('Добре! Перенаправляю тебе на головне меню.', reply_markup=types.ReplyKeyboardRemove())
-                    await main.toMenu(message)
+                    await toMenu(message)
 
             else:
                 await message.answer('Я не знаю що відповісти :(')

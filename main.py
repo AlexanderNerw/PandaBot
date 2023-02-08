@@ -1,26 +1,17 @@
-from aiogram import Bot, Dispatcher, executor, types
-import logging, handlers.uslovie
-import callback_querry
-from config import dp, bot, ADMIN
-from querry_db import QuerryDB
-from handlers import keyboards as kb, tests as ts, setting as st
-from handlers.dialogs import *
+from handlers import keyboards as kb, tests as ts, setting as st, menu
+from importing import *
 
-# соединение с БД
-db = QuerryDB()
+# Машина сострояний
+class ClientStateGroup(StatesGroup):
+    photo = State()
+    desc = State()
 
-# уровень логов
-logging.basicConfig(level=logging.INFO)
-#listing = db.get_update()
+@dp.message_handler(commands=['cancel'])
+async def get_cancel(message: types.Message, state: FSMContext) -> None:
+    await state.finish()
 
-# def __init__(listing):
-#     print(listing)
-#     for id in listing:
-#         bot.send_message(id, 'Всё нормально')
-#     return
 
 #№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ БОТ БОТ БОТ БОТ БОТ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
-
 
 @dp.message_handler(commands=['start'])
 async def welcome(message): ################### СТАРТ МЕНЮ ######################
@@ -49,21 +40,21 @@ async def welcome(message): ################### СТАРТ МЕНЮ ############
 
 #------------------------------------------------  
 
-@dp.message_handler(commands=['menu'])
-async def toMenu(message): #******************* ГЛАВНОЕ МЕНЮ *********************
-    global msg
-    msg = message
-    print(msg)
-    try:
-        if (db.getting(message.from_user.id, 'language') == "ru"): #            Русский язык
-            await message.answer("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
-            parse_mode='html', reply_markup=kb.board_menu)
+# @dp.message_handler(commands=['menu'])
+# async def toMenu(message): #******************* ГЛАВНОЕ МЕНЮ *********************
+#     global msg
+#     msg = message
+#     print(msg)
+#     try:
+#         if (db.getting(message.from_user.id, 'language') == "ru"): #            Русский язык
+#             await message.answer("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
+#             parse_mode='html', reply_markup=kb.board_menu)
                         
-        elif (db.getting(message.from_user.id, 'language') == "uk"): #            Украинский язык
-            await message.answer("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
-            parse_mode='html', reply_markup = kb.board_menu)
-    except Exception as ex:
-        print('Ошибка главного меню: ', ex)
+#         elif (db.getting(message.from_user.id, 'language') == "uk"): #            Украинский язык
+#             await message.answer("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
+#             parse_mode='html', reply_markup = kb.board_menu)
+#     except Exception as ex:
+#         print('Ошибка главного меню: ', ex)
 
 #******************************* АДМИНИСТРИРОВАНИЕ *******************************
 
@@ -85,7 +76,7 @@ async def admin_panel(message):
             await message.answer('Here:\n/start - Старт, общий запуск\n/terakota - Тестирование функций\n/hyi - Пнуть Саню\n/sending - (id) (text)\n/mega_sending - (text)')
         else:
             await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
-            await toMenu(message)
+            await menu.toMenu(message)
     except Exception as ex:
         print('Ошибка панели админа: ', ex)
 
@@ -181,11 +172,67 @@ async def pizda(message):
 
 #------------------------------------------------  
 
-def register_uslovie(dp : Dispatcher):
-    dp.register_message_handler(welcome, content_types=['command'])
-    dp.register_message_handler(toMenu, content_types=['command'])
+
+@dp.inline_handler()
+async def inline_menu_online(inline_query: types.InlineQuery) -> None:
+
+    text = inline_query.query or '*напиши запрос*'
+    if text != None:
+        procent = random.randint(0, 100)
+        if procent < 10:
+            how_shiza = InputTextMessageContent(message_text = f'<b>Я шизик на {procent}%!</b> 🙂', parse_mode='html')
+        elif procent >= 10 and procent < 30:
+            how_shiza = InputTextMessageContent(message_text = f'<b>Я шизик на {procent}%!</b> 🙄', parse_mode='html')
+        elif procent >= 30 and procent < 70:
+            how_shiza = InputTextMessageContent(message_text = f'<b>Я шизик на {procent}%!</b> 🫠', parse_mode='html')
+        elif procent >= 70:
+            how_shiza = InputTextMessageContent(message_text = f'<b>Я шизик на {procent}%!</b> 🤪', parse_mode='html')
+
+    result_id: str = hashlib.md5(text.encode()).hexdigest()
+
+
+    HowGay = InlineQueryResultArticle(
+        id = str(uuid.uuid4()),
+        input_message_content = InputTextMessageContent(message_text = f'<b>Я гей на {random.randint(0, 100)}%!</b> 🏳️‍🌈', parse_mode='html'),
+        title = '🏳️‍🌈 Насколько % ты гей',
+        description = 'Просто отправь это в чат и узнай.',
+        thumb_url = 'https://kartinkof.club/uploads/posts/2022-06/1655617211_2-kartinkof-club-p-kartinki-s-nadpisyu-ti-gei-2.png'
+        )
+    
+    HowShiza = InlineQueryResultArticle(
+        id = str(uuid.uuid4()),
+        input_message_content = how_shiza,
+        title = '🥴 Насколько % ты шизофреник',
+        description = 'Рискнёшь или боишься?',
+        thumb_url = 'https://www.neurolikar.com.ua/wp-content/uploads/2017/09/bangalore-treatment-schizophrenia-symptoms.jpg'
+        )
+
+    MatNaMat = InlineQueryResultArticle(
+        id = str(uuid.uuid4()),
+        input_message_content = InputTextMessageContent(message_text = f'<b> {duff[random.randint(0, 42)]}!</b>', parse_mode='html'),
+        title = 'Пожелать счастья собеседнику',
+        description = 'Обматери его/её по полной.',
+        thumb_url = 'https://psychologyjournal.ru/upload/resize_cache/iblock/710/141_113_2/7105fae3f772f4a7fe11a4d32dd217c9.jpg'
+        )
+
+    HowSex = InlineQueryResultArticle(
+        id = str(uuid.uuid4()),
+        input_message_content = InputTextMessageContent(message_text = f'Сегодня я пересплю с <b>{name_sex[random.randint(0, 49)]} 🥰</b>', parse_mode='html'),
+        title = 'C кем я пересплю по имени',
+        description = 'С кем ты переспишь ',
+        thumb_url = 'https://png.pngtree.com/png-vector/20190420/ourlarge/pngtree-question-mark-vector-icon-png-image_963326.jpg'
+        )
+
+    HowDuo = InlineQueryResultArticle(
+        id = str(uuid.uuid4()),
+        input_message_content = InputTextMessageContent(message_text = f'Твоя совместимость с <b>{text}</b>: {random.randint(0, 100)}% 💞', parse_mode='html'),
+        title = 'Проверка совместимости по имени 💞',
+        description = 'Введи cюда имя и посмотрим.',
+        thumb_url = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRw3-gg8s81qbG8genEgNX641bc2WNM9qdajA&usqp=CAU'
+        )
+
+    await bot.answer_inline_query( results = [HowGay, HowShiza, MatNaMat, HowSex, HowDuo], inline_query_id = inline_query.id, cache_time = 1 )
 
 
 if __name__ == '__main__':
-    #************************************ ЗАПУСК *************************************
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dispatcher = dp, skip_updates= True)

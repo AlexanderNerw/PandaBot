@@ -1,16 +1,28 @@
+from querry_db import QuerryDB
 from aiogram import Bot, Dispatcher
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from importing import *
 
+# Cоединение с БД
+db = QuerryDB()
+
+# Уровень логов
+logging.basicConfig(level=logging.INFO)
+
+# TIMEZONE
 TIMEZONE = 'Europe/Kiev'
 TIMEZONE_COMMON_NAME = 'Kiev'
 ADMIN = [1082803262, 459849194]
 
-Token = ['5357393783:AAEz0T0qhn-Ph6YD-NdQQFxB_NhxCt7vXUk']
+storage = MemoryStorage()
 
-bot = Bot(token='5357393783:AAEz0T0qhn-Ph6YD-NdQQFxB_NhxCt7vXUk')
-dp = Dispatcher(bot)
+Token = ['5644119718:AAG4QKyUab3V7HrjabmcR1r-NtX2IWmOH7Y']
 
-host = '127.0.0.1' # localhost
+bot = Bot(token = '5644119718:AAG4QKyUab3V7HrjabmcR1r-NtX2IWmOH7Y')
+dp = Dispatcher(bot, storage = storage)
+
+host = '127.0.0.1' # localhost - 127.0.0.1
 user = 'root'
-password = 'root'
+password = 'sanik888'
 db_name = 'pandabase' # subscribers
 port = 3306

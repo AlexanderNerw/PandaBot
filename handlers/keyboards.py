@@ -1,5 +1,4 @@
-from aiogram.types import ReplyKeyboardRemove, \
-    ReplyKeyboardMarkup, KeyboardButton, \
+from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton, \
     InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 """Добавить обычную кнопку"""
@@ -17,9 +16,6 @@ from aiogram.types import ReplyKeyboardRemove, \
 
 #№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ МЕНЮ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
-inline_menu_1 = InlineKeyboardButton('Первая кнопка!', callback_data='tests')
-inline_kb1 = InlineKeyboardMarkup().add(inline_menu_1)
-
 board_menu = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
 """Меню главного меню. Хе-хе."""
 menu_btn_1 = InlineKeyboardButton('Тесты 📊', callback_data='menu_test')
@@ -32,7 +28,6 @@ board_menu.row(menu_btn_4)
 
 
 #№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ОБЩЕЙ НАСТРОЙКИ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
-
 
 fbBRu = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True).add(InlineKeyboardButton('Ecтееественно 😏', callback_data='fb_yes'))
 """Согласие\Несогласие связаться с автором на русском"""

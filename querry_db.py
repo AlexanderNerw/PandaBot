@@ -29,7 +29,7 @@ class QuerryDB:
                                     gender VARCHAR(6) NULL, \
                                     language VARCHAR(3) NULL, PRIMARY KEY (id))"    
 
-                    #cursor.execute(querry) 
+                    cursor.execute(querry) 
 
             finally:
                 self.connection.commit()
@@ -187,7 +187,7 @@ class QuerryDB:
             return users
 
 
-#a = QuerryDB()
+a = QuerryDB()
 #print(a.get_update())
 #print(a.get_update())
 
