@@ -20,15 +20,11 @@ async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ 
             await message.answer("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
             parse_mode='html', reply_markup = kb.board_menu)
     except Exception as ex:
-        print('Ошибка главного меню: ', ex)
-
-@dp.message_handler(commands=['mens'])
-async def mens(message) -> None:
-    await bot.send_message(message.chat.id, 'Ok')
+        await bot.send_message(ADMIN[1], 'menu.py [INFO] Неполадки в toMenu: ', ex)
+        print('menu.py [INFO] Неполадки в toMenu: ', ex)
 
 
 #*******************************************************************************************************************************************
-
 
 
 
@@ -76,9 +72,9 @@ async def inline_menu_online(inline_query: InlineQuery) -> None:
 
     HowSex = InlineQueryResultArticle(
         id = str(uuid.uuid4()),
-        input_message_content = InputTextMessageContent(message_text = f'Сегодня я пересплю с <b>{name_sex[random.randint(0, 49)]} 🥰</b>', parse_mode='html'),
-        title = 'C кем я пересплю по имени',
-        description = 'С кем ты переспишь ',
+        input_message_content = InputTextMessageContent(message_text = f'Сегодня я пересплю с <b>{name_sex[random.randint(0, 48)]} 🥰</b>', parse_mode='html'),
+        title = 'C кем я сегодня пересплю?',
+        description = 'С кем ты сегодня переспишь.',
         thumb_url = 'https://png.pngtree.com/png-vector/20190420/ourlarge/pngtree-question-mark-vector-icon-png-image_963326.jpg'
         )
 

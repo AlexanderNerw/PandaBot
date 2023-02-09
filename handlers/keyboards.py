@@ -59,6 +59,14 @@ start_gender_butt_uk = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboa
 """Выбор пола на украинском"""
 start_gender_butt_uk.add(*["Я хлопець 🧔🏽‍♂️", "Я дівчина 👱🏼‍♀️"])
 
+one_two_three_four = InlineKeyboardMarkup(row_width=3)
+one_two_three_four.add(InlineKeyboardButton(text='1', callback_data='1'), InlineKeyboardButton(text='2', callback_data='2'))
+one_two_three_four.add(InlineKeyboardButton(text='3', callback_data='3'), InlineKeyboardButton(text='4', callback_data='4'))
+
+button_test = InlineKeyboardMarkup(row_width=2)
+button_test.add(InlineKeyboardButton(text='Да, вперед', callback_data='Да, вперед'))
+button_test.add(InlineKeyboardButton(text='🔙 Назад', callback_data='🔙 Назад'))
+
 
 #№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ГЛУБОКИХ НАСТРОЕК №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 

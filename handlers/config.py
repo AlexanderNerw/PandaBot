@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 # TIMEZONE
 TIMEZONE = 'Europe/Kiev'
 TIMEZONE_COMMON_NAME = 'Kiev'
-ADMIN = [1082803262, 459849194]
+ADMIN = [1082803262, 5287350422]
 
 storage = MemoryStorage()
 
