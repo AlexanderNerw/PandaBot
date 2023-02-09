@@ -5,18 +5,6 @@ from handlers.querry_db import db
 from handlers.dialogs import *
 import menu
 
-
-#@dp.message_handler(commands=['hyi'])
-async def hyi(message):
-    global msg
-    msg = message
-
-    try:
-        await bot.edit_message_reply_markup(message.from_user.id, message.id)
-        await message.answer('Всё сделано босс')
-    except Exception as ex:
-        print("Tarakota не нормас: ", ex)
-
 @dp.callback_query_handler(text='menu_setting')
 async def inline_menu(c):
     if (db.getting(c.message.chat.id, 'gender') == "Male"):
@@ -38,6 +26,19 @@ async def inline_menu(c):
             await bot.edit_message_reply_markup(c.message.chat.id, c.message.message_id, reply_markup = kb.setting_button_uk_women)
     else:
         db.adding(c.message.chat.id, 'gender', "Male")
+
+@dp.callback_query_handler(text='menu_setting_back')
+async def inline_menu_back(c):
+    try:
+        if (db.getting(c.message.chat.id, 'language') == "ru"): #            Русский язык
+            await bot.edit_message_text("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
+            c.message.chat.id, c.message.message_id, parse_mode='html', reply_markup = kb.board_menu)
+                        
+        elif (db.getting(c.message.chat.id, 'language') == "uk"): #            Украинский язык
+            await bot.edit_message_text("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
+            c.message.chat.id, c.message.message_id, parse_mode='html', reply_markup = kb.board_menu)
+    except Exception as ex:
+        print('Ошибка главного callback меню: ', ex)
 
 @dp.callback_query_handler(text='setting_gender_ru')
 async def setting_gender_ru(c):
@@ -113,7 +114,7 @@ async def inline_fb_yes(call:types.CallbackQuery):
         await bot.send_message(ADMIN[0], f"@{user_name}: {name}, хочет поговорить :)")
         await bot.send_message(call.message.chat.id, """Хорошо! Когда нибудь с тобой свяжутся 😉 (или нет)\n
         Ты можешь просто написать ему: @alexnerw\nА пока что перенаправляю в тебя меню:""", parse_mode='html', reply_markup=None)
-        await menu.toMenu(msg)
+        await menu.toMenu(call.message)
     except Exception as ex:
         print("""Отчёт об ошибке:\n
         fb_yes чёт подвело: """, ex)
@@ -123,7 +124,6 @@ async def inline_fb_no(call:types.CallbackQuery):
     try:
 
         await bot.send_message(call.message.chat.id, "Хорошо! Нет так нет :)", parse_mode='html', reply_markup=None)
-        await menu.toMenu(msg)
+        await menu.toMenu(call.message)
     except Exception as ex:
-        print("""Отчёт об ошибке:\n
-        fb_no чёт подвело: """, ex)
+        print("Отчёт об ошибке: fb_no чёт подвело:" , ex)

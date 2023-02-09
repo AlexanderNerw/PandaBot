@@ -12,9 +12,9 @@ ADMIN = [1082803262, 459849194]
 
 storage = MemoryStorage()
 
-Token = ['5644119718:AAG4QKyUab3V7HrjabmcR1r-NtX2IWmOH7Y']
+Token = ['6147145237:AAE5qAmLI-dnL5cKf7yo9yhhHL_-_x2vRM8']
 
-bot = Bot(token = '5644119718:AAG4QKyUab3V7HrjabmcR1r-NtX2IWmOH7Y')
+bot = Bot(token = '6147145237:AAE5qAmLI-dnL5cKf7yo9yhhHL_-_x2vRM8')
 dp = Dispatcher(bot, storage = storage)
 
 host = '127.0.0.1' # localhost - 127.0.0.1
