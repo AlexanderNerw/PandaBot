@@ -37,7 +37,7 @@ class QuerryDB:
 
         except Exception as ex:
 
-            print("[INFO] Problems in Database Connection:", ex)
+            print("[INFO] Problems in Database Connection:{ex}")
 
 ####################### ДОБАВЛЕНИЕ #################################
 
@@ -49,7 +49,7 @@ class QuerryDB:
                     cursor.execute(f"INSERT INTO `subscribers` (`user_id`, `status`) VALUES ({user_id},{status})")
 
             except Exception as ex:
-                print("[Info] Error Database (add_subs): ", ex)
+                print(f"[Info] Error Database (add_subs): {ex}")
 
             finally:
                 self.connection.commit()
@@ -67,7 +67,7 @@ class QuerryDB:
                     cursor.execute(f'UPDATE `subscribers` SET `{info1}` = "{inform2}" WHERE `user_id` = {user_id}')
 
             except Exception as ex:
-                print("[Info] Error Database (adding): ", ex)
+                print(f"[Info] Error Database (adding): {ex}")
 
             finally:
                 self.connection.commit()
@@ -88,7 +88,7 @@ class QuerryDB:
                 result = cursor.fetchone()
 
             except Exception as ex:
-                print("[Info] Error Database (getting): ", ex)
+                print(f"[Info] Error Database (getting): {ex}")
 
             finally:
                 self.connection.commit()
@@ -107,7 +107,7 @@ class QuerryDB:
                 return bool(len(result))
 
         except Exception as ex:
-            print("[Info] Error Database (subsex): ", ex)
+            print(f"[Info] Error Database (subsex): {ex}")
 
         finally:
             self.connection.commit()
@@ -120,11 +120,11 @@ class QuerryDB:
         try:    
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(f'SELECT * FROM `subscribers`')  # <= `{info}`
-                result = cursor.fetchone()
+                cursor.execute(f'SELECT user_id FROM subscribers')  # <= `{info}`
+                result = cursor.fetchall()
 
         except Exception as ex:
-                print("[Info] Error Database (get_all): ", ex)
+                print(f"[Info] Error Database (get_all): {ex}")
 
         finally:
             self.connection.commit()
@@ -142,7 +142,7 @@ class QuerryDB:
                 result = cursor.fetchall()
 
         except Exception as ex:
-                print("[Info] Error Database (get_person): ", ex)
+                print(f"[Info] Error Database (get_person): {ex}")
 
         finally:
             self.connection.commit()
@@ -159,7 +159,7 @@ class QuerryDB:
                 cursor.execute(f'DELETE FROM `subscribers` WHERE `user_id` = {user_id}')
 
         except Exception as ex:
-            print("[Info] Error Database (get_all): ", ex)
+            print(f"[Info] Error Database (get_all): {ex}")
 
         finally:
             self.connection.commit()
@@ -179,7 +179,7 @@ class QuerryDB:
                     users.append(a['user_id'])
 
         except Exception as ex:
-                print("[Info] Error Database (get_all): ", ex)
+                print(f"[Info] Error Database (get_all): {ex}")
 
         finally:
             self.connection.commit()

@@ -8,6 +8,7 @@ from handlers.dialogs import *
 from aiogram import executor
 from callback_query import *
 from handlers.tests import *
+import asyncio
 import menu
 
 
@@ -124,13 +125,13 @@ async def help_panel(message: Message) -> None:
 # ------------------------------------------------
 
 
-@dp.message_handler(commands=['negritos'])
+@dp.message_handler(commands=['negr'])
 async def admin_panel(message: Message) -> None:
 
     try:
         if message.from_user.id in ADMIN:
             await message.answer('Hi, my lord.')
-            await message.answer('Here:\n/start - Старт, общий запуск\n/pizda - Тестирование функций\n/hyi - Пнуть Саню\n/sending - (id) (text)\n/mega_sending - (text)')
+            await message.answer('Here:\n/start - Старт, общий запуск\n/pizda - Тестирование функций\n/poh - Пнуть Саню\n/sending - (id) (text)\n/mega_sending - (text)')
         else:
             await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
             await menu.toMenu(message)
@@ -141,7 +142,7 @@ async def admin_panel(message: Message) -> None:
 # ------------------------------------------------
 
 
-@dp.message_handler(commands=['mega_sending'])
+@dp.message_handler(commands=['mega_send'])
 async def mega_sending(message: Message) -> None:
     global msg
     msg = message
@@ -151,8 +152,8 @@ async def mega_sending(message: Message) -> None:
             for i in a:
                 await bot.send_message(*i, message.from_chat.text[13:])
         except Exception as ex:
-            await bot.send_message(ADMIN[1], "main.py [INFO] Неполадки в mega_sending: ", ex)
-            print("main.py [INFO] Неполадки в mega_sending: ", ex)
+            await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в mega_sending: {ex}")
+            print(f"main.py [INFO] Неполадки в mega_sending: {ex}")
     else:
         await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
         await menu.toMenu(message)
@@ -160,16 +161,16 @@ async def mega_sending(message: Message) -> None:
 # ------------------------------------------------
 
 
-@dp.message_handler(commands=['sending'])
+@dp.message_handler(commands=['send'])
 async def sending(message: Message) -> None:
     global msg
     msg = message
     if message.from_user.id in ADMIN:
         try:
-            await bot.send_message(message.text[9:20], f"Автор: {message.text[20:]}")
+            await bot.send_message(message.text[9:20], f"〽️ Автор: {message.text[20:]}")
         except Exception as ex:
-            await bot.send_message(ADMIN[1], "main.py [INFO] Неполдаки в sending: ", ex)
-            print("main.py [INFO] Неполдаки в sending: ", ex)
+            await bot.send_message(ADMIN[1], f"main.py [INFO] Неполдаки в sending: {ex}")
+            print(f"main.py [INFO] Неполадки в sending: {ex}")
     else:
         await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
         await menu.toMenu(message)
@@ -177,22 +178,55 @@ async def sending(message: Message) -> None:
 # ------------------------------------------------
 
 
-@dp.message_handler(commands=['ask'])
-async def ask(message: Message) -> None:
-    lang = db.getting(message.from_user.id, 'language')
-    name = message.from_user.first_name
+class AskAdmin(StatesGroup):
+    ask = State()
 
-    if message.text[5:] == None:
-        try:
+@dp.message_handler(commands=['cancel'], state=AskAdmin)
+async def ask_cancel(message: Message, state: FSMContext) -> None:
+
+    try:
+        lang = db.getting(message.from_user.id, 'language')
+        await bot.send_message(message.chat.id, ask_admin_no[lang], reply_markup=ask_admin_no)
+        await state.finish()
+        await menu.toMenu(message)
+
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_cancel: {ex}")
+        print(f"main.py [INFO] Неполадки в ask_cancel: {ex}")
+
+
+@dp.message_handler(commands=['ask'])
+async def ask_user(message: Message) -> None:
+    try:
+        lang = db.getting(message.from_user.id, 'language')
+        name = message.from_user.first_name
+
+        if message.text.strip() != '/ask':
             await bot.send_message(ADMIN[1], f'{name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text[5:]}')
-        except Exception as ex:
-            await bot.send_message(ADMIN[1], "main.py [INFO] Неполадки в ask: ", ex)
-            print("main.py [INFO] Неполадки в ask: ", ex)
-    else:
-        await message.answer(empty_ask[lang])
+
+        else:
+            await message.answer(empty_ask[lang])
+            await AskAdmin.ask.set()
+
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_user: {ex}")
+        print(f"main.py [INFO] Неполадки в ask_user: {ex}")
+
+
+@dp.message_handler(content_types=['text'], state=AskAdmin.ask)
+async def ask_text(message: Message, state: FSMContext) -> None:
+    try:
+        lang = db.getting(message.from_user.id, 'language')
+        name = message.from_user.first_name
+        await bot.send_message(ADMIN[1], f'{message.from_user.first_name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text}')
+        await state.finish()
+        await menu.toMenu(message)
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_user_text: {ex}")
+        print(f"main.py [INFO] Неполадки в ask_user_text: {ex}")
+
 
 # ------------------------------------------------
-
 
 @dp.message_handler(commands=["feedback"])
 async def feedback(message: Message) -> None:
@@ -204,11 +238,10 @@ async def feedback(message: Message) -> None:
             await message.answer("Кажуть, через цей відділ можна поговорити з автором бота. Точно хочеш? 🙂", reply_markup=kb.fbBUa)
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], 'main.py [INFO] Неполдаки в начале feedback: ', ex)
-        print("main.py [INFO] Неполдаки в начале feedback: ", ex)
+        await bot.send_message(ADMIN[1], f'main.py [INFO] Неполдаки в начале feedback: {ex}')
+        print(f"main.py [INFO] Неполадки в начале feedback: {ex}")
 
 # ------------------------------------------------
-
 
 @dp.message_handler(commands=['poh'])
 async def poh(message: Message):
@@ -223,8 +256,8 @@ async def poh(message: Message):
             await message.answer('Все зроблено босс. Я його пнув 😀')
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], "main.py [INFO] Неполадки с poh: ", ex)
-        print("main.py [INFO] Неполадки с poh: ", ex)
+        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с poh: {ex}")
+        print(f"main.py [INFO] Неполадки с poh: {ex}")
 
 # ------------------------------------------------
 
@@ -233,12 +266,25 @@ async def poh(message: Message):
 async def pizda(message: Message):
 
     try:
-        await message.answer(f"{depression_beka2['0']}\n{depression_beka2['1']}\n{depression_beka2['2']}\n{depression_beka2['3']}", parse_mode='html')
+        await message.answer(f"{depression_beka_result_ru['0-9']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result_ru['10-15']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result_ru['16-19']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result_ru['20-29']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result_ru['30-63']}\n\n", parse_mode='html')
     except Exception as ex:
-        await bot.send_message(ADMIN[1], "main.py [INFO] Неполадки с test-panel pizda: ", ex)
-        print("main.py [INFO] Неполадки с test-panel pizda: ", ex)
+        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
+        print(f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
 
 # ------------------------------------------------
 
+
+async def main():
+    await bot.delete_webhook(drop_pending_updates=True)
+    #users = db.get_all()
+    #print(users)
+    #for user in users:
+        #await bot.send_message(user['user_id'], f'Бот был обновлён..')
+    await dp.start_polling(bot)
+
 if __name__ == '__main__':
-    executor.start_polling(dispatcher=dp, skip_updates=True)
+    asyncio.run(main())

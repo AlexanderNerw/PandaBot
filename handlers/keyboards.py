@@ -2,19 +2,19 @@ from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButt
     InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 """Добавить обычную кнопку"""
-#tst.kld = ReplyKeyboardMarkup(resize_keyboard=True)
-#buttons = ["Тесты", "Календарь"]
-#keyboard.add(*buttons)
+# tst.kld = ReplyKeyboardMarkup(resize_keyboard=True)
+# buttons = ["Тесты", "Календарь"]
+# keyboard.add(*buttons)
 
 """Удалить кнопку"""
-#await message.answer( reply_markup=ReplyKeyboardRemove())
+# await message.answer( reply_markup=ReplyKeyboardRemove())
 
 """Добавить обычную кнопку исчезающую"""
-#keyboard = .ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-#buttons = ["Тесты", "Календарь"]
-#keyboard.add(*buttons)
+# keyboard = .ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+# buttons = ["Тесты", "Календарь"]
+# keyboard.add(*buttons)
 
-#№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ МЕНЮ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
+# №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ МЕНЮ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
 board_menu = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
 """Меню главного меню. Хе-хе."""
@@ -22,7 +22,7 @@ menu_btn_1 = InlineKeyboardButton('Тесты 📊', callback_data='menu_test')
 menu_btn_2 = InlineKeyboardButton('Календарь 📅', callback_data='menu_calendar')
 menu_btn_3 = InlineKeyboardButton('Игры 🎮', callback_data='menu_game')
 menu_btn_4 = InlineKeyboardButton('Настроки ⚙️', callback_data='menu_setting')
-#menu_btn_5 = InlineKeyboardButton('кнопка 5', callback_data='btn5')
+# menu_btn_5 = InlineKeyboardButton('кнопка 5', callback_data='btn5')
 board_menu.add(menu_btn_1, menu_btn_2, menu_btn_3)
 board_menu.row(menu_btn_4)
 
@@ -32,7 +32,7 @@ sing_up_start1.add(KeyboardButton('Начать работу'))
 sing_up_start_cancel = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 sing_up_start_cancel.add(KeyboardButton('Завершить'))
 
-#№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ОБЩЕЙ НАСТРОЙКИ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
+# №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ОБЩЕЙ НАСТРОЙКИ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
 fbBRu = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
 """Согласие\Несогласие связаться с автором на русском"""
@@ -52,23 +52,25 @@ languageB.add(*["Русский", "Українська"])
 
 
 start_gender_butt_ru = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-"""Выбор пола на русском""" 
+"""Выбор пола на русском"""
 start_gender_butt_ru.add(*["Я парень 🧔🏽‍♂️", "Я девушка 👱🏼‍♀️"])
 
 start_gender_butt_uk = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 """Выбор пола на украинском"""
 start_gender_butt_uk.add(*["Я хлопець 🧔🏽‍♂️", "Я дівчина 👱🏼‍♀️"])
 
-one_two_three_four = InlineKeyboardMarkup(row_width=3)
+one_two_three_four = InlineKeyboardMarkup(row_width=3, one_time_keyboard=True)
 one_two_three_four.add(InlineKeyboardButton(text='1', callback_data='1'), InlineKeyboardButton(text='2', callback_data='2'))
 one_two_three_four.add(InlineKeyboardButton(text='3', callback_data='3'), InlineKeyboardButton(text='4', callback_data='4'))
 
 button_test = InlineKeyboardMarkup(row_width=2)
-button_test.add(InlineKeyboardButton(text='Да, вперед', callback_data='Да, вперед'))
-button_test.add(InlineKeyboardButton(text='🔙 Назад', callback_data='🔙 Назад'))
+button_test.add(InlineKeyboardButton(text='Да, вперед', callback_data='yes_test'))
+button_test.add(InlineKeyboardButton( text='🔙 Назад', callback_data='back_menu_test'))
 
+menu_all_test = InlineKeyboardMarkup(row_width=2)
+menu_all_test.add(InlineKeyboardButton( text='Тест депрессии Бека 🫥', callback_data='test_depression_beka'))
 
-#№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ГЛУБОКИХ НАСТРОЕК №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
+# №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ГЛУБОКИХ НАСТРОЕК №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
 setting_button_ru_men = InlineKeyboardMarkup(row_width=2)
 setting_button_ru_men.add(InlineKeyboardButton(text='🔙 Назад', callback_data='menu_setting_back'))
@@ -80,7 +82,7 @@ setting_button_uk_men.add(InlineKeyboardButton(text='🔙 Назад', callback_
 setting_button_uk_men.add(InlineKeyboardButton(text='  ✅  Я хлопець 👨  ✅  ||   Я дівчина 👩   ', callback_data='setting_gender_uk'))
 setting_button_uk_men.add(InlineKeyboardButton(text='   Русский   ||   ✅  Українська  ✅ ', callback_data='setting_language_ru'))
 
-#""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+# """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 setting_button_ru_women = InlineKeyboardMarkup(row_width=2)
 setting_button_ru_women.add(InlineKeyboardButton(text='🔙 Назад', callback_data='menu_setting_back'))
