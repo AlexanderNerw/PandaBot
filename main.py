@@ -8,8 +8,7 @@ from handlers.dialogs import *
 from aiogram import executor
 from callback_query import *
 from handlers.tests import *
-import asyncio
-import menu
+import asyncio, menu
 
 
 # Машина сострояний
@@ -21,23 +20,25 @@ class ProfileStateGroup(StatesGroup):
 
 @dp.message_handler(commands=['start'])  # СТАРТ МЕНЮ ######################
 async def start(message: Message) -> None:
-    language = message.from_user.language_code
+
     try:
+        lang = message.from_user.language_code
         if (not db.subsex(message.from_user.id)):  # Пользователя нет в БД
-            if language == 'ru' or language == 'uk':
-                await message.answer(f"{hi[language]} <b>{message.from_user.first_name}</b>! 😉 {hi_start[language]}",
-                                     parse_mode='html', reply_markup=kb.languageB)
-                await message.answer(get_lang_start[language])
+            if lang in ['ru','uk']:
+                await message.answer(f"{hello[lang]} <b>{message.chat.first_name}</b>! 😉 {start_sign_up[f'{lang}_bot_start']}",
+                parse_mode='html', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(*["Русский", "Українська"]))
+
+                await message.answer(start_sign_up[f'{lang}_start_1/3'])
                 await ProfileStateGroup.lang.set()
 
             else:
-                await message.answer(hi_start['en'])
+                await message.answer(start_sign_up['en'])
                 await ProfileStateGroup.lang.set()
 
         else:  # Пользователь есть в БД
-            names = db.getting(message.from_user.id, 'username')
-            language = db.getting(message.from_user.id, 'language')
-            await message.answer(f"{hi[language]} <b>{names}</b>! {again_hi_start[language]}", parse_mode='html')
+            name = db.getting(message.from_user.id, 'username')
+            lang = db.getting(message.from_user.id, 'language')
+            await message.answer(f"{hello[lang]}, <b>{name}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
             await menu.toMenu(message)
 
     except Exception as ex:
@@ -48,22 +49,18 @@ async def start(message: Message) -> None:
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.lang)
 async def start_lang(message: Message) -> None:
     try:
-        nameKb = ReplyKeyboardMarkup(resize_keyboard=True)
-        nameKb.add(KeyboardButton(message.from_user.first_name))
-
-        if message.text == 'Русский':
+        
+        if message.text in ['Русский', 'Українська']:
+            lang = 'uk' if message.text == 'Українська' else 'ru'
             db.add_subs(message.from_user.id)
-            db.adding(message.from_user.id, 'language', 'ru')
-            await message.answer('Супер!\n2/3: Как мне тебя называть? 🙂', reply_markup=nameKb)
+            db.adding(message.from_user.id, 'language', lang)
+            await message.answer(start_sign_up[f'{lang}_start_2/3'], parse_mode='html',
+            reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(KeyboardButton(message.chat.first_name)))
             await ProfileStateGroup.next()
 
-        elif message.text == 'Українська':
-            db.add_subs(message.from_user.id)
-            db.adding(message.from_user.id, 'language', 'uk')
-            await message.answer('Супер!\n2/3: Як мені тебе називати? 🙂', reply_markup=nameKb)
-            await ProfileStateGroup.next()
         else:
-            await message.reply(dont_know_start[message.from_user.language_code])
+            await message.reply(start_sign_up['ru_dont_know_start'])
+
     except Exception as ex:
         await bot.send_message(ADMIN[1], 'main.py [INFO] Неполадки в start_lang: ', ex)
         print('main.py [INFO] Неполадки в start_lang: ', ex)
@@ -72,13 +69,12 @@ async def start_lang(message: Message) -> None:
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.name)
 async def start_name(message: Message) -> None:
     try:
+        lang = db.getting(message.from_user.id, 'language') 
         db.adding(message.from_user.id, 'username', message.text)
-        if db.getting(message.from_user.id, 'language') == 'ru':
-            await message.answer('3/3: Хорошо, ты парень или девушка? 🚻', reply_markup=kb.start_gender_butt_ru)
+        buttons = ["Я парень 🧔🏽‍♂️", "Я девушка 👱🏼‍♀️"] if lang == 'ru' else ["Я хлопець 🧔🏽‍♂️", "Я дівчина 👱🏼‍♀️"]
 
-        elif db.getting(message.from_user.id, 'language') == 'uk':
-            await message.answer('3/3: Добре, ти хлопець чи дівчина? 🚻', reply_markup=kb.start_gender_butt_uk)
-
+        await message.answer(start_sign_up[f'{lang}_start_3/3'], parse_mode='html',
+        reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(*buttons))
         await ProfileStateGroup.next()
 
     except Exception as ex:
@@ -90,22 +86,17 @@ async def start_name(message: Message) -> None:
 async def start_gender(message: Message, state: FSMContext) -> None:
     try:
         lang = db.getting(message.from_user.id, 'language')
-        if message.text == 'Я парень 🧔🏽‍♂️' or message.text == 'Я хлопець 🧔🏽‍♂️':
-            db.adding(message.from_user.id, 'gender', 'male')
-            await bot.send_message(ADMIN[1], '[INFO] Новый зарегистрированный пользователь')
-            await message.answer(new_user_menu[lang])
-            await state.finish()
-            await menu.toMenu(message)
+        if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️', "Я девушка 👱🏼‍♀️", "Я дівчина 👱🏼‍♀️"]:
+            gender = 'male' if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️'] else 'female'
+            db.adding(message.from_user.id, 'gender', gender)
 
-        elif message.text == "Я девушка 👱🏼‍♀️" or message.text == "Я дівчина 👱🏼‍♀️":
-            db.adding(message.from_user.id, 'gender', 'female')
             await bot.send_message(ADMIN[1], '[INFO] Новый зарегистрированный пользователь')
-            await message.answer(new_user_menu[lang])
+            await message.answer(start_sign_up[f'{lang}_start_to_menu'], reply_markup=ReplyKeyboardRemove())
             await state.finish()
             await menu.toMenu(message)
 
         else:
-            await message.reply(dont_know_start[lang])
+            await message.reply(start_sign_up[f'{lang}_dont_know_start'])
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], 'main.py [INFO] Неполадки в start_gender: ', ex)
@@ -116,14 +107,12 @@ async def start_gender(message: Message, state: FSMContext) -> None:
 
 # ******************************* АДМИНИСТРИРОВАНИЕ *******************************
 
-
 @dp.message_handler(commands=['help'])
 async def help_panel(message: Message) -> None:
     language = db.getting(message.chat.id, 'language')
     await message.answer(help_menu[language], parse_mode='html')
 
 # ------------------------------------------------
-
 
 @dp.message_handler(commands=['negr'])
 async def admin_panel(message: Message) -> None:
@@ -141,11 +130,9 @@ async def admin_panel(message: Message) -> None:
 
 # ------------------------------------------------
 
-
 @dp.message_handler(commands=['mega_send'])
 async def mega_sending(message: Message) -> None:
-    global msg
-    msg = message
+
     if message.from_user.id in ADMIN:
         try:
             a = db.get_all('user_id')
@@ -160,11 +147,9 @@ async def mega_sending(message: Message) -> None:
 
 # ------------------------------------------------
 
-
 @dp.message_handler(commands=['send'])
 async def sending(message: Message) -> None:
-    global msg
-    msg = message
+
     if message.from_user.id in ADMIN:
         try:
             await bot.send_message(message.text[9:20], f"〽️ Автор: {message.text[20:]}")
@@ -176,7 +161,6 @@ async def sending(message: Message) -> None:
         await menu.toMenu(message)
 
 # ------------------------------------------------
-
 
 class AskAdmin(StatesGroup):
     ask = State()
@@ -261,16 +245,16 @@ async def poh(message: Message):
 
 # ------------------------------------------------
 
-
 @dp.message_handler(commands=['pizda'])
 async def pizda(message: Message):
-
+    lang = 'ru'
     try:
-        await message.answer(f"{depression_beka_result_ru['0-9']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result_ru['10-15']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result_ru['16-19']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result_ru['20-29']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result_ru['30-63']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result[f'{lang}10-15']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result[f'{lang}16-19']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result[f'{lang}20-29']}\n\n", parse_mode='html')
+        await message.answer(f"{depression_beka_result[f'{lang}30-63']}\n\n", parse_mode='html')
+        print(message.chat.first_name)
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
         print(f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
@@ -283,7 +267,8 @@ async def main():
     #users = db.get_all()
     #print(users)
     #for user in users:
-        #await bot.send_message(user['user_id'], f'Бот был обновлён..')
+    #    await bot.send_message(user['user_id'], f'Ща я тебя удалю из базы данных, подожди', reply_markup=go_to_menu)
+    #await bot.send_message(720526928, f'Летс гоу', reply_markup=go_to_menu)
     await dp.start_polling(bot)
 
 if __name__ == '__main__':

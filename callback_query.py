@@ -5,6 +5,16 @@ from handlers.querry_db import db
 from handlers.dialogs import *
 import menu
 
+@dp.callback_query_handler(text="toMenu")
+async def inline_toMenu(call:types.CallbackQuery):
+
+    try:
+        await menu.toMenuWithout(call.message.chat.id, call.message.message_id)
+
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_toMenu: {ex}')
+        print(f"callback_query.py [INFO] Неполадки с inline_toMenu: {ex}")
+
 @dp.callback_query_handler(text='menu_setting')
 async def inline_menu(c):
     try:
@@ -106,7 +116,7 @@ async def setting_language_uk(c):
 @dp.callback_query_handler(text="menu_test")
 async def inline_menu_tests(call:types.CallbackQuery):
     try:
-        await ts.tests(call.message)
+        await ts.tests(call.message.chat.id, call.message.message_id)
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_menu_tests: {ex}')
         print(f"callback_query.py [INFO] Неполадки с inline_menu_tests: {ex}")

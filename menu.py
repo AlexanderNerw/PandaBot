@@ -6,27 +6,38 @@ import handlers.keyboards as kb, handlers.tests as ts, handlers.setting as st
 from handlers.dialogs import *
 
 
-
-
 @dp.message_handler(commands=['menu'])
 async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
 
     try:
         if (db.getting(message.chat.id, 'language') == "ru"): #            Русский язык
-            await message.answer("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
-            parse_mode='html', reply_markup = kb.board_menu)
+            await bot.send_message(message.chat.id, "🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
+            parse_mode='html', reply_markup = kb.board_menu_ru)
                         
         elif (db.getting(message.chat.id, 'language') == "uk"): #            Украинский язык
-            await message.answer("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
-            parse_mode='html', reply_markup = kb.board_menu)
+            await bot.send_message(message.chat.id, "🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
+            parse_mode='html', reply_markup = kb.board_menu_uk)
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
         print('menu.py [INFO] Неполадки в toMenu: ', ex)
 
+@dp.message_handler(commands=['menu'])
+async def toMenuWithout(message_chat_id, message_message_id) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
+
+    try:
+        #await bot.delete_message(message_chat_id, message_message_id)
+        if (db.getting(message_chat_id, 'language') == "ru"): #            Русский язык
+            await bot.edit_message_text("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
+            message_chat_id, message_message_id, parse_mode='html', reply_markup = kb.board_menu_ru)
+                        
+        elif (db.getting(message_chat_id, 'language') == "uk"): #            Украинский язык
+            await bot.edit_message_text("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
+            message_chat_id, message_message_id, parse_mode='html', reply_markup = kb.board_menu_uk)
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
+        print('menu.py [INFO] Неполадки в toMenu: ', ex)
 
 #*******************************************************************************************************************************************
-
-
 
 @dp.inline_handler()
 async def inline_menu_inline(inline_query: InlineQuery) -> None:

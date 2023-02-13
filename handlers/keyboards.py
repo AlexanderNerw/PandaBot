@@ -16,15 +16,23 @@ from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButt
 
 # №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ МЕНЮ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
-board_menu = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
+board_menu_ru = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
 """Меню главного меню. Хе-хе."""
 menu_btn_1 = InlineKeyboardButton('Тесты 📊', callback_data='menu_test')
 menu_btn_2 = InlineKeyboardButton('Календарь 📅', callback_data='menu_calendar')
 menu_btn_3 = InlineKeyboardButton('Игры 🎮', callback_data='menu_game')
 menu_btn_4 = InlineKeyboardButton('Настроки ⚙️', callback_data='menu_setting')
-# menu_btn_5 = InlineKeyboardButton('кнопка 5', callback_data='btn5')
-board_menu.add(menu_btn_1, menu_btn_2, menu_btn_3)
-board_menu.row(menu_btn_4)
+board_menu_ru.add(menu_btn_1, menu_btn_2, menu_btn_3)
+board_menu_ru.row(menu_btn_4)
+
+board_menu_uk = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
+"""Меню главного меню. Только на укр. Хе-хе."""
+menu_btn_1 = InlineKeyboardButton('Тести 📊', callback_data='menu_test')
+menu_btn_2 = InlineKeyboardButton('Календар 📅', callback_data='menu_calendar')
+menu_btn_3 = InlineKeyboardButton('Ігри 🎮', callback_data='menu_game')
+menu_btn_4 = InlineKeyboardButton('Налаштування ⚙️', callback_data='menu_setting')
+board_menu_uk.add(menu_btn_1, menu_btn_2, menu_btn_3)
+board_menu_uk.row(menu_btn_4)
 
 sing_up_start1 = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 sing_up_start1.add(KeyboardButton('Начать работу'))
@@ -62,6 +70,7 @@ start_gender_butt_uk.add(*["Я хлопець 🧔🏽‍♂️", "Я дівчи
 one_two_three_four = InlineKeyboardMarkup(row_width=3, one_time_keyboard=True)
 one_two_three_four.add(InlineKeyboardButton(text='1', callback_data='1'), InlineKeyboardButton(text='2', callback_data='2'))
 one_two_three_four.add(InlineKeyboardButton(text='3', callback_data='3'), InlineKeyboardButton(text='4', callback_data='4'))
+one_two_three_four.add(InlineKeyboardButton(text='❌', callback_data='back_menu_test'))
 
 button_test = InlineKeyboardMarkup(row_width=2)
 button_test.add(InlineKeyboardButton(text='Да, вперед', callback_data='yes_test'))
@@ -69,6 +78,11 @@ button_test.add(InlineKeyboardButton( text='🔙 Назад', callback_data='bac
 
 menu_all_test = InlineKeyboardMarkup(row_width=2)
 menu_all_test.add(InlineKeyboardButton( text='Тест депрессии Бека 🫥', callback_data='test_depression_beka'))
+menu_all_test.add(InlineKeyboardButton(text='🔙 Назад', callback_data='toMenu'))
+
+
+go_to_menu = InlineKeyboardMarkup(row_width=2)
+go_to_menu.add(InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenu'))
 
 # №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ГЛУБОКИХ НАСТРОЕК №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 

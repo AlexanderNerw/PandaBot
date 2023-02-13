@@ -16,7 +16,7 @@ class QuerryDB:
                     database = db_name,
                     cursorclass = pymysql.cursors.DictCursor)
 
-            print("[INFO] Database Succes Connection" ) # : , self.connection)
+            print("[INFO] Database Succes Connection") # : , self.connection)
 
             try:
 
@@ -37,7 +37,7 @@ class QuerryDB:
 
         except Exception as ex:
 
-            print("[INFO] Problems in Database Connection:{ex}")
+            print(f"[INFO] Problems in Database Connection:{ex}")
 
 ####################### ДОБАВЛЕНИЕ #################################
 
