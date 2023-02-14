@@ -42,16 +42,16 @@ sing_up_start_cancel.add(KeyboardButton('Завершить'))
 
 # №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ОБЩЕЙ НАСТРОЙКИ №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
-fbBRu = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
+feedback_button_ru = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
 """Согласие\Несогласие связаться с автором на русском"""
-fbBRu.add(InlineKeyboardButton('Ecтееественно 😏', callback_data='fb_yes'))
-fbBRu.add(InlineKeyboardButton('Лучше потом 👋', callback_data='fb_no'))
+feedback_button_ru.add(InlineKeyboardButton('Ecтееественно 😏', callback_data='fb_yes'))
+feedback_button_ru.add(InlineKeyboardButton('Лучше потом 👋', callback_data='fb_no'))
 
 
-fbBUa = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True).add(InlineKeyboardButton('Ну звісно ж 😏', callback_data='fb_yes'))
+feedback_button_uk = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True).add(InlineKeyboardButton('Ну звісно ж 😏', callback_data='fb_yes'))
 """Согласие\Несогласие связаться с автором на украинском"""
-fbBUa.add(InlineKeyboardButton('Ну звісно ж 😏', callback_data='fb_yes'))
-fbBUa.add(InlineKeyboardButton('Краще потiм 👋', callback_data='fb_no'))
+feedback_button_uk.add(InlineKeyboardButton('Ну звісно ж 😏', callback_data='fb_yes'))
+feedback_button_uk.add(InlineKeyboardButton('Краще потiм 👋', callback_data='fb_no'))
 
 
 languageB = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -87,23 +87,23 @@ go_to_menu.add(InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='to
 # №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ГЛУБОКИХ НАСТРОЕК №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
 
 setting_button_ru_men = InlineKeyboardMarkup(row_width=2)
-setting_button_ru_men.add(InlineKeyboardButton(text='🔙 Назад', callback_data='menu_setting_back'))
+setting_button_ru_men.add(InlineKeyboardButton(text='🔙 Назад', callback_data='toMenu'))
 setting_button_ru_men.add(InlineKeyboardButton(text='  ✅  Я парень 👨  ✅  ||   Я девушка 👩   ', callback_data='setting_gender_ru'))
 setting_button_ru_men.add(InlineKeyboardButton(text='  ✅  Русский  ✅  ||   Українська    ', callback_data='setting_language_uk'))
 
 setting_button_uk_men = InlineKeyboardMarkup(row_width=2)
-setting_button_uk_men.add(InlineKeyboardButton(text='🔙 Назад', callback_data='menu_setting_back'))
+setting_button_uk_men.add(InlineKeyboardButton(text='🔙 Назад', callback_data='toMenu'))
 setting_button_uk_men.add(InlineKeyboardButton(text='  ✅  Я хлопець 👨  ✅  ||   Я дівчина 👩   ', callback_data='setting_gender_uk'))
 setting_button_uk_men.add(InlineKeyboardButton(text='   Русский   ||   ✅  Українська  ✅ ', callback_data='setting_language_ru'))
 
 # """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 setting_button_ru_women = InlineKeyboardMarkup(row_width=2)
-setting_button_ru_women.add(InlineKeyboardButton(text='🔙 Назад', callback_data='menu_setting_back'))
+setting_button_ru_women.add(InlineKeyboardButton(text='🔙 Назад', callback_data='toMenu'))
 setting_button_ru_women.add(InlineKeyboardButton(text='   Я парень 👨   ||  ✅ Я девушка 👩 ✅  ', callback_data='setting_gender_ru'))
 setting_button_ru_women.add(InlineKeyboardButton(text='  ✅  Русский  ✅  ||   Українська    ', callback_data='setting_language_uk'))
 
 setting_button_uk_women = InlineKeyboardMarkup(row_width=2)
-setting_button_uk_women.add(InlineKeyboardButton(text='🔙 Назад', callback_data='menu_setting_back'))
+setting_button_uk_women.add(InlineKeyboardButton(text='🔙 Назад', callback_data='toMenu'))
 setting_button_uk_women.add(InlineKeyboardButton(text='  Я хлопець 👨   ||  ✅ Я дівчина 👩 ✅ ', callback_data='setting_gender_uk'))
 setting_button_uk_women.add(InlineKeyboardButton(text='   Русский   ||   ✅  Українська  ✅ ', callback_data='setting_language_ru'))

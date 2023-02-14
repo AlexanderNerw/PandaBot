@@ -15,6 +15,16 @@ async def inline_toMenu(call:types.CallbackQuery):
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_toMenu: {ex}')
         print(f"callback_query.py [INFO] Неполадки с inline_toMenu: {ex}")
 
+@dp.callback_query_handler(text="back_menu_test")
+async def inline_toMenu(call:types.CallbackQuery):
+
+    try:
+        await menu.toMenuWithout(call.message.chat.id, call.message.message_id)
+
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_toMenu: {ex}')
+        print(f"callback_query.py [INFO] Неполадки с inline_toMenu: {ex}")
+
 @dp.callback_query_handler(text='menu_setting')
 async def inline_menu(c):
     try:
@@ -41,20 +51,6 @@ async def inline_menu(c):
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_menu: {ex}')
         print(f"callback_query.py [INFO] Неполадки с inline_menu: {ex}")
-
-@dp.callback_query_handler(text='menu_setting_back')
-async def inline_menu_back(c):
-    try:
-        if (db.getting(c.message.chat.id, 'language') == "ru"): #            Русский язык
-            await bot.edit_message_text("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
-            c.message.chat.id, c.message.message_id, parse_mode='html', reply_markup = kb.board_menu)
-                        
-        elif (db.getting(c.message.chat.id, 'language') == "uk"): #            Украинский язык
-            await bot.edit_message_text("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
-            c.message.chat.id, c.message.message_id, parse_mode='html', reply_markup = kb.board_menu)
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_menu_back: {ex}')
-        print(f"callback_query.py [INFO] Неполадки с inline_menu_back: {ex}")
 
 @dp.callback_query_handler(text='setting_gender_ru')
 async def setting_gender_ru(c):
@@ -150,11 +146,11 @@ async def inline_menu_game(call:types.CallbackQuery):
 async def inline_fb_yes(call:types.CallbackQuery):
 
     try:
+        lang = db.getting(call.message.chat.id, 'language')
         user_name = call.message.chat.username
         name = call.message.chat.first_name
         await bot.send_message(ADMIN[0], f"@{user_name}: {name}, хочет поговорить :)")
-        await bot.send_message(call.message.chat.id, """Хорошо! Когда нибудь с тобой свяжутся 😉 (или нет)\n
-        Ты можешь просто написать ему: @alexnerw\nА пока что перенаправляю в тебя меню:""", parse_mode='html', reply_markup=None)
+        await bot.send_message(call.message.chat.id, f"{general_text_answer[f'{lang}_feedback_yes']}", parse_mode='html')
         await menu.toMenu(call.message)
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_fb_yes: {ex}')
@@ -163,8 +159,8 @@ async def inline_fb_yes(call:types.CallbackQuery):
 @dp.callback_query_handler(text="fb_no")
 async def inline_fb_no(call:types.CallbackQuery):
     try:
-
-        await bot.send_message(call.message.chat.id, "Хорошо! Нет так нет :)", parse_mode='html', reply_markup=None)
+        lang = db.getting(call.message.chat.id, 'language')
+        await bot.send_message(call.message.chat.id, f"{general_text_answer[f'{lang}_ask_admin_no']}", parse_mode='html', reply_markup=None)
         await menu.toMenu(call.message)
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_fb_no: {ex}')

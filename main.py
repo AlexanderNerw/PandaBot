@@ -1,14 +1,13 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, Message, KeyboardButton
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from handlers.config import dp, bot, Dispatcher, ADMIN
+import asyncio, menu, callback_query, uslovie
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher import FSMContext
 from handlers.querry_db import db
 from handlers.dialogs import *
 from aiogram import executor
-from callback_query import *
 from handlers.tests import *
-import asyncio, menu
 
 
 # Машина сострояний
@@ -22,8 +21,9 @@ class ProfileStateGroup(StatesGroup):
 async def start(message: Message) -> None:
 
     try:
+        print(db.subsex(message.chat.id))
         lang = message.from_user.language_code
-        if (not db.subsex(message.from_user.id)):  # Пользователя нет в БД
+        if (not db.subsex(message.chat.id)):  # Пользователя нет в БД
             if lang in ['ru','uk']:
                 await message.answer(f"{hello[lang]} <b>{message.chat.first_name}</b>! 😉 {start_sign_up[f'{lang}_bot_start']}",
                 parse_mode='html', reply_markup=ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(*["Русский", "Українська"]))
@@ -36,10 +36,16 @@ async def start(message: Message) -> None:
                 await ProfileStateGroup.lang.set()
 
         else:  # Пользователь есть в БД
-            name = db.getting(message.from_user.id, 'username')
-            lang = db.getting(message.from_user.id, 'language')
-            await message.answer(f"{hello[lang]}, <b>{name}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
-            await menu.toMenu(message)
+            try:
+                name = db.getting(message.from_user.id, 'username')
+                lang = db.getting(message.from_user.id, 'language')
+                await message.answer(f"{hello[lang]}, <b>{name}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
+                await menu.toMenu(message)
+
+            except Exception as ex:
+                await bot.send_message(ADMIN[1], 'main.py [INFO] Неполадки со start-menu: # Пользователь есть в БД', ex)
+                print('main.py [INFO] Неполадки со start-menu: # Пользователь есть в БД', ex)
+                
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], 'main.py [INFO] Неполадки со start-menu: ', ex)
@@ -109,8 +115,8 @@ async def start_gender(message: Message, state: FSMContext) -> None:
 
 @dp.message_handler(commands=['help'])
 async def help_panel(message: Message) -> None:
-    language = db.getting(message.chat.id, 'language')
-    await message.answer(help_menu[language], parse_mode='html')
+    lang = db.getting(message.chat.id, 'language')
+    await message.answer(general_text_answer[f'{lang}_help_menu'], parse_mode='html')
 
 # ------------------------------------------------
 
@@ -131,7 +137,7 @@ async def admin_panel(message: Message) -> None:
 # ------------------------------------------------
 
 @dp.message_handler(commands=['mega_send'])
-async def mega_sending(message: Message) -> None:
+async def mega_send(message: Message) -> None:
 
     if message.from_user.id in ADMIN:
         try:
@@ -148,9 +154,9 @@ async def mega_sending(message: Message) -> None:
 # ------------------------------------------------
 
 @dp.message_handler(commands=['send'])
-async def sending(message: Message) -> None:
+async def send(message: Message) -> None:
 
-    if message.from_user.id in ADMIN:
+    if message.chat.id in ADMIN:
         try:
             await bot.send_message(message.text[9:20], f"〽️ Автор: {message.text[20:]}")
         except Exception as ex:
@@ -165,14 +171,14 @@ async def sending(message: Message) -> None:
 class AskAdmin(StatesGroup):
     ask = State()
 
-@dp.message_handler(commands=['cancel'], state=AskAdmin)
-async def ask_cancel(message: Message, state: FSMContext) -> None:
+@dp.callback_query_handler(text='go_back', state=AskAdmin)
+async def ask_cancel(call: CallbackQuery, state: FSMContext) -> None:
 
     try:
-        lang = db.getting(message.from_user.id, 'language')
-        await bot.send_message(message.chat.id, ask_admin_no[lang], reply_markup=ask_admin_no)
+        lang = db.getting(call.message.from_user.id, 'language')
+        await bot.send_message(call.message.chat.id, general_text_answer[f'{lang}_ask_admin_no'])
         await state.finish()
-        await menu.toMenu(message)
+        await menu.toMenu(call.message)
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_cancel: {ex}")
@@ -185,11 +191,12 @@ async def ask_user(message: Message) -> None:
         lang = db.getting(message.from_user.id, 'language')
         name = message.from_user.first_name
 
-        if message.text.strip() != '/ask':
+        if (message.text).strip() != '/ask':
             await bot.send_message(ADMIN[1], f'{name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text[5:]}')
-
+            await bot.send_message(message.chat.id, general_text_answer[f'{lang}_send_ask'])
         else:
-            await message.answer(empty_ask[lang])
+            await bot.send_message(message.chat.id, general_text_answer[f'{lang}_empty_ask'], reply_markup=
+            InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(text='Назад', callback_data='go_back')))
             await AskAdmin.ask.set()
 
     except Exception as ex:
@@ -203,6 +210,7 @@ async def ask_text(message: Message, state: FSMContext) -> None:
         lang = db.getting(message.from_user.id, 'language')
         name = message.from_user.first_name
         await bot.send_message(ADMIN[1], f'{message.from_user.first_name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text}')
+        await bot.send_message(message.chat.id, f"{general_text_answer[f'{lang}_send_ask']}")
         await state.finish()
         await menu.toMenu(message)
     except Exception as ex:
@@ -216,10 +224,8 @@ async def ask_text(message: Message, state: FSMContext) -> None:
 async def feedback(message: Message) -> None:
 
     try:
-        if (db.getting(message.chat.id, 'language') == "ru"):
-            await message.answer("Говорят, через это меню можно поговорить с автором бота. Точно хочешь? 🙂", reply_markup=kb.fbBRu)
-        else:
-            await message.answer("Кажуть, через цей відділ можна поговорити з автором бота. Точно хочеш? 🙂", reply_markup=kb.fbBUa)
+        lang = db.getting(message.chat.id, 'language')
+        await message.answer(general_text_answer[f'{lang}_feedback_yes'], reply_markup=f'feedback_button_{lang}')
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполдаки в начале feedback: {ex}')
@@ -249,11 +255,11 @@ async def poh(message: Message):
 async def pizda(message: Message):
     lang = 'ru'
     try:
-        await message.answer(f"{depression_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result[f'{lang}10-15']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result[f'{lang}16-19']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result[f'{lang}20-29']}\n\n", parse_mode='html')
-        await message.answer(f"{depression_beka_result[f'{lang}30-63']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}10-15']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}16-19']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}20-29']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}30-63']}\n\n", parse_mode='html')
         print(message.chat.first_name)
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
@@ -261,15 +267,17 @@ async def pizda(message: Message):
 
 # ------------------------------------------------
 
-
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
+
     #users = db.get_all()
+    #photo = open('photo_2023-02-14_14-42-31.jpg', 'rb')
     #print(users)
     #for user in users:
-    #    await bot.send_message(user['user_id'], f'Ща я тебя удалю из базы данных, подожди', reply_markup=go_to_menu)
-    #await bot.send_message(720526928, f'Летс гоу', reply_markup=go_to_menu)
-    await dp.start_polling(bot)
+        #await bot.send_message(user['user_id'], f'Вітаю тебе зі святом', reply_markup=go_to_menu)
+    #await bot.send_photo(720526928, photo=photo)
+    #await bot.send_message(720526928, depression_beka_result['uk20-29'], reply_markup=go_to_menu)
 
 if __name__ == '__main__':
     asyncio.run(main())

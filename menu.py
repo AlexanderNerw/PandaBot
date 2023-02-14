@@ -21,7 +21,7 @@ async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ 
         await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
         print('menu.py [INFO] Неполадки в toMenu: ', ex)
 
-@dp.message_handler(commands=['menu'])
+@dp.message_handler(text='')
 async def toMenuWithout(message_chat_id, message_message_id) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
 
     try:
