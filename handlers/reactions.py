@@ -1,10 +1,6 @@
-from aiogram import Bot, Dispatcher
-from aiogram.types import ReplyKeyboardRemove
-from menu import toMenu
-from handlers.config import dp, bot, ADMIN
-from handlers.querry_db import db
-import handlers.keyboards as kb
-from handlers.dialogs import *
+from handlers.support.importing import *
+
+
 
 @dp.message_handler(commands=['name'])
 async def input_name(message):
@@ -13,7 +9,7 @@ async def input_name(message):
     else:
         await message.answer("Як мені до тебе звертатись?")
 
-#@dp.message_handler(content_types=['text'])
+#@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'])
 async def reaction(message):
 
     text_user = (message.text).lower()
@@ -28,7 +24,7 @@ async def reaction(message):
                 await message.answer('Всё отлично, а ты как?')
 
             elif text_user in ["меню", "menu"]:
-                await toMenu(message)
+                await menu.toMenu(message)
 
             # ЯЗЫК ******************************************************************************************
 
@@ -37,7 +33,7 @@ async def reaction(message):
                 if lang != lang_user:
                     await bot.send_message(message.chat.id, reverse_info[f'{lang_user}_lang'])
                     db.adding(message.from_user.id, 'language', lang_user)
-                    await toMenu(message) 
+                    await menu.toMenu(message) 
                 else:
                     await bot.send_message(message.chat.id, 'Я знаю :)')    
 
@@ -49,7 +45,7 @@ async def reaction(message):
                 if gender != gender_user:
                     await bot.send_message(message.chat.id, reverse_info[f'{lang_user}_{gender_user}_lang'])
                     db.adding(message.from_user.id, 'gender', gender)
-                    await toMenu(message)
+                    await menu.toMenu(message)
                 else:
                     await bot.send_message(message.chat.id, 'Я знаю :)')
 
@@ -63,8 +59,8 @@ async def reaction(message):
             await reaction(message)
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], 'uslovie.py [INFO] Неполадки в text_gandler: ', ex)
-        print('uslovie.py [INFO] Неполадки в text_gandler: ', ex)
+        await bot.send_message(ADMIN[1], 'uslovie.py [INFO] Неполадки в reaction: ', ex)
+        print('uslovie.py [INFO] Неполадки в reaction: ', ex)
 
 ### УКРАИНА ###########################################################################################################################################
 

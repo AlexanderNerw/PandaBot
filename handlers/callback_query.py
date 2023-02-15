@@ -1,12 +1,8 @@
-import handlers.keyboards as kb, handlers.setting as st, handlers.tests as ts
-from aiogram import Bot, Dispatcher, executor, types
-from handlers.config import dp, bot, ADMIN, storage
-from handlers.querry_db import db
-from handlers.dialogs import *
-import menu
+import handlers.support.keyboards as kb, handlers.setting as st, handlers.tests as ts
+from handlers.support.importing import *
 
 @dp.callback_query_handler(text="toMenu")
-async def inline_toMenu(call:types.CallbackQuery):
+async def inline_toMenu(call: CallbackQuery):
 
     try:
         await menu.toMenuWithout(call.message.chat.id, call.message.message_id)
@@ -16,7 +12,7 @@ async def inline_toMenu(call:types.CallbackQuery):
         print(f"callback_query.py [INFO] Неполадки с inline_toMenu: {ex}")
 
 @dp.callback_query_handler(text="back_menu_test")
-async def inline_toMenu(call:types.CallbackQuery):
+async def inline_toMenu(call: CallbackQuery):
 
     try:
         await menu.toMenuWithout(call.message.chat.id, call.message.message_id)
@@ -26,7 +22,7 @@ async def inline_toMenu(call:types.CallbackQuery):
         print(f"callback_query.py [INFO] Неполадки с inline_toMenu: {ex}")
 
 @dp.callback_query_handler(text='menu_setting')
-async def inline_menu(c):
+async def inline_menu(c: CallbackQuery):
     try:
         if (db.getting(c.message.chat.id, 'gender') == "Male"):
             if (db.getting(c.message.chat.id, 'language') == "ru"): 
@@ -53,7 +49,7 @@ async def inline_menu(c):
         print(f"callback_query.py [INFO] Неполадки с inline_menu: {ex}")
 
 @dp.callback_query_handler(text='setting_gender_ru')
-async def setting_gender_ru(c):
+async def setting_gender_ru(c: CallbackQuery):
 
     try:
         if (db.getting(c.message.chat.id, 'gender') == "Female"):
@@ -68,7 +64,7 @@ async def setting_gender_ru(c):
         print(f"callback_query.py [INFO] Неполадки с setting_gender_ru: {ex}")
 
 @dp.callback_query_handler(text='setting_gender_uk')
-async def setting_gender_uk(c):
+async def setting_gender_uk(c: CallbackQuery):
     try:
         if (db.getting(c.message.chat.id, 'gender') == "Female"):
             db.adding(c.message.chat.id, 'gender', "Male")
@@ -82,7 +78,7 @@ async def setting_gender_uk(c):
         print(f"callback_query.py [INFO] Неполадки с setting_gender_uk: {ex}")
 
 @dp.callback_query_handler(text='setting_language_ru')
-async def setting_language_ru(c):
+async def setting_language_ru(c: CallbackQuery):
     try:
         if (db.getting(c.message.chat.id, 'language') == "ru"):
             db.adding(c.message.chat.id, 'language', "uk")
@@ -96,7 +92,7 @@ async def setting_language_ru(c):
         print(f"callback_query.py [INFO] Неполадки с setting_language_ru: {ex}")
 
 @dp.callback_query_handler(text='setting_language_uk')
-async def setting_language_uk(c):
+async def setting_language_uk(c: CallbackQuery):
     try:
         if (db.getting(c.message.chat.id, 'language') == "uk"):
             db.adding(c.message.chat.id, 'language', "ru")
@@ -110,7 +106,7 @@ async def setting_language_uk(c):
         print(f"callback_query.py [INFO] Неполадки с setting_language_uk: {ex}")
 
 @dp.callback_query_handler(text="menu_test")
-async def inline_menu_tests(call:types.CallbackQuery):
+async def inline_menu_tests(call: CallbackQuery):
     try:
         await ts.tests(call.message.chat.id, call.message.message_id)
     except Exception as ex:
@@ -118,7 +114,7 @@ async def inline_menu_tests(call:types.CallbackQuery):
         print(f"callback_query.py [INFO] Неполадки с inline_menu_tests: {ex}")
 
 @dp.callback_query_handler(text="menu_setting")
-async def inline_menu_setting(call:types.CallbackQuery):
+async def inline_menu_setting(call: CallbackQuery):
     try:
         await st.setting(call.message)
     except Exception as ex:
@@ -126,7 +122,7 @@ async def inline_menu_setting(call:types.CallbackQuery):
         print(f"callback_query.py [INFO] Неполадки с inline_menu_setting: {ex}")
 
 @dp.callback_query_handler(text="menu_calendar")
-async def inline_menu_сalendar(call:types.CallbackQuery):
+async def inline_menu_сalendar(call: CallbackQuery):
     try:
         await call.message.answer("Нихера пока-что")
         import handlers.tests as ts
@@ -135,7 +131,7 @@ async def inline_menu_сalendar(call:types.CallbackQuery):
         print(f"callback_query.py [INFO] Неполадки с inline_menu_сalendar: {ex}")
 
 @dp.callback_query_handler(text="menu_game")
-async def inline_menu_game(call:types.CallbackQuery):
+async def inline_menu_game(call: CallbackQuery):
     try:
         await call.message.answer("Тут нихера нет")
     except Exception as ex:
@@ -143,7 +139,7 @@ async def inline_menu_game(call:types.CallbackQuery):
         print(f"callback_query.py [INFO] Неполадки с inline_menu_game: {ex}")
 
 @dp.callback_query_handler(text="fb_yes")
-async def inline_fb_yes(call:types.CallbackQuery):
+async def inline_fb_yes(call: CallbackQuery):
 
     try:
         lang = db.getting(call.message.chat.id, 'language')
@@ -157,7 +153,7 @@ async def inline_fb_yes(call:types.CallbackQuery):
         print(f"callback_query.py [INFO] Неполадки с inline_fb_yes: {ex}")
 
 @dp.callback_query_handler(text="fb_no")
-async def inline_fb_no(call:types.CallbackQuery):
+async def inline_fb_no(call: CallbackQuery):
     try:
         lang = db.getting(call.message.chat.id, 'language')
         await bot.send_message(call.message.chat.id, f"{general_text_answer[f'{lang}_ask_admin_no']}", parse_mode='html', reply_markup=None)
