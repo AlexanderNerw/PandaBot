@@ -1,18 +1,17 @@
-import handlers.sign_up as sign_up
-import asyncio
-import handlers.callback_query
-import handlers.reactions
+import asyncio, handlers.sign_up, handlers.callback_query
 from aiogram.dispatcher.filters.builtin import CommandHelp
 from handlers.support.importing import *
 from aiogram import executor
 
 # АДМИНИСТРИРОВАНИЕ ################################### ADMIN PANEL and SEND MESSAGE to USER/S
 
-
 @dp.message_handler(CommandHelp(), ChatTypeFilter(chat_type=ChatType.PRIVATE))
 async def help_panel(message: Message) -> None:
-    lang = db.getting(message.chat.id, 'language')
-    await message.answer(general_text_answer[f'{lang}_help_menu'], parse_mode='html')
+
+    if (db.user_in_database(message.chat.id)):
+        lang = db.getting(message.chat.id, 'language')
+        await message.answer(general_text_answer[f'{lang}_help_menu'], parse_mode='html')
+    else: await message.answer('Сначала зарегистрируйся: 🙂'), await handlers.sign_up.start(message, FSMContext)
 # ----------------------------------------------------------------------------
 
 
@@ -27,8 +26,8 @@ async def admin_panel(message: Message) -> None:
             await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
             await menu.toMenu(message)
     except Exception as ex:
-        await bot.send_message(ADMIN[1], 'main.py [INFO] Неполадки в admin_panel: ', ex)
-        print('main.py [INFO] Неполадки в admin_panel: ', ex)
+        await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в admin_panel: {ex}')
+        print(f'main.py [INFO] Неполадки в admin_panel: {ex}')
 # --------------------------------------------------------------------------------
 
 ##################################################################################### - ASK from USER to ADMIN
@@ -39,7 +38,7 @@ class TextToSend(StatesGroup):
 
 
 @dp.callback_query_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), text='go_back', state=TextToSend)
-async def ask_cancel(call: CallbackQuery, state: FSMContext) -> None:
+async def send_cancel(call: CallbackQuery, state: FSMContext) -> None:
 
     try:
         await bot.send_message(call.message.chat.id, 'TextToSend отменено.')
@@ -152,7 +151,7 @@ async def ask_user(message: Message) -> None:
 
 
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=AskAdmin.ask)
-async def ask_text(message: Message, state: FSMContext) -> None:
+async def ask_user_text(message: Message, state: FSMContext) -> None:
     try:
         lang = db.getting(message.from_user.id, 'language')
         name = message.from_user.first_name
@@ -219,6 +218,18 @@ async def pizda(message: Message):
 
 # - START POLLING
 
+#def register(dp : Dispatcher):
+#     dp.register_message_handler(help_panel, CommandHelp(), ChatTypeFilter(chat_type=ChatType.PRIVATE))
+#     dp.register_message_handler(admin_panel, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['negr'])
+#     dp.register_message_handler(send_cancel, ChatTypeFilter(chat_type=ChatType.PRIVATE), text='go_back', state=TextToSend)
+#     dp.register_message_handler(mega_send, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['mega_send'])
+#     dp.register_message_handler(send, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['send'])
+#     dp.register_message_handler(toSend_user_id, ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=TextToSend.id_user)
+#     dp.register_message_handler(ask_cancel, ChatTypeFilter(chat_type=ChatType.PRIVATE), text='go_back', state=AskAdmin)
+#     dp.register_message_handler(ask_user, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['ask'])
+#     dp.register_message_handler(ask_user_text, ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=AskAdmin.ask)
+#     dp.register_message_handler(feedback, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=["feedback"])
+#     dp.register_message_handler(pizda, commands=['pizda'])
 
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
@@ -233,4 +244,5 @@ async def main():
     # await bot.send_message(720526928, depression_beka_result['uk20-29'], reply_markup=go_to_menu)
 
 if __name__ == '__main__':
+    import handlers.reactions
     asyncio.run(main())

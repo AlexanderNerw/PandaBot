@@ -1,22 +1,26 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineQuery
+import hashlib, random, uuid, handlers.sign_up
 from handlers.support.importing import *
-import hashlib, random, uuid
 
 
 @dp.message_handler(commands=['menu'])
 async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
 
-    try:
-        if (db.getting(message.chat.id, 'language') == "ru"): #            Русский язык
-            await bot.send_message(message.chat.id, "🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
-            parse_mode='html', reply_markup = board_menu_ru)
-                        
-        elif (db.getting(message.chat.id, 'language') == "uk"): #            Украинский язык
-            await bot.send_message(message.chat.id, "🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
-            parse_mode='html', reply_markup = board_menu_uk)
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
-        print('menu.py [INFO] Неполадки в toMenu: ', ex)
+    if (db.user_in_database(message.chat.id)):
+        print(db.user_in_database(message.chat.id))
+        try:
+            if (db.getting(message.chat.id, 'language') == "ru"): #            Русский язык
+                await bot.send_message(message.chat.id, "🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
+                parse_mode='html', reply_markup = board_menu_ru)
+                            
+            elif (db.getting(message.chat.id, 'language') == "uk"): #            Украинский язык
+                await bot.send_message(message.chat.id, "🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
+                parse_mode='html', reply_markup = board_menu_uk)
+        except Exception as ex:
+            await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
+            print('menu.py [INFO] Неполадки в toMenu: ', ex)
+
+    else: await message.answer('Сначала зарегистрируйся: 🙂'), await handlers.sign_up.start(message, FSMContext)
 
 @dp.message_handler(text='')
 async def toMenuWithout(message_chat_id, message_message_id) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************

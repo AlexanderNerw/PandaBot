@@ -1,7 +1,5 @@
 from handlers.support.importing import *
 
-
-
 @dp.message_handler(commands=['name'])
 async def input_name(message):
     if (db.getting(message.from_user.id, 'language') == 'ru'):
@@ -9,7 +7,7 @@ async def input_name(message):
     else:
         await message.answer("Як мені до тебе звертатись?")
 
-#@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'])
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'])
 async def reaction(message):
 
     text_user = (message.text).lower()
@@ -26,29 +24,6 @@ async def reaction(message):
             elif text_user in ["меню", "menu"]:
                 await menu.toMenu(message)
 
-            # ЯЗЫК ******************************************************************************************
-
-            elif text_user in ['русский', 'українська']:
-                lang_user = 'ru' if text_user == "русский" else 'uk'
-                if lang != lang_user:
-                    await bot.send_message(message.chat.id, reverse_info[f'{lang_user}_lang'])
-                    db.adding(message.from_user.id, 'language', lang_user)
-                    await menu.toMenu(message) 
-                else:
-                    await bot.send_message(message.chat.id, 'Я знаю :)')    
-
-            # ПОЛ ******************************************************************************************
-
-            elif text_user in ["я парень", "я девушка"]:
-                gender = db.getting(message.from_user.id, 'gender')
-                gender_user = 'male' if text_user == "я парень" else 'female'
-                if gender != gender_user:
-                    await bot.send_message(message.chat.id, reverse_info[f'{lang_user}_{gender_user}_lang'])
-                    db.adding(message.from_user.id, 'gender', gender)
-                    await menu.toMenu(message)
-                else:
-                    await bot.send_message(message.chat.id, 'Я знаю :)')
-
             # ПРИМОЧКИ ****************************************************************************************
 
             else:
@@ -59,8 +34,8 @@ async def reaction(message):
             await reaction(message)
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], 'uslovie.py [INFO] Неполадки в reaction: ', ex)
-        print('uslovie.py [INFO] Неполадки в reaction: ', ex)
+        await bot.send_message(ADMIN[1], f'uslovie.py [INFO] Неполадки в reaction: {ex}')
+        print(f'uslovie.py [INFO] Неполадки в reaction: {ex}')
 
 ### УКРАИНА ###########################################################################################################################################
 
@@ -115,6 +90,6 @@ async def reaction(message):
         # else:
         #     await message.answer('Я не знаю що відповісти :(')
 
-# def register_uslovie(dp : Dispatcher):
-#     dp.register_message_handler(reaction, content_types=['text'])
-#     dp.register_message_handler(input_name, content_types=['man'])
+#def register(dp : Dispatcher):
+    #dp.register_message_handler(reaction, content_types=['text'])
+    #dp.register_message_handler(input_name, content_types=['man'])
