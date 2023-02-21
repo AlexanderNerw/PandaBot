@@ -7,7 +7,6 @@ from handlers.support.importing import *
 async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
 
     if (db.user_in_database(message.chat.id)):
-        print(db.user_in_database(message.chat.id))
         try:
             if (db.getting(message.chat.id, 'language') == "ru"): #            Русский язык
                 await bot.send_message(message.chat.id, "🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",

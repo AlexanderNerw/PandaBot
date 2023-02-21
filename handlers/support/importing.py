@@ -1,5 +1,5 @@
 from aiogram.types import Message, ChatType, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.dispatcher.filters.builtin import ChatTypeFilter
+from aiogram.dispatcher.filters.builtin import ChatTypeFilter, Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from handlers.support.config import dp, bot, ADMIN, storage
 from aiogram.dispatcher import FSMContext, Dispatcher

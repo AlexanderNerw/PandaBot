@@ -71,10 +71,9 @@ try: # TEST DEPRESSION BEKA
 
             if data['answerNum'] < 21:
                 async with state.proxy() as data:
-                    print(type(data['answerDict']))
-                    data['answerDict'].append(f"Answer{data['answerNum']}: {int(call.data)-1}")
                     data['answerNum'] += 1
-                
+
+                db.addingInEnd(call.message.chat.id, 'TDBeka', f", answr{data['answerNum']}: {int(call.data)-1}")
                 await bot.send_message(call.message.chat.id, test_depression_beka[f"answer_{data['answerNum']}_{data['answerLang']}"],
                 parse_mode='html', reply_markup=one_two_three_four)
 
