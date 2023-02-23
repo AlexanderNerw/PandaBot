@@ -20,7 +20,6 @@ class QuerryDB:
 
             self.database_table_name = 'testbase'
 
-            # : , self.connection)
             print("querry_db.py [INFO] Database Succes Connection")
 
             with self.connection.cursor() as cursor:
@@ -36,8 +35,9 @@ class QuerryDB:
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
                                 status TINYINT(1) DEFAULT 0, \
+                                notice TINYINT(1) DEFAULT 1, \
                                 username VARCHAR(30) NULL, \
-                                gender VARCHAR(6) DEFAULT 'male', \
+                                gender VARCHAR(6) DEFAULT 'man', \
                                 language VARCHAR(3) DEFAULT 'ru', \
                                 text_to_send VARCHAR(255) NULL, PRIMARY KEY (id));"
 
@@ -51,7 +51,6 @@ class QuerryDB:
                 self.connection.commit()
                 self.connection.close()
 
-
 ####################### ДОБАВЛЕНИЕ #################################
 
     def add_subs(self, user_id):
@@ -59,8 +58,12 @@ class QuerryDB:
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(f"INSERT INTO pandabase.{self.database_table_name} (user_id) VALUES ({user_id});")
-                cursor.execute(f"INSERT INTO pandabase.answer_test (user_id) VALUES ({user_id});")
+                cursor.execute(f'SELECT * FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
+                result = cursor.fetchone()                
+                if (True if result == None else False):
+                    cursor.execute(f"INSERT INTO pandabase.{self.database_table_name} (user_id) VALUES ({user_id});")
+                    cursor.execute(f"INSERT INTO pandabase.answer_test (user_id) VALUES ({user_id});")
+
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (add_subs): {ex}")
 
@@ -164,15 +167,28 @@ class QuerryDB:
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f'SELECT status FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
+                cursor.execute( f'SELECT status FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
                 result = cursor.fetchone()                
-                print(result)
                 return False if result == None else bool(result['status'])
 
         except Exception as ex:
-            print(
-                f"querry_db.py [INFO] Error Database (user_online_in_database): {ex}")
+            print( f"querry_db.py [INFO] Error Database (user_online_in_database): {ex}")
+
+        finally:
+            self.connection.commit()
+            self.connection.close()
+
+    def user_notice(self, user_id):
+        """Проверяем есть ли уже юзер в базе"""
+        try:
+            self.connection.ping()
+            with self.connection.cursor() as cursor:
+                cursor.execute(f'SELECT notice FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
+                result = cursor.fetchone()                
+                return False if result == None else bool(result['notice'])
+
+        except Exception as ex:
+            print( f"querry_db.py [INFO] Error Database (user_online_in_database): {ex}")
 
         finally:
             self.connection.commit()
@@ -180,19 +196,16 @@ class QuerryDB:
 
 ###################### АДМИНИСТРИРОВАНИЕ ###########################
 
-    def get_all_id(self):  # <= info
+    def get_all_id(self, info = 'ru'):  # <= info
         """ Получение всех записей user_id """
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 # <= `{info}`
                 cursor.execute(
-                    f'SELECT user_id FROM {self.database_table_name};')
+                    f'SELECT user_id FROM {self.database_table_name} WHERE (notice = 1);')
                 result = cursor.fetchall()
-                users = []
-                for a in result:
-                    users.append(a['user_id'])
-                return users
+                return result
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (get_all_id): {ex}")
@@ -252,8 +265,6 @@ class QuerryDB:
             self.connection.close()
 
 # ------------------------------------------------
-
-
 
 # Cоединение с БД
 db = QuerryDB()

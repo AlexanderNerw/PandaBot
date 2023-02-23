@@ -14,24 +14,23 @@ class ProfileStateGroup(StatesGroup):
 async def start(message: Message, state: FSMContext) -> None:
     try:    
 
-        if (not db.user_in_database(message.chat.id)):  # Пользователя нет в БД
-            choice_reg = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add("Регистрация 🔸")
+        if (not db.user_in_database(message.chat.id)) or (not db.user_online_in_database(message.chat.id)):  # Пользователя нет в БД или он не онлайн
+            choice_reg = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(InlineKeyboardButton("Регистрация 🔸", callback_data='Регистрация 🔸'))
             db.add_subs(message.chat.id)
 
             if message.from_user.language_code in ['ru','uk']:
-                await message.answer(f"{short_texts[f'{message.from_user.language_code}_hello']} <b>{message.chat.first_name}</b>! 😉 {start_sign_up[f'{message.from_user.language_code}_bot_start']}",
+                await message.answer(f"{general_text[f'{message.from_user.language_code}_hello']} <b>{message.chat.first_name}</b>! 😉 {start_sign_up[f'{message.from_user.language_code}_bot_start']}",
                                         parse_mode='html', reply_markup=choice_reg)
-
 
             else:
                 await message.answer(start_sign_up[f'ru_bot_start'])
 
-            await ProfileStateGroup.lang.set()
+            await ProfileStateGroup.start.set()
 
         else:  # Пользователь есть в БД
 
             lang = db.getting(message.from_user.id, 'language')
-            await message.answer(f"{short_texts[f'{lang}_hello']}, <b>{db.getting(message.from_user.id, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
+            await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.from_user.id, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
             await menu.toMenu(message)
 
     except Exception as ex:
@@ -40,17 +39,15 @@ async def start(message: Message, state: FSMContext) -> None:
 
 #==============================================================================
 
-@dp.callback_query_handler(text = 'Регистрация 🔸', state=ProfileStateGroup.start)
+@dp.callback_query_handler(text = 'Регистрация 🔸', state='*')
 async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
     try:
-        choice_lang_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(*["Русский", "Українська"])
-        
-        if c.message.from_user.language_code in ['ru','uk']:
-            db.adding(c.message.chat.id, 'language', c.message.from_user.first_name)
-            await bot.send_message(c.message.chat.id, start_sign_up[f'{c.message.from_user.language_code}_start_1/3'], parse_mode='html', reply_markup=choice_lang_kb)
-            await ProfileStateGroup.next()
-        else:
+        if (not db.user_in_database(c.message.chat.id)) or (not db.user_online_in_database(c.message.chat.id)):  # Пользователя нет в БД или он не онлайн
+            choice_lang_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(*["Русский", "Українська"])
+
+            db.adding(c.message.chat.id, 'username', c.message.chat.first_name), await c.answer()
             await bot.send_message(c.message.chat.id, start_sign_up[f'ru_start_1/3'], parse_mode='html', reply_markup=choice_lang_kb)
+            await ProfileStateGroup.next()
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в start_reg: {ex}')
@@ -110,7 +107,7 @@ async def start_gender(message: Message, state: FSMContext) -> None:
         if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️', "Я девушка 👱🏼‍♀️", "Я дівчина 👱🏼‍♀️"]:
 
             async with state.proxy() as data: 
-                db.adding(message.from_user.id, 'gender', 'male' if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️'] else 'female')
+                db.adding(message.from_user.id, 'gender', 'man' if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️'] else 'woman')
                 await bot.send_message(ADMIN[1], '[INFO] Новый зарегистрированный пользователь')
                 await message.answer(start_sign_up[f"{data['lang']}_start_to_menu"], reply_markup=ReplyKeyboardRemove())
                 await state.finish()

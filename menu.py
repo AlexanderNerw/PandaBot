@@ -3,39 +3,35 @@ import hashlib, random, uuid, handlers.sign_up
 from handlers.support.importing import *
 
 
-@dp.message_handler(commands=['menu'])
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['menu'])
 async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
-
-    if (db.user_in_database(message.chat.id)):
-        try:
-            if (db.getting(message.chat.id, 'language') == "ru"): #            Русский язык
-                await bot.send_message(message.chat.id, "🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
-                parse_mode='html', reply_markup = board_menu_ru)
-                            
-            elif (db.getting(message.chat.id, 'language') == "uk"): #            Украинский язык
-                await bot.send_message(message.chat.id, "🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
-                parse_mode='html', reply_markup = board_menu_uk)
-        except Exception as ex:
-            await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
-            print('menu.py [INFO] Неполадки в toMenu: ', ex)
-
-    else: await message.answer('Сначала зарегистрируйся: 🙂'), await handlers.sign_up.start(message, FSMContext)
-
-@dp.message_handler(text='')
-async def toMenuWithout(message_chat_id, message_message_id) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
-
     try:
-        #await bot.delete_message(message_chat_id, message_message_id)
-        if (db.getting(message_chat_id, 'language') == "ru"): #            Русский язык
-            await bot.edit_message_text("🔸                <b>Главное меню</b>                🔸\n\nЗдесь ты можешь пользоваться моими функциями.",
-            message_chat_id, message_message_id, parse_mode='html', reply_markup = board_menu_ru)
-                        
-        elif (db.getting(message_chat_id, 'language') == "uk"): #            Украинский язык
-            await bot.edit_message_text("🔸                <b>Головне меню</b>                🔸\n\nТут ти можеш користуватися моїми функціями.",
-            message_chat_id, message_message_id, parse_mode='html', reply_markup = board_menu_uk)
+        if (db.user_online_in_database(message.chat.id)):
+
+            await bot.send_message(message.chat.id, general_text[f"{db.getting(message.chat.id, 'language')}_menu_text"],
+                parse_mode='html', reply_markup = board_menu[db.getting(message.chat.id, 'language')])
+
+        else: await message.answer('Сначала зарегистрируйся: 🙂'), await handlers.sign_up.start(message, FSMContext)
+
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
         print('menu.py [INFO] Неполадки в toMenu: ', ex)
+
+
+@dp.callback_query_handler(text='toMenu')
+async def toMenuWithout(c: CallbackQuery) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
+    try:
+
+        if (db.user_online_in_database(c.message.chat.id)):
+
+            await bot.edit_message_text(general_text[f"{db.getting(c.message.chat.id, 'language')}_menu_text"],
+                c.message.chat.id, c.message.message_id, parse_mode='html', reply_markup = board_menu[db.getting(c.message.chat.id, 'language')])
+
+        else: await bot.send_message(c.message.chat.id, 'Сначала зарегистрируйся: 🙂 /start')
+
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenuInline: {ex}')
+        print('menu.py [INFO] Неполадки в toMenuInline: ', ex)
 
 #*******************************************************************************************************************************************
 

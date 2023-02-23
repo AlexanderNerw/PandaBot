@@ -1,6 +1,5 @@
 from handlers.support.importing import *
 
-
 class AnswerTest(StatesGroup):  # МАШИНА СОСТРОЯНИЙ ДЛЯ ТЕСТОВ
     answerNum = State()
     answerLang = State()
@@ -90,14 +89,12 @@ try: # TEST DEPRESSION BEKA
                 await bot.send_message(call.message.chat.id, f"<b>Ваш результат: {data['answerEnd']} {result_point}</b>\n\n"
                 + test_depression_beka_result[f"{data['answerLang']}{text}"], reply_markup=go_to_menu, parse_mode='html')
 
-                print(data['answerDict'])
-
                 print(f"Id: {call.message.chat.id} | Закончил проходить тест")
                 await state.finish()
 
         except Exception as ex:
             if str(ex) != 'Message to delete not found':
-                print(f'tests.py [INFO] Неполадки в questions_TDB Теста Депрессии Бека: {ex}')
+                print(f'tests.py [INFO] Неполадки в {data["answerNum"]} questions_TDB Теста Депрессии Бека: {ex}')
 
 except Exception as ex: # TEST DEPRESSION BEKA 
     print(f'tests.py [INFO] Неполадки в Тесте Депрессии Бека: {ex}')
@@ -254,7 +251,11 @@ except Exception as ex: # TEST DEPRESSION BEKA
 
 
 async def tests(chat_id, message_id):
-    lang = db.getting(chat_id, 'language')
-    await bot.delete_message(chat_id, message_id)
-    await bot.send_message(chat_id, f"🧾 {general_text_answer[f'{lang}_list_tests']}\n",
-    parse_mode='html', reply_markup=menu_all_test)
+    try:
+        await bot.delete_message(chat_id, message_id)
+        await bot.send_message(chat_id, f"🧾 " + general_text[f"{db.getting(chat_id, 'language')}_list_tests"],
+        parse_mode='html', reply_markup=menu_all_test[db.getting(chat_id, 'language')])
+
+    except Exception as ex: 
+        bot.send_message(ADMIN[1], f'tests.py [INFO] Неполадки в Меню Тестов: {ex}' )
+        print(f'tests.py [INFO] Неполадки в Меню Тестов: {ex}')
