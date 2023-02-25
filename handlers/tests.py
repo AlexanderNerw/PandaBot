@@ -239,6 +239,7 @@ except Exception as ex: # TEST DEPRESSION BEKA
 
 async def tests(chat_id, message_id):
     try:
+        
         await bot.delete_message(chat_id, message_id)
         await bot.send_message(chat_id, f"🧾 " + general_text[f"{db.getting(chat_id, 'language')}_list_tests"],
         parse_mode='html', reply_markup=menu_all_test[db.getting(chat_id, 'language')])

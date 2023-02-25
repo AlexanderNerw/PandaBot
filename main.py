@@ -253,7 +253,6 @@ async def ask_user(message: Message) -> None:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_user: {ex}")
         print(f"main.py [INFO] Неполадки в ask_user: {ex}")
 
-
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=AskAdmin.ask)
 async def ask_user_text(message: Message, state: FSMContext) -> None:
     try:
@@ -269,9 +268,7 @@ async def ask_user_text(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_user_text: {ex}")
         print(f"main.py [INFO] Неполадки в ask_user_text: {ex}")
 
-
 ################################################################################# -   FEEDBACK and TEST and POH
-
 
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=["feedback"])
 async def feedback(message: Message) -> None:
@@ -285,7 +282,6 @@ async def feedback(message: Message) -> None:
         print(f"main.py [INFO] Неполадки в начале feedback: {ex}")
 
 # ------------------------------------------------
-
 
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['poh'])
 async def poh(message: Message):
