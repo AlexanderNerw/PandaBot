@@ -2,7 +2,6 @@ from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, Inl
 import hashlib, random, uuid, handlers.sign_up
 from handlers.support.importing import *
 
-
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['menu'])
 async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
     try:
