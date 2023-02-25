@@ -113,7 +113,7 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    f'UPDATE pandabase.answer_test SET `{info1}` = `{info1}` + "{info2}"  WHERE `user_id` = {user_id};')
+                    f"UPDATE pandabase.answer_test SET {info1} = CONCAT({info1}, '{info2}')  WHERE user_id = {user_id};")
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (adding): {ex}")
@@ -125,7 +125,7 @@ class QuerryDB:
 
 ####################### ПОЛУЧЕНИЕ ###################################
 
-    def getting(self, user_id, info):
+    def getting(self, user_id, info, database = 'testbase'):
         """Получение какой-то херни"""
 
         try:
@@ -133,7 +133,7 @@ class QuerryDB:
 
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    f'SELECT `{info}` FROM `{self.database_table_name}` WHERE `user_id` = {user_id} LIMIT 1;')
+                    f'SELECT `{info}` FROM `{database}` WHERE `user_id` = {user_id} LIMIT 1;') # self.database_table_name
             result = cursor.fetchone()
 
         except Exception as ex:
@@ -196,7 +196,7 @@ class QuerryDB:
 
 ###################### АДМИНИСТРИРОВАНИЕ ###########################
 
-    def get_all_id(self, info = 'ru'):  # <= info
+    def get_all_id(self):  # <= info
         """ Получение всех записей user_id """
         try:
             self.connection.ping()
@@ -269,10 +269,7 @@ class QuerryDB:
 # Cоединение с БД
 db = QuerryDB()
 
-#print(db.user_in_database('1082803262'))
+#a = str(db.getting('1082803262', 'TDBeka', database='answer_test')).split(',')
 #db.addingInEnd(1082803262, 'text_to_send', 5)
-
-# print(a.get_update())
-# print(a.get_update())
 
 # a.delete_person('1082803262')

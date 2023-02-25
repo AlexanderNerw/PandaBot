@@ -1,7 +1,7 @@
 import asyncio, handlers.sign_up, handlers.callback_query
 from aiogram.dispatcher.filters.builtin import CommandHelp
 from handlers.support.importing import *
-from aiogram import executor, types
+from aiogram import executor
 
 # АДМИНИСТРИРОВАНИЕ ################################### ADMIN PANEL and SEND MESSAGE to USER/S
 
@@ -153,12 +153,9 @@ async def toSend_text(message: Message, state: FSMContext) -> None:
                 if len(data['id_user']) > 1:
                     for user in data['id_user']:
                         try:
-                            if data['photo_num'] > 1: 
-                                await bot.send_media_group(user, media=list_photo)
-                                await bot.send_message(user, f"{data['TEXT']}")
-
-                            elif data['photo_num'] == 0: await bot.send_message(user, f"{data['TEXT']}")
-                            elif data['photo_num'] == 1: await bot.send_photo(user, photo= data['photo1'], caption= f"{data['TEXT']}")
+                            if data['photo_num'] > 1: await asyncio.sleep(0.1), await bot.send_media_group(user, media=list_photo), await bot.send_message(user, f"{data['TEXT']}")
+                            elif data['photo_num'] == 0: await asyncio.sleep(0.1), await bot.send_message(user, f"{data['TEXT']}")
+                            elif data['photo_num'] == 1: await asyncio.sleep(0.1), await bot.send_photo(user, photo= data['photo1'], caption= f"{data['TEXT']}")
 
                         except Exception as ex:
                             print(f"main.py [INFO] Неполадки в toSend_text в рассылке: id - {user} | Ошибка: {ex}")
@@ -313,32 +310,16 @@ async def poh(message: Message):
 async def pizda(message: Message):
     lang = 'ru'
     try:
-        await message.answer(f"{test_depression_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
-        await message.answer(f"{test_depression_beka_result[f'{lang}10-15']}\n\n", parse_mode='html')
-        await message.answer(f"{test_depression_beka_result[f'{lang}16-19']}\n\n", parse_mode='html')
-        await message.answer(f"{test_depression_beka_result[f'{lang}20-29']}\n\n", parse_mode='html')
-        await message.answer(f"{test_depression_beka_result[f'{lang}30-63']}\n\n", parse_mode='html')
-        print(message.chat.first_name)
+        #await message.answer(f"{test_worry_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
+        #await message.answer(f"{test_worry_beka_result[f'{lang}10-21']}\n\n", parse_mode='html')
+        await message.answer(f"{test_worry_beka_result[f'{lang}22-35']}\n\n", parse_mode='html')
+        #await message.answer(f"{test_worry_beka_result[f'{lang}36-63']}\n\n", parse_mode='html')
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
         print(f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
 
 
 # - START POLLING
-
-# def register(dp : Dispatcher):
-#     dp.register_message_handler(help_panel, CommandHelp(), ChatTypeFilter(chat_type=ChatType.PRIVATE))
-#     dp.register_message_handler(admin_panel, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['negr'])
-#     dp.register_message_handler(send_cancel, ChatTypeFilter(chat_type=ChatType.PRIVATE), text='go_back', state=TextToSend)
-#     dp.register_message_handler(mega_send, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['mega_send'])
-#     dp.register_message_handler(send, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['send'])
-#     dp.register_message_handler(toSend_user_id, ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=TextToSend.id_user)
-#     dp.register_message_handler(ask_cancel, ChatTypeFilter(chat_type=ChatType.PRIVATE), text='go_back', state=AskAdmin)
-#     dp.register_message_handler(ask_user, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['ask'])
-#     dp.register_message_handler(ask_user_text, ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=AskAdmin.ask)
-#     dp.register_message_handler(feedback, ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=["feedback"])
-#     dp.register_message_handler(pizda, commands=['pizda'])
-
 async def main():
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

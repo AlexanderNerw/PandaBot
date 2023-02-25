@@ -17,7 +17,6 @@ async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ 
         await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
         print('menu.py [INFO] Неполадки в toMenu: ', ex)
 
-
 @dp.callback_query_handler(text='toMenu')
 async def toMenuWithout(c: CallbackQuery) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
     try:

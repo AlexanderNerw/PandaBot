@@ -68,7 +68,7 @@ async def set_name(message: Message, state: FSMContext) -> None:
 
         else: 
             db.adding(message.chat.id, 'username', message.text)
-            await bot.send_message(f"{db.getting(message.chat.id, 'language')}_to_menu", reply_markup=ReplyKeyboardRemove())
+            await bot.send_message(message.chat.id, general_text[f"{db.getting(message.chat.id, 'language')}_to_menu"], reply_markup=ReplyKeyboardRemove())
             
 
     except Exception as ex:
