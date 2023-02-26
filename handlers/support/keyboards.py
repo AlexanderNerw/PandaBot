@@ -32,18 +32,18 @@ menu_all_test = { # МЕНЮ ТЕСТОВ
 
         'ru':   InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
         .add(   InlineKeyboardButton('Тест депрессии Бека 🫥', callback_data='test_depression_beka'))
-        .add(   InlineKeyboardButton('Тест тревожности Бека 🫥', callback_data='test_depression_beka'))
-        .add(   InlineKeyboardButton('Тест безнадёжности Бека 🫥', callback_data='test_depression_beka'))
-        .add(   InlineKeyboardButton('⬅️', callback_data='back_list_test'),
-                InlineKeyboardButton('➡️', callback_data='back_list_test'))
-        .add(   InlineKeyboardButton('🔙 Назад в меню', callback_data='toMenu'))
-,
+        .add(   InlineKeyboardButton('Тест тревожности Бека 😬', callback_data='test_worry_beka'))
+        .add(   InlineKeyboardButton('Тест безнадёжности Бека 😔', callback_data='test_hopeless_beka'))
+        #.add(   InlineKeyboardButton('⬅️', callback_data='back_list_test'),
+        #        InlineKeyboardButton('➡️', callback_data='next_list_test'))
+        .add(   InlineKeyboardButton('🔙 Назад в меню', callback_data='toMenu')),
+
         'uk':   InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
         .add(   InlineKeyboardButton('Тест депресії Бека 🫥', callback_data='test_depression_beka'))
-        .add(   InlineKeyboardButton('Тест тривожності Бека 🫥', callback_data='test_depression_beka'))
-        .add(   InlineKeyboardButton('Тест безнадійності Бека 🫥', callback_data='test_depression_beka'))
-        .add(   InlineKeyboardButton('⬅️', callback_data='back_list_test'),
-                InlineKeyboardButton('➡️', callback_data='back_list_test'))
+        .add(   InlineKeyboardButton('Тест тривожності Бека 😬', callback_data='test_worry_beka'))
+        .add(   InlineKeyboardButton('Тест безнадійності Бека 😔', callback_data='test_hopeless_beka'))
+        #.add(   InlineKeyboardButton('⬅️', callback_data='back_list_test'),
+        #        InlineKeyboardButton('➡️', callback_data='next_list_test'))
         .add(   InlineKeyboardButton('🔙 Назад до меню', callback_data='toMenu'))}
 
 # №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ОБЩЕГО ВЫБОРА №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
@@ -59,18 +59,52 @@ feedback_button = {  # CВЯЗАТЬСЯ С АВТОРОМ ИЛИ ЖЕ НЕТ?
         .add(InlineKeyboardButton('Краще потiм 👋', callback_data='fb_no'))
 }
 
-one_two_three_four = InlineKeyboardMarkup(row_width=2, one_time_keyboard=True) \
+one_two_three_four = InlineKeyboardMarkup(row_width=1, one_time_keyboard=True) \
 .add(   InlineKeyboardButton(text='1', callback_data='1'),
         InlineKeyboardButton(text='2', callback_data='2')) \
 .add(   InlineKeyboardButton(text='3', callback_data='3'),
         InlineKeyboardButton(text='4', callback_data='4')) \
 .add(   InlineKeyboardButton(text='❌', callback_data='back_menu_test'))
 
+one_two_three_four_TTB = {
+        'ru':
+                InlineKeyboardMarkup(row_width=1, one_time_keyboard=True) \
+        .add(   InlineKeyboardButton(text='▫️ 1. Нет, меня это не беспокоило', callback_data='1'),
+                InlineKeyboardButton(text='▫️ 2. Как и обычно       ', callback_data='2')) \
+        .add(   InlineKeyboardButton(text='▫️ 3. Не очень сильно (неприятно, но я справляюсь)', callback_data='3'),
+                InlineKeyboardButton(text='▫️ 4. Очень сильно            ', callback_data='4')) \
+        .add(   InlineKeyboardButton(text='❌', callback_data='back_menu_test')),
+        
+        'uk':
+                InlineKeyboardMarkup(row_width=2, one_time_keyboard=True) \
+        .add(   InlineKeyboardButton(text='▫️ 1. Ні, це мене не турбувало', callback_data='1'),
+                InlineKeyboardButton(text='▫️ 2. Як завжди       	', callback_data='2')) \
+        .add(   InlineKeyboardButton(text='▫️ 3. Не дуже сильно (неприємно, але я впораюся)', callback_data='3'),
+                InlineKeyboardButton(text='▫️ 4. Дуже сильно             ', callback_data='4')) \
+        .add(   InlineKeyboardButton(text='❌', callback_data='back_menu_test')) }
+
+
+one_two_three_four_TBB = {
+        'ru':
+                InlineKeyboardMarkup(row_width=2, one_time_keyboard=True) \
+        .add(   InlineKeyboardButton(text='🔹 Нет, неверно', callback_data='1'),
+                InlineKeyboardButton(text='Да, верно 🔸', callback_data='2'))
+        .add(   InlineKeyboardButton(text='❌', callback_data='back_menu_test')),
+
+
+        'uk':
+                InlineKeyboardMarkup(row_width=2, one_time_keyboard=True) \
+        .add(   InlineKeyboardButton(text='🔹 Нi, невiрно', callback_data='1'),
+                InlineKeyboardButton(text='Так, вiрно 🔸', callback_data='2'))
+        .add(   InlineKeyboardButton(text='❌', callback_data='back_menu_test')),}
+answer_reverse_TBB = {'1': 4, '2': 3, '3': 2, '4': 1}
+
+
 button_test = InlineKeyboardMarkup(row_width=2) \
 .add(   InlineKeyboardButton(text='Да, вперед', callback_data='yes_test')) \
 .add(   InlineKeyboardButton( text='🔙 Назад', callback_data='back_menu_test'))
 
-go_to_menu = InlineKeyboardMarkup(row_width=2) \
-.add(   InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenu'))
+go_to_menu = InlineKeyboardMarkup(row_width=2).add(   InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenu'))
+go_to_menu_safe = InlineKeyboardMarkup(row_width=2).add(   InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenuSafe'))
 
 # №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№ КНОПКИ ГЛУБОКИХ НАСТРОЕК №№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№

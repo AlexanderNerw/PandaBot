@@ -24,12 +24,12 @@ class QuerryDB:
 
             with self.connection.cursor() as cursor:
 
-                querry1 = f"CREATE TABLE IF NOT EXISTS pandabase.answer_test \
+                querry1 = f"CREATE TABLE IF NOT EXISTS pandabase.answersTest \
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
-                                TDBeka VARCHAR(255) DEFAULT 'Ansews TDBeka', \
-                                TTBeka VARCHAR(255) DEFAULT 'Ansews TTBeka', \
-                                TBBeka VARCHAR(255) DEFAULT 'Ansews TBBeka', PRIMARY KEY (id));"
+                                TDBeka VARCHAR(255) DEFAULT 'TDBeka', \
+                                TTBeka VARCHAR(255) DEFAULT 'TTBeka', \
+                                TBBeka VARCHAR(255) DEFAULT 'TBBeka', PRIMARY KEY (id));"
 
                 querry = f"CREATE TABLE IF NOT EXISTS pandabase.{self.database_table_name} \
                                 (id INT NOT NULL AUTO_INCREMENT, \
@@ -38,8 +38,7 @@ class QuerryDB:
                                 notice TINYINT(1) DEFAULT 1, \
                                 username VARCHAR(30) NULL, \
                                 gender VARCHAR(6) DEFAULT 'man', \
-                                language VARCHAR(3) DEFAULT 'ru', \
-                                text_to_send VARCHAR(255) NULL, PRIMARY KEY (id));"
+                                language VARCHAR(3) DEFAULT 'ru', PRIMARY KEY (id));"
 
                 cursor.execute(querry1)
                 cursor.execute(querry)
@@ -58,11 +57,11 @@ class QuerryDB:
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(f'SELECT * FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
+                cursor.execute(f'SELECT * FROM {self.database_table_name} WHERE user_id = {user_id};')
                 result = cursor.fetchone()                
                 if (True if result == None else False):
                     cursor.execute(f"INSERT INTO pandabase.{self.database_table_name} (user_id) VALUES ({user_id});")
-                    cursor.execute(f"INSERT INTO pandabase.answer_test (user_id) VALUES ({user_id});")
+                    cursor.execute(f"INSERT INTO pandabase.answersTest (user_id) VALUES ({user_id});")
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (add_subs): {ex}")
@@ -72,31 +71,16 @@ class QuerryDB:
             self.connection.close()
             return
 
-    def add_subs_online(self, user_id, status = 1):
-        """Добавление нового подписчика в поток"""
-        try:
-            self.connection.ping()
-            with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f"UPDATE pandabase.{self.database_table_name} SET status = '{status}' WHERE `user_id` = {user_id};")
-
-        except Exception as ex:
-            print(f"querry_db.py [INFO] Error Database (add_subs_online): {ex}")
-
-        finally:
-            self.connection.commit()
-            self.connection.close()
-            return
 # ------------------------------------------------
 
-    def adding(self, user_id, info1, info2):
+    def adding(self, user_id, info1: str, info2: str, database = 'testbase'):
         """Добавление какой-то херни"""
 
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    f'UPDATE `{self.database_table_name}` SET `{info1}` = "{info2}" WHERE `user_id` = {user_id};')
+                    f'UPDATE pandabase.{database} SET {info1} = "{info2}" WHERE `user_id` = {user_id};')
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (adding): {ex}")
@@ -106,14 +90,14 @@ class QuerryDB:
             self.connection.close()
             return
 
-    def addingInEnd(self, user_id, info1, info2):
+    def addingEndStart(self, user_id, info1, info2, reserse = False):
         """Добавление какой-то херни"""
-
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f"UPDATE pandabase.answer_test SET {info1} = CONCAT({info1}, '{info2}')  WHERE user_id = {user_id};")
+
+                if (not reserse): cursor.execute(f"UPDATE pandabase.answersTest SET {info1} = CONCAT({info1}, '{info2}')  WHERE user_id = {user_id};")
+                else: cursor.execute(f"UPDATE pandabase.answersTest SET {info1} = CONCAT('{info2}', {info1})  WHERE user_id = {user_id};")
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (adding): {ex}")
@@ -132,8 +116,7 @@ class QuerryDB:
             self.connection.ping()
 
             with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f'SELECT `{info}` FROM `{database}` WHERE `user_id` = {user_id} LIMIT 1;') # self.database_table_name
+                cursor.execute(f'SELECT `{info}` FROM `{database}` WHERE `user_id` = {user_id} LIMIT 1;') # self.database_table_name
             result = cursor.fetchone()
 
         except Exception as ex:
@@ -232,13 +215,12 @@ class QuerryDB:
             self.connection.close()
             return result
 
-    def get_person(self, user_id):
+    def get_person(self, user_id, database = 'testbase'):
         """ Получение всех записей user_id """
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f'SELECT * FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
+                cursor.execute(f'SELECT * FROM {database} WHERE user_id = {user_id};')
                 result = cursor.fetchall()
 
         except Exception as ex:
@@ -269,7 +251,7 @@ class QuerryDB:
 # Cоединение с БД
 db = QuerryDB()
 
-#a = str(db.getting('1082803262', 'TDBeka', database='answer_test')).split(',')
+#a = str(db.getting('1082803262', 'TDBeka', database='answersTest')).split(',')
 #db.addingInEnd(1082803262, 'text_to_send', 5)
 
 # a.delete_person('1082803262')

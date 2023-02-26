@@ -47,6 +47,7 @@ async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
 
             db.adding(c.message.chat.id, 'username', c.message.chat.first_name), await c.answer()
             await bot.send_message(c.message.chat.id, start_sign_up[f'ru_start_1/3'], parse_mode='html', reply_markup=choice_lang_kb)
+            await ProfileStateGroup.start.set()
             await ProfileStateGroup.next()
 
     except Exception as ex:
@@ -101,18 +102,15 @@ async def start_name(message: Message, state: FSMContext) -> None:
 
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.gender)
 async def start_gender(message: Message, state: FSMContext) -> None:
-
     try:
-
         if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️', "Я девушка 👱🏼‍♀️", "Я дівчина 👱🏼‍♀️"]:
 
             async with state.proxy() as data: 
                 db.adding(message.from_user.id, 'gender', 'man' if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️'] else 'woman')
                 await bot.send_message(ADMIN[1], '[INFO] Новый зарегистрированный пользователь')
-                await message.answer(start_sign_up[f"{data['lang']}_start_to_menu"], reply_markup=ReplyKeyboardRemove())
-                await state.finish()
-                db.add_subs_online(message.chat.id)
-                await menu.toMenu(message)
+                await message.answer(general_text[f"{data['lang']}_to_menu"], reply_markup=ReplyKeyboardRemove())
+                db.adding(message.chat.id, 'status', 1)
+                await state.finish(), await menu.toMenu(message)
 
         else:
             await message.reply(start_sign_up[f"{data['lang']}_dont_know_start"])

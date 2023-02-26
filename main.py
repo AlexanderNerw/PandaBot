@@ -272,10 +272,10 @@ async def ask_user_text(message: Message, state: FSMContext) -> None:
 
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=["feedback"])
 async def feedback(message: Message) -> None:
-
+    
     try:
         lang = db.getting(message.chat.id, 'language')
-        await message.answer(general_text[f'{lang}_feedback_yes'], reply_markup=f'feedback_button_{lang}')
+        await message.answer(general_text[f'{lang}_feedback_yes'], reply_markup=feedback_button[lang])
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполдаки в начале feedback: {ex}')
@@ -301,19 +301,18 @@ async def poh(message: Message):
 
 # ------------------------------------------------
 
-
 @dp.message_handler(commands=['pizda'])
 async def pizda(message: Message):
     lang = 'ru'
     try:
-        #await message.answer(f"{test_worry_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
-        #await message.answer(f"{test_worry_beka_result[f'{lang}10-21']}\n\n", parse_mode='html')
-        await message.answer(f"{test_worry_beka_result[f'{lang}22-35']}\n\n", parse_mode='html')
-        #await message.answer(f"{test_worry_beka_result[f'{lang}36-63']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}10-15']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}16-19']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}20-29']}\n\n", parse_mode='html')
+        await message.answer(f"{test_depression_beka_result[f'{lang}30-63']}\n\n", parse_mode='html')
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
         print(f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
-
 
 # - START POLLING
 async def main():
