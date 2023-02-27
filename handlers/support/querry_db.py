@@ -1,6 +1,6 @@
 import pymysql
-from handlers.support.config import *
-#from config import *
+#from handlers.support.config import *
+from config import *
 
 
 class QuerryDB:
@@ -24,7 +24,7 @@ class QuerryDB:
 
             with self.connection.cursor() as cursor:
 
-                querry1 = f"CREATE TABLE IF NOT EXISTS pandabase.answersTest \
+                querry1 = f"CREATE TABLE IF NOT EXISTS pandabase.answer_test \
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
                                 TDBeka VARCHAR(255) DEFAULT 'TDBeka', \
@@ -61,7 +61,7 @@ class QuerryDB:
                 result = cursor.fetchone()                
                 if (True if result == None else False):
                     cursor.execute(f"INSERT INTO pandabase.{self.database_table_name} (user_id) VALUES ({user_id});")
-                    cursor.execute(f"INSERT INTO pandabase.answersTest (user_id) VALUES ({user_id});")
+                    cursor.execute(f"INSERT INTO pandabase.answer_test (user_id) VALUES ({user_id});")
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (add_subs): {ex}")
@@ -96,8 +96,8 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
 
-                if (not reserse): cursor.execute(f"UPDATE pandabase.answersTest SET {info1} = CONCAT({info1}, '{info2}')  WHERE user_id = {user_id};")
-                else: cursor.execute(f"UPDATE pandabase.answersTest SET {info1} = CONCAT('{info2}', {info1})  WHERE user_id = {user_id};")
+                if (not reserse): cursor.execute(f"UPDATE pandabase.answer_test SET {info1} = CONCAT({info1}, '{info2}')  WHERE user_id = {user_id};")
+                else: cursor.execute(f"UPDATE pandabase.answer_test SET {info1} = CONCAT('{info2}', {info1})  WHERE user_id = {user_id};")
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (adding): {ex}")
@@ -116,7 +116,7 @@ class QuerryDB:
             self.connection.ping()
 
             with self.connection.cursor() as cursor:
-                cursor.execute(f'SELECT `{info}` FROM `{database}` WHERE `user_id` = {user_id} LIMIT 1;') # self.database_table_name
+                cursor.execute(f'SELECT {info} FROM {database} WHERE `user_id` = {user_id} LIMIT 1;') # self.database_table_name
             result = cursor.fetchone()
 
         except Exception as ex:
@@ -251,7 +251,7 @@ class QuerryDB:
 # Cоединение с БД
 db = QuerryDB()
 
-#a = str(db.getting('1082803262', 'TDBeka', database='answersTest')).split(',')
+#a = db.getting(1082803262, 'notice')
 #db.addingInEnd(1082803262, 'text_to_send', 5)
 
 # a.delete_person('1082803262')

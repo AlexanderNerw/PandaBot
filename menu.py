@@ -2,8 +2,9 @@ from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, Inl
 import hashlib, random, uuid, handlers.sign_up
 from handlers.support.importing import *
 
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['menu'])
-async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
+######################################################################################## - ГЛАВНОЕ МЕНЮ ЛИЧНОГО ЧАТА
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['menu'])    ## - ГЛАВНОЕ МЕНЮ
+async def toMenu(message) -> None: 
     try:
         if (db.user_online_in_database(message.chat.id)):
 
@@ -16,8 +17,8 @@ async def toMenu(message) -> None: #******************* ГЛАВНОЕ МЕНЮ 
         await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
         print('menu.py [INFO] Неполадки в toMenu: ', ex)
 
-@dp.callback_query_handler(text='toMenu')
-async def toMenuWithout(c: CallbackQuery) -> None: #******************* ГЛАВНОЕ МЕНЮ *********************
+@dp.callback_query_handler(text='toMenu')                                             ## - ГЛАВНОЕ МЕНЮ С ИЗМЕНЕНИЕМ
+async def toMenuWithout(c: CallbackQuery) -> None:
     try:
 
         if (db.user_online_in_database(c.message.chat.id)):
@@ -25,17 +26,36 @@ async def toMenuWithout(c: CallbackQuery) -> None: #******************* ГЛАВ
             await bot.edit_message_text(general_text[f"{db.getting(c.message.chat.id, 'language')}_menu_text"],
                 c.message.chat.id, c.message.message_id, parse_mode='html', reply_markup = board_menu[db.getting(c.message.chat.id, 'language')])
 
-        else: await bot.send_message(c.message.chat.id, 'Сначала зарегистрируйся: 🙂 /start')
+        else:
+            await bot.send_message(c.message.chat.id, 'Сначала зарегистрируйся 🙂:')
+            await handlers.sign_up.start(c.message, FSMContext)
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenuInline: {ex}')
         print('menu.py [INFO] Неполадки в toMenuInline: ', ex)
 
-#*******************************************************************************************************************************************
 
+######################################################################################### - ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.GROUP), commands=['menu'])       ## - ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
+async def toMenu(message) -> None: 
+    try:
+        print(message)
+        if (db.user_online_in_database(message.chat.id)):
+
+            await bot.send_message(message.chat.id, general_text[f"{db.getting(message.chat.id, 'language')}_menu_text"],
+                parse_mode='html', reply_markup = board_menu[db.getting(message.chat.id, 'language')])
+
+        else: await message.answer('Сначала зарегистрируйся: 🙂'), await handlers.sign_up.start(message, FSMContext)
+
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
+        print('menu.py [INFO] Неполадки в toMenu: ', ex)
+
+
+######################################################################################### - ИНЛАЙН РЕЖИМ
 @dp.inline_handler()
 async def inline_menu_inline(inline_query: InlineQuery) -> None:
-   
+    
     text = inline_query.query or '*напиши запрос*'
 
     procent = random.randint(0, 100)
@@ -78,6 +98,15 @@ async def inline_menu_inline(inline_query: InlineQuery) -> None:
         description = 'Обматери его/её по полной.',
         thumb_url = 'https://psychologyjournal.ru/upload/resize_cache/iblock/710/141_113_2/7105fae3f772f4a7fe11a4d32dd217c9.jpg'
         )
+
+    NameRandom = InlineQueryResultArticle(
+        id = str(uuid.uuid4()),
+        input_message_content = InputTextMessageContent(message_text = f'<b> {duff[random.randint(0, 42)]}!</b>', parse_mode='html'),
+        title = 'Пожелать счастья собеседнику',
+        description = 'Обматери его/её по полной.',
+        thumb_url = 'https://psychologyjournal.ru/upload/resize_cache/iblock/710/141_113_2/7105fae3f772f4a7fe11a4d32dd217c9.jpg'
+        )
+
 
     HowSex = InlineQueryResultArticle(
         id = str(uuid.uuid4()),

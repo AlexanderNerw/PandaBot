@@ -9,36 +9,35 @@ class ProfileStateGroup(StatesGroup):
     name = State()
     gender = State()
 
+##################################### - СТАРТ ЛИЧНОГО ЧАТА - #######################################################
 
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), CommandStart())  # СТАРТ МЕНЮ ###################### commands=['start'] CommandStart()
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), CommandStart())  ## - СТАРТ МЕНЮ ################### 
 async def start(message: Message, state: FSMContext) -> None:
     try:    
-
         if (not db.user_in_database(message.chat.id)) or (not db.user_online_in_database(message.chat.id)):  # Пользователя нет в БД или он не онлайн
-            choice_reg = InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(InlineKeyboardButton("Регистрация 🔸", callback_data='Регистрация 🔸'))
+
             db.add_subs(message.chat.id)
-
             if message.from_user.language_code in ['ru','uk']:
-                await message.answer(f"{general_text[f'{message.from_user.language_code}_hello']} <b>{message.chat.first_name}</b>! 😉 {start_sign_up[f'{message.from_user.language_code}_bot_start']}",
-                                        parse_mode='html', reply_markup=choice_reg)
+                await message.answer(   general_text[f'{message.from_user.language_code}_hello'] + f"<b>{message.chat.first_name}</b>! 😉"
+                                     +  start_sign_up[f'{message.from_user.language_code}_bot_start'], parse_mode='html', reply_markup=
+                                        InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                                        InlineKeyboardButton("Регистрация 🔸" if message.from_user.language_code == 'ru' else "Регiстрацiя 🔸", callback_data='Регистрация 🔸')))
 
-            else:
-                await message.answer(start_sign_up[f'ru_bot_start'])
-
+            else: await message.answer( general_text['ru_hello'] + f"<b>{message.chat.first_name}</b>! 😉"
+                                     +  start_sign_up['ru_bot_start'], parse_mode='html', reply_markup=
+                                        InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                                        InlineKeyboardButton("Регистрация 🔸", callback_data='Регистрация 🔸')))
             await ProfileStateGroup.start.set()
 
         else:  # Пользователь есть в БД
-
-            lang = db.getting(message.from_user.id, 'language')
-            await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.from_user.id, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
+            lang = db.getting(message.chat.id, 'language')
+            await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.chat, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
             await menu.toMenu(message)
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
         print(f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
-
 #==============================================================================
-
 @dp.callback_query_handler(text = 'Регистрация 🔸', state='*')
 async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
     try:
@@ -53,7 +52,7 @@ async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в start_reg: {ex}')
         print(f'main.py [INFO] Неполадки в start_reg: {ex}')
-
+#==============================================================================
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.lang)
 async def start_lang(message: Message, state: FSMContext) -> None:
 
@@ -75,9 +74,7 @@ async def start_lang(message: Message, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в start_lang: {ex}')
         print(f'main.py [INFO] Неполадки в start_lang: {ex}')
-
 #==============================================================================
-
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.name)
 async def start_name(message: Message, state: FSMContext) -> None:
 
@@ -97,9 +94,7 @@ async def start_name(message: Message, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в start_name: {ex}')
         print(f'main.py [INFO] Неполадки в start_name: {ex}')
-
 #==============================================================================
-
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.gender)
 async def start_gender(message: Message, state: FSMContext) -> None:
     try:
@@ -118,6 +113,43 @@ async def start_gender(message: Message, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'sing_up.py [INFO] Неполадки в start_gender: {ex}')
         print(f'main.py [INFO] Неполадки в start_gender: {ex}')
+
+
+##################################### - СТАРТ ГРУППОВОГО ЧАТА -  ###################################################
+
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.GROUP), CommandStart())  ## - СТАРТ МЕНЮ ################### 
+async def start(message: Message, state: FSMContext) -> None:
+    try:    
+        if (not db.user_in_database(message.chat.id)) or (not db.user_online_in_database(message.chat.id)):  # Пользователя нет в БД или он не онлайн
+
+            db.add_subs(message.chat.id)
+            if message.from_user.language_code in ['ru','uk']:
+                await message.answer(message.from_user.id,
+                                        general_text[f'{message.from_user.language_code}_hello'] + f" <b>{message.chat.first_name}</b>! 😉"
+                                     +  start_sign_up[f'{message.from_user.language_code}_bot_start'], parse_mode='html', reply_markup=
+                                        InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                                        InlineKeyboardButton("Регистрация 🔸" if message.from_user.language_code == 'ru' else "Регiстрацiя 🔸", callback_data='Регистрация 🔸')))
+
+            else:
+                await message.answer(   general_text[f'ru_hello'] + f"<b>{message.chat.first_name}</b>! 😉"
+                                     +  start_sign_up['ru_bot_start'], parse_mode='html', reply_markup=
+                                        InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                                        InlineKeyboardButton("Регистрация 🔸", callback_data='Регистрация 🔸')))
+
+            await ProfileStateGroup.start.set()
+
+        else:  # Пользователь есть в БД
+
+            lang = db.getting(message.from_user.id, 'language')
+            await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.from_user.id, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
+            await menu.toMenu(message)
+
+    except Exception as ex:
+        await bot.send_message(ADMIN[1], f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
+        print(f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
+
+
+
 
 
 def register(dp : Dispatcher):
