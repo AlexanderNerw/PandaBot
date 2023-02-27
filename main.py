@@ -20,8 +20,8 @@ async def admin_panel(message: Message) -> None:
 
     try:
         if message.from_user.id in ADMIN:
-            await message.answer('Hi, my lord.')
-            await message.answer('Here:\n/start - Старт, общий запуск\n/pizda - Тестирование функций\n/poh - Пнуть Саню\n/sending - (id) (text)\n/mega_sending - (text)')
+            await message.answer('Hi, my lord. 🤴')
+            await message.answer('Here:\n/start - Старт, общий запуск\n/cucumber - Тестирование функций\n/poh - Пнуть Админа\n/send - СообщениЕ Пользователю\n/mega_send - СообщениЯ Пользовалелям')
         else:
             await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
             await menu.toMenu(message)
@@ -47,7 +47,7 @@ class TextToSend(StatesGroup):
     TEXT = State()
     READY = State()
 
-@dp.message_handler(commands=['cancel'], state=TextToSend)                              ## ОТМЕНА SEND и MEGASEND
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['cancel'], state=TextToSend)                              ## ОТМЕНА SEND и MEGASEND
 async def send_cancel(message: Message, state: FSMContext) -> None:
 
     try:
@@ -59,7 +59,7 @@ async def send_cancel(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_cancel: {ex}")
         print(f"main.py [INFO] Неполадки в ask_cancel: {ex}")
 #==============================================================================
-@dp.message_handler(commands=['mega_send'])                                             ## ГЛОБАЛЬНАЯ РАССЫЛКА СООБЩЕНИЙ
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['mega_send'])                                             ## ГЛОБАЛЬНАЯ РАССЫЛКА СООБЩЕНИЙ
 async def mega_send(message: Message, state: FSMContext) -> None:
     if message.from_user.id in ADMIN:
 
@@ -81,7 +81,7 @@ async def mega_send(message: Message, state: FSMContext) -> None:
         await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
         await menu.toMenu(message)
 #==============================================================================
-@dp.message_handler(commands=['send'])                                                  ## ЛИЧНОЕ СООБЩЕНИе ЮЗЕРУ
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['send'])                                                  ## ЛИЧНОЕ СООБЩЕНИе ЮЗЕРУ
 async def send(message: Message, state: FSMContext) -> None:
     try:
         if message.chat.id in ADMIN:
@@ -109,7 +109,7 @@ async def send(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Непладки в send: {ex}")
         print(f"main.py [INFO] Неполадки в send: {ex}")
 #==============================================================================
-@dp.message_handler(content_types=['photo'], state=TextToSend.TEXT)                     ## ЕСЛИ В РАССЫЛКЕ ФОТО
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['photo'], state=TextToSend.TEXT)                     ## ЕСЛИ В РАССЫЛКЕ ФОТО
 async def toSend_photo(message: Message, state: FSMContext) -> None:
     try:
         async with state.proxy() as data:
@@ -121,7 +121,7 @@ async def toSend_photo(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в toSend_photo: {ex}")
         print(f"main.py [INFO] Неполадки в toSend_photo: {ex}")
 #==============================================================================
-@dp.message_handler(content_types=['text'], state=TextToSend.TEXT)                      ## ЕСЛИ В РАССЫЛКЕ ТЕКСТ
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=TextToSend.TEXT)                      ## ЕСЛИ В РАССЫЛКЕ ТЕКСТ
 async def toSend_text(message: Message, state: FSMContext) -> None:
     try:
         async with state.proxy() as data:
@@ -179,7 +179,7 @@ async def toSend_text(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в toSend_text: {ex}")
         print(f"main.py [INFO] Неполадки в toSend_text: {ex}")
 #==============================================================================
-@dp.callback_query_handler(text=['OnlyRus', 'OnlyUkr', 'SEND'], state=TextToSend.TEXT)  ## ОПРЕДЕЛЕНИЕ ЯЗЫКА И ОТПРАВКИ
+@dp.callback_query_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), text=['OnlyRus', 'OnlyUkr', 'SEND'], state=TextToSend.TEXT)  ## ОПРЕДЕЛЕНИЕ ЯЗЫКА И ОТПРАВКИ
 async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
     try:
         async with state.proxy() as data:
@@ -266,7 +266,6 @@ async def ask_user_text(message: Message, state: FSMContext) -> None:
 
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=["feedback"])   ## ОБРАТНАЯ СВЯЗЬ -> callback_querry.py (fb_yes, fb_no)
 async def feedback(message: Message) -> None:
-    
     try:
         lang = db.getting(message.chat.id, 'language')
         await message.answer(general_text[f'{lang}_feedback_yes'], reply_markup=feedback_button[lang])
@@ -277,25 +276,21 @@ async def feedback(message: Message) -> None:
 #==============================================================================
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['poh'])        ## ПРОСТО ПНУТЬ АДМИНА
 async def poh(message: Message):
-    lang = db.getting(message.from_user.id, 'language')
-
     try:
-        name = db.getting(message.from_user.id, 'username')
-        await bot.send_message(ADMIN[1], f"@{message.chat.username}: {name}, {message.chat.id} тебя пнул :)")
-        if lang == 'ru':
-            await message.answer('Всё сделано босс. Я его пнул 😀')
-        elif lang == 'uk':
-            await message.answer('Все зроблено босс. Я його пнув 😀')
+        lang = db.getting(message.from_user.id, 'language')
+        await bot.send_message(ADMIN[1], f"@{message.chat.username}: {db.getting(message.from_user.id, 'username')}, {message.chat.id} тебя пнул :)")
+
+        if lang == 'uk':    await message.answer('Все зроблено босс. Я його пнув 😀')
+        else:               await message.answer('Всё сделано босс. Я его пнул 😀')
 
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с poh: {ex}")
         print(f"main.py [INFO] Неполадки с poh: {ex}")
 #==============================================================================
-@dp.message_handler(commands=['pizda'])                                                  ## ДЛЯ ТЕСТА ФУНКЦИЙ
-async def pizda(message: Message):
-    lang = db.getting(message.chat.id, 'language')
+@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['cucumber'])                                                  ## ДЛЯ ТЕСТА ФУНКЦИЙ
+async def cucumber(message: Message):
     try:
-
+        lang = db.getting(message.chat.id, 'language')
         await message.answer(f"{test_hopeless_beka_result[f'{lang}_0-3']}\n\n", parse_mode='html')
         await message.answer(f"{test_hopeless_beka_result[f'{lang}_4-8']}\n\n", parse_mode='html')
         await message.answer(f"{test_hopeless_beka_result[f'{lang}_9-14']}\n\n", parse_mode='html')
@@ -314,14 +309,14 @@ async def main():                                                               
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
+    
     # users = db.get_all()
     # photo = open('photo_2023-02-14_14-42-31.jpg', 'rb')
     # print(users)
     # for user in users:
-    # await bot.send_message(user['user_id'], f'Вітаю тебе зі святом', reply_markup=go_to_menu)
-    # await bot.send_photo(720526928, photo=photo)
-    # await bot.send_message(720526928, depression_beka_result['uk20-29'], reply_markup=go_to_menu)
+    # await bot.send_message(user['user_id'], f'Вітаю тебе зі святом', reply_markup=go_to_menu_safe)
+    # await bot.send_message(720526928, depression_beka_result['uk20-29'], reply_markup=go_to_menu_safe)
 
 if __name__ == '__main__':
-    import handlers.reactions
+    import handlers.reactions    
     asyncio.run(main())

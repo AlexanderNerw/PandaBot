@@ -15,6 +15,16 @@ board_menu = {                  # КЛАВ-А МЕНЮ ГЛАВНОГО МЕНЮ
                 InlineKeyboardButton('Ігри 🎮', callback_data='menu_game'))
         .add(   InlineKeyboardButton('Налаштування ⚙️', callback_data='menu_setting'))}
 
+board_menu_group = {            # КЛАВ-А МЕНЮ ГЛАВНОГО МЕНЮ В ГРУППЕ
+    'ru':   InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
+        .add(   InlineKeyboardButton('Игры 🎮', callback_data='menu_game'))
+        .add(   InlineKeyboardButton('Настроки ⚙️', callback_data='menu_setting'))
+,
+        'uk':   InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)
+        .add(   InlineKeyboardButton('Ігри 🎮', callback_data='menu_game'))
+        .add(   InlineKeyboardButton('Налаштування ⚙️', callback_data='menu_setting'))}
+
+
 menu_all_test = {               # КЛАВ-А ПОЛНОГО МЕНЮ ТЕСТОВ
 
         'ru':   InlineKeyboardMarkup(row_width=2, one_time_keyboard=True)

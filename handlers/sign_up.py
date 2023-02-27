@@ -14,6 +14,7 @@ class ProfileStateGroup(StatesGroup):
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), CommandStart())  ## - СТАРТ МЕНЮ ################### 
 async def start(message: Message, state: FSMContext) -> None:
     try:    
+
         if (not db.user_in_database(message.chat.id)) or (not db.user_online_in_database(message.chat.id)):  # Пользователя нет в БД или он не онлайн
 
             db.add_subs(message.chat.id)
@@ -31,12 +32,12 @@ async def start(message: Message, state: FSMContext) -> None:
 
         else:  # Пользователь есть в БД
             lang = db.getting(message.chat.id, 'language')
-            await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.chat, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
+            await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.chat.id, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
             await menu.toMenu(message)
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
-        print(f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
+        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
+        print(f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
 #==============================================================================
 @dp.callback_query_handler(text = 'Регистрация 🔸', state='*')
 async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
@@ -50,8 +51,8 @@ async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
             await ProfileStateGroup.next()
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в start_reg: {ex}')
-        print(f'main.py [INFO] Неполадки в start_reg: {ex}')
+        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_reg: {ex}')
+        print(f'sign_up.py [INFO] Неполадки в start_reg: {ex}')
 #==============================================================================
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.lang)
 async def start_lang(message: Message, state: FSMContext) -> None:
@@ -72,8 +73,8 @@ async def start_lang(message: Message, state: FSMContext) -> None:
             await message.reply(start_sign_up['ru_dont_know_start'])
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в start_lang: {ex}')
-        print(f'main.py [INFO] Неполадки в start_lang: {ex}')
+        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_lang: {ex}')
+        print(f'sign_up.py [INFO] Неполадки в start_lang: {ex}')
 #==============================================================================
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.name)
 async def start_name(message: Message, state: FSMContext) -> None:
@@ -92,8 +93,8 @@ async def start_name(message: Message, state: FSMContext) -> None:
                 await message.reply(start_sign_up[f"{data['lang']}_start_too_long_name"])
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в start_name: {ex}')
-        print(f'main.py [INFO] Неполадки в start_name: {ex}')
+        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_name: {ex}')
+        print(f'sign_up.py [INFO] Неполадки в start_name: {ex}')
 #==============================================================================
 @dp.message_handler(content_types=['text'], state=ProfileStateGroup.gender)
 async def start_gender(message: Message, state: FSMContext) -> None:
@@ -111,14 +112,14 @@ async def start_gender(message: Message, state: FSMContext) -> None:
             await message.reply(start_sign_up[f"{data['lang']}_dont_know_start"])
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sing_up.py [INFO] Неполадки в start_gender: {ex}')
-        print(f'main.py [INFO] Неполадки в start_gender: {ex}')
+        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_gender: {ex}')
+        print(f'sign_up.py [INFO] Неполадки в start_gender: {ex}')
 
 
 ##################################### - СТАРТ ГРУППОВОГО ЧАТА -  ###################################################
 
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.GROUP), CommandStart())  ## - СТАРТ МЕНЮ ################### 
-async def start(message: Message, state: FSMContext) -> None:
+async def start_group(message: Message, state: FSMContext) -> None:
     try:    
         if (not db.user_in_database(message.chat.id)) or (not db.user_online_in_database(message.chat.id)):  # Пользователя нет в БД или он не онлайн
 
@@ -145,8 +146,8 @@ async def start(message: Message, state: FSMContext) -> None:
             await menu.toMenu(message)
 
     except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
-        print(f'sing_up.py [INFO] Неполадки со start-menu: {ex}')
+        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
+        print(f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
 
 
 

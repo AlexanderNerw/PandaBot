@@ -111,13 +111,12 @@ class QuerryDB:
 
     def getting(self, user_id, info, database = 'testbase'):
         """Получение какой-то херни"""
-
         try:
             self.connection.ping()
-
             with self.connection.cursor() as cursor:
-                cursor.execute(f'SELECT {info} FROM {database} WHERE `user_id` = {user_id} LIMIT 1;') # self.database_table_name
+                cursor.execute(f'SELECT {info} FROM {database} WHERE user_id = {user_id} LIMIT 1') # self.database_table_name
             result = cursor.fetchone()
+            return result[info]
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (getting): {ex}")
@@ -125,7 +124,6 @@ class QuerryDB:
         finally:
             self.connection.commit()
             self.connection.close()
-            return result[info]
 # ------------------------------------------------
 
     def user_in_database(self, user_id):
@@ -133,8 +131,7 @@ class QuerryDB:
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f'SELECT * FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
+                cursor.execute(f'SELECT * FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
                 result = cursor.fetchone()                
                 return False if result == None else True
 

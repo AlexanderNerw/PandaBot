@@ -37,7 +37,7 @@ async def toMenuWithout(c: CallbackQuery) -> None:
 
 ######################################################################################### - ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
 @dp.message_handler(ChatTypeFilter(chat_type=ChatType.GROUP), commands=['menu'])       ## - ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
-async def toMenu(message) -> None: 
+async def toMenu_group(message) -> None: 
     try:
         print(message)
         if (db.user_online_in_database(message.chat.id)):
