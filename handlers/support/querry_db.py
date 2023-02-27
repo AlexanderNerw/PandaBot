@@ -1,6 +1,6 @@
 import pymysql
-#from handlers.support.config import *
-from config import *
+from handlers.support.config import *
+#from config import *
 
 
 class QuerryDB:
