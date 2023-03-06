@@ -1,6 +1,6 @@
 import pymysql
-from handlers.support.config import *
-#from config import *
+try: from handlers.support.config import *
+except: from config import *
 
 
 class QuerryDB:
@@ -90,7 +90,7 @@ class QuerryDB:
             self.connection.close()
             return
 
-    def addingEndStart(self, user_id, info1, info2, reserse = False):
+    def addingEndStart(self, user_id, info1: str, info2: str, reserse = False):
         """Добавление какой-то херни"""
         try:
             self.connection.ping()
@@ -176,16 +176,20 @@ class QuerryDB:
 
 ###################### АДМИНИСТРИРОВАНИЕ ###########################
 
-    def get_all_id(self):  # <= info
+    def get_all_id(self, language = 'all'):
         """ Получение всех записей user_id """
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                # <= `{info}`
-                cursor.execute(
-                    f'SELECT user_id FROM {self.database_table_name} WHERE (notice = 1);')
+                if language in ['uk', 'ru']:    cursor.execute(f"SELECT user_id FROM {self.database_table_name} WHERE (notice = 1) AND (language = '{language}')")
+                else:                           cursor.execute(f'SELECT user_id FROM {self.database_table_name} WHERE (notice = 1)')
                 result = cursor.fetchall()
-                return result
+                users = set()
+                
+                for i in result:
+                    if str(i['user_id']).startswith('-'): continue
+                    users.add(i['user_id'])
+                return users
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (get_all_id): {ex}")
@@ -194,12 +198,11 @@ class QuerryDB:
             self.connection.commit()
             self.connection.close()
 
-    def get_all_info(self):  # <= info
+    def get_all_info(self):
         """ Получение всех записей user_id """
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                # <= `{info}`
                 cursor.execute(
                     f'SELECT user_id, username, gender, language FROM {self.database_table_name};')
                 result = cursor.fetchall()
@@ -234,7 +237,7 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    f'DELETE FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
+                    f'DELETE FROM {self.database_table_name} WHERE user_id = {user_id};')
 
         except Exception as ex:
             print(f"querry_db.py [INFO] Error Database (get_all): {ex}")
@@ -248,7 +251,6 @@ class QuerryDB:
 # Cоединение с БД
 db = QuerryDB()
 
-#a = db.getting(1082803262, 'notice')
+#print(db.get_all_info())
 #db.addingInEnd(1082803262, 'text_to_send', 5)
-
 # a.delete_person('1082803262')

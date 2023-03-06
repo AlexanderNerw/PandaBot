@@ -3,10 +3,9 @@ from aiogram.dispatcher.filters.builtin import CommandHelp
 from handlers.support.importing import *
 from aiogram import executor
 
-
 # АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
 
-@dp.message_handler(CommandHelp(), ChatTypeFilter(chat_type=ChatType.PRIVATE))          ## ПАНЕЛЬ ПОМОЩИ ЮЗЕРУ
+@dp.message_handler(CHAT_PRIVATE, CommandHelp())                          ## ПАНЕЛЬ ПОМОЩИ ЮЗЕРУ
 async def help_panel(message: Message) -> None:
 
     if (db.user_in_database(message.chat.id)):
@@ -14,10 +13,10 @@ async def help_panel(message: Message) -> None:
         await message.answer(general_text[f'{lang}_help_menu'], parse_mode='html')
     else:
         await message.answer('Сначала зарегистрируйся: 🙂'), await handlers.sign_up.start(message, FSMContext)
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['negr'])      ## ПАНЕЛЬ ПОМОЩИ АДМИНУ
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, commands=['negr'])                                                    ## ПАНЕЛЬ ПОМОЩИ АДМИНУ
 async def admin_panel(message: Message) -> None:
-
+    print(message)
     try:
         if message.from_user.id in ADMIN:
             await message.answer('Hi, my lord. 🤴')
@@ -29,7 +28,7 @@ async def admin_panel(message: Message) -> None:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в admin_panel: {ex}')
         print(f'main.py [INFO] Неполадки в admin_panel: {ex}')
 
-################################################### - ASK from ADMIN to USER ##########################################################
+################################################### - ASK from ADMIN to USER ######################################
 class TextToSend(StatesGroup):
     id_user = State()
     photo_num = State()
@@ -47,7 +46,7 @@ class TextToSend(StatesGroup):
     TEXT = State()
     READY = State()
 
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['cancel'], state=TextToSend)                              ## ОТМЕНА SEND и MEGASEND
+@dp.message_handler(CHAT_PRIVATE, commands=['cancel'], state=TextToSend)                                ## ОТМЕНА SEND и MEGASEND
 async def send_cancel(message: Message, state: FSMContext) -> None:
 
     try:
@@ -58,8 +57,8 @@ async def send_cancel(message: Message, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_cancel: {ex}")
         print(f"main.py [INFO] Неполадки в ask_cancel: {ex}")
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['mega_send'])                                             ## ГЛОБАЛЬНАЯ РАССЫЛКА СООБЩЕНИЙ
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, commands=['mega_send'])                                               ## ГЛОБАЛЬНАЯ РАССЫЛКА СООБЩЕНИЙ
 async def mega_send(message: Message, state: FSMContext) -> None:
     if message.from_user.id in ADMIN:
 
@@ -80,8 +79,8 @@ async def mega_send(message: Message, state: FSMContext) -> None:
     else:
         await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
         await menu.toMenu(message)
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['send'])                                                  ## ЛИЧНОЕ СООБЩЕНИе ЮЗЕРУ
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, commands=['send'])                                                    ## ЛИЧНОЕ СООБЩЕНИе ЮЗЕРУ
 async def send(message: Message, state: FSMContext) -> None:
     try:
         if message.chat.id in ADMIN:
@@ -108,8 +107,8 @@ async def send(message: Message, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Непладки в send: {ex}")
         print(f"main.py [INFO] Неполадки в send: {ex}")
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['photo'], state=TextToSend.TEXT)                     ## ЕСЛИ В РАССЫЛКЕ ФОТО
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, content_types=['photo'], state=TextToSend.TEXT)                       ## ЕСЛИ В РАССЫЛКЕ ФОТО
 async def toSend_photo(message: Message, state: FSMContext) -> None:
     try:
         async with state.proxy() as data:
@@ -120,8 +119,8 @@ async def toSend_photo(message: Message, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в toSend_photo: {ex}")
         print(f"main.py [INFO] Неполадки в toSend_photo: {ex}")
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=TextToSend.TEXT)                      ## ЕСЛИ В РАССЫЛКЕ ТЕКСТ
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=TextToSend.TEXT)                        ## ЕСЛИ В РАССЫЛКЕ ТЕКСТ
 async def toSend_text(message: Message, state: FSMContext) -> None:
     try:
         async with state.proxy() as data:
@@ -159,7 +158,6 @@ async def toSend_text(message: Message, state: FSMContext) -> None:
                             await bot.send_message(f"main.py [INFO] Неполадки в toSend_text в общей рассылке: id - {user} | Ошибка: {ex}")
 
                     await bot.delete_message(message.chat.id, message.message_id)
-                    await bot.delete_chat_photo
                     await bot.send_message(message.chat.id, 'Рассылка отправлена 〽️', reply_markup=ReplyKeyboardRemove() )
                     await state.reset_data(), await state.finish()
 
@@ -178,8 +176,8 @@ async def toSend_text(message: Message, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в toSend_text: {ex}")
         print(f"main.py [INFO] Неполадки в toSend_text: {ex}")
-#==============================================================================
-@dp.callback_query_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), text=['OnlyRus', 'OnlyUkr', 'SEND'], state=TextToSend.TEXT)  ## ОПРЕДЕЛЕНИЕ ЯЗЫКА И ОТПРАВКИ
+#------------------------------------------------------------------------------
+@dp.callback_query_handler(CHAT_PRIVATE, text=['OnlyRus', 'OnlyUkr', 'SEND'], state=TextToSend.TEXT)    ## ОПРЕДЕЛЕНИЕ ЯЗЫКА И ОТПРАВКИ
 async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
     try:
         async with state.proxy() as data:
@@ -189,20 +187,11 @@ async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
                 await toSend_text(c.message, state)
 
             elif c.data == 'OnlyRus':
-                user_dict = []
-                for user_id in db.get_all_id():
-                    if db.getting(user_id['user_id'], 'language') == 'ru':
-                        user_dict.append(user_id['user_id'])
-                data['id_user'] = user_dict
-
+                data['id_user'] = db.get_all_id('ru')
                 await c.answer("Отсортировано по русскому языку")
 
             elif c.data == 'OnlyUkr':
-                user_dict = []
-                for user_id in db.get_all_id():
-                    if db.getting(user_id['user_id'], 'language') == 'uk':
-                        user_dict.append(user_id['user_id'])
-                data['id_user'] = user_dict
+                data['id_user'] = db.get_all_id('uk')
                 await c.answer("Отсортировано по украинскому языку")
             
     except Exception as ex:
@@ -210,11 +199,11 @@ async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
         print(f"main.py [INFO] Неполадки в ChoiseWhoneSend: {ex}")
 
 
-#################################################### - ASK from USER to ADMIN ###########################################################
+#################################################### - ASK from USER to ADMIN ######################################
 class AskAdmin(StatesGroup):
     ask = State()
 
-@dp.callback_query_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), text='go_back', state=AskAdmin)       ## ОТМЕНА ВОПРОСА АДМИНУ
+@dp.callback_query_handler(CHAT_PRIVATE, text='go_back', state=AskAdmin)                                ## ОТМЕНА ВОПРОСА АДМИНУ
 async def ask_cancel(call: CallbackQuery, state: FSMContext) -> None:
 
     try:
@@ -227,8 +216,8 @@ async def ask_cancel(call: CallbackQuery, state: FSMContext) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_cancel: {ex}")
         print(f"main.py [INFO] Неполадки в ask_cancel: {ex}")
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['ask'])                            ## ЗАДАТЬ ВОПРОС АДМИНУ
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, commands=['ask'])                                                     ## ЗАДАТЬ ВОПРОС АДМИНУ
 async def ask_user(message: Message) -> None:
     try:
         lang = db.getting(message.from_user.id, 'language')
@@ -245,8 +234,8 @@ async def ask_user(message: Message) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_user: {ex}")
         print(f"main.py [INFO] Неполадки в ask_user: {ex}")
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'], state=AskAdmin.ask)  ## ОТПРАВКА ASK 
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=AskAdmin.ask)                           ## ОТПРАВКА ASK 
 async def ask_user_text(message: Message, state: FSMContext) -> None:
     try:
         lang = db.getting(message.from_user.id, 'language')
@@ -262,9 +251,9 @@ async def ask_user_text(message: Message, state: FSMContext) -> None:
         print(f"main.py [INFO] Неполадки в ask_user_text: {ex}")
 
 
-################################################# - FEEDBACK and TEST(pizda) and POH #####################################################
+################################################# - FEEDBACK and TEST(pizda) and POH ###############################
 
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=["feedback"])   ## ОБРАТНАЯ СВЯЗЬ -> callback_querry.py (fb_yes, fb_no)
+@dp.message_handler(CHAT_PRIVATE, commands=["feedback"])                                                ## ОБРАТНАЯ СВЯЗЬ -> callback_querry.py (fb_yes, fb_no)
 async def feedback(message: Message) -> None:
     try:
         lang = db.getting(message.chat.id, 'language')
@@ -273,8 +262,8 @@ async def feedback(message: Message) -> None:
     except Exception as ex:
         await bot.send_message(ADMIN[1], f'main.py [INFO] Неполдаки в начале feedback: {ex}')
         print(f"main.py [INFO] Неполадки в начале feedback: {ex}")
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['poh'])        ## ПРОСТО ПНУТЬ АДМИНА
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, commands=['poh'])                                                     ## ПРОСТО ПНУТЬ АДМИНА
 async def poh(message: Message):
     try:
         lang = db.getting(message.from_user.id, 'language')
@@ -286,8 +275,8 @@ async def poh(message: Message):
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с poh: {ex}")
         print(f"main.py [INFO] Неполадки с poh: {ex}")
-#==============================================================================
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['cucumber'])                                                  ## ДЛЯ ТЕСТА ФУНКЦИЙ
+#------------------------------------------------------------------------------
+@dp.message_handler(CHAT_PRIVATE, commands=['cucumber'])                                                ## ДЛЯ ТЕСТА ФУНКЦИЙ
 async def cucumber(message: Message):
     try:
         lang = db.getting(message.chat.id, 'language')
@@ -304,17 +293,17 @@ async def cucumber(message: Message):
     except Exception as ex:
         await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
         print(f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
-#==============================================================================
+#------------------------------------------------------------------------------
 async def main():                                                                        ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
+    #users = db.get_all_id()
+    #print(users)
     await dp.start_polling(bot)
 
-    
-    # users = db.get_all()
+
     # photo = open('photo_2023-02-14_14-42-31.jpg', 'rb')
-    # print(users)
     # for user in users:
-    # await bot.send_message(user['user_id'], f'Вітаю тебе зі святом', reply_markup=go_to_menu_safe)
+    # await bot.send_message(user, f'Вітаю тебе зі святом', reply_markup=go_to_menu_safe)
     # await bot.send_message(720526928, depression_beka_result['uk20-29'], reply_markup=go_to_menu_safe)
 
 if __name__ == '__main__':

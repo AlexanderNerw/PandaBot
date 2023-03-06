@@ -2,8 +2,8 @@ from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, Inl
 import hashlib, random, uuid, handlers.sign_up
 from handlers.support.importing import *
 
-######################################################################################## - ГЛАВНОЕ МЕНЮ ЛИЧНОГО ЧАТА
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), commands=['menu'])    ## - ГЛАВНОЕ МЕНЮ
+######################################################################################### - ГЛАВНОЕ МЕНЮ ЛИЧНОГО ЧАТА
+@dp.message_handler(CHAT_PRIVATE, commands=['menu'])                                   ##   ГЛАВНОЕ МЕНЮ
 async def toMenu(message) -> None: 
     try:
         if (db.user_online_in_database(message.chat.id)):
@@ -17,7 +17,7 @@ async def toMenu(message) -> None:
         await bot.send_message(ADMIN[1], f'menu.py [INFO] Неполадки в toMenu: {ex}')
         print('menu.py [INFO] Неполадки в toMenu: ', ex)
 
-@dp.callback_query_handler(text='toMenu')                                             ## - ГЛАВНОЕ МЕНЮ С ИЗМЕНЕНИЕМ
+@dp.callback_query_handler(CHAT_PRIVATE, text='toMenu')                                ##   ГЛАВНОЕ МЕНЮ С ИЗМЕНЕНИЕМ
 async def toMenuWithout(c: CallbackQuery) -> None:
     try:
 
@@ -36,7 +36,7 @@ async def toMenuWithout(c: CallbackQuery) -> None:
 
 
 ######################################################################################### - ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.GROUP), commands=['menu'])       ## - ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
+@dp.message_handler(CHAT_PRIVATE, commands=['menu'])                                   ##   ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
 async def toMenu_group(message) -> None: 
     try:
         print(message)

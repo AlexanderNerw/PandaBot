@@ -1,7 +1,7 @@
 import handlers.setting as st, handlers.tests as ts
 from handlers.support.importing import *
 
-@dp.callback_query_handler(text="toMenuSafe")
+@dp.callback_query_handler(CHAT_PRIVATE, text="toMenuSafe")
 async def inline_to_menu_safe(call: CallbackQuery):
     try:
         await menu.toMenu(call.message)
@@ -9,7 +9,7 @@ async def inline_to_menu_safe(call: CallbackQuery):
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_to_menu_safe: {ex}')
         print(f"callback_query.py [INFO] Неполадки с inline_menu_setting_tests: {ex}")
 
-@dp.callback_query_handler(text="menu_test")
+@dp.callback_query_handler(CHAT_PRIVATE, text="menu_test")
 async def inline_menu_tests(call: CallbackQuery):
     try:
         await ts.tests(call.message.chat.id, call.message.message_id)
@@ -17,7 +17,7 @@ async def inline_menu_tests(call: CallbackQuery):
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_menu_setting_tests: {ex}')
         print(f"callback_query.py [INFO] Неполадки с inline_menu_setting_tests: {ex}")
 
-@dp.callback_query_handler(text="menu_calendar")
+@dp.callback_query_handler(CHAT_PRIVATE, text="menu_calendar")
 async def inline_menu_сalendar(call: CallbackQuery):
     try:
         await call.message.answer("Нихера пока-что")
@@ -26,7 +26,7 @@ async def inline_menu_сalendar(call: CallbackQuery):
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с st.inline_menu_setting_сalendar: {ex}')
         print(f"callback_query.py [INFO] Неполадки с st.inline_menu_setting_сalendar: {ex}")
 
-@dp.callback_query_handler(text="menu_game")
+@dp.callback_query_handler(CHAT_PRIVATE, text="menu_game")
 async def inline_menu_game(call: CallbackQuery):
     try:
         await call.message.answer("Тут нихера нет")
@@ -34,7 +34,7 @@ async def inline_menu_game(call: CallbackQuery):
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с st.inline_menu_setting_game: {ex}')
         print(f"callback_query.py [INFO] Неполадки с st.inline_menu_setting_game: {ex}")
 
-@dp.callback_query_handler(text="fb_yes")
+@dp.callback_query_handler(CHAT_PRIVATE, text="fb_yes")
 async def inline_fb_yes(call: CallbackQuery):
     try:
 
@@ -45,7 +45,7 @@ async def inline_fb_yes(call: CallbackQuery):
         await bot.send_message(ADMIN[1], f'callback_query.py [INFO] Неполадки с inline_fb_yes: {ex}')
         print(f"callback_query.py [INFO] Неполадки с inline_fb_yes: {ex}")
 
-@dp.callback_query_handler(text="fb_no")
+@dp.callback_query_handler(CHAT_PRIVATE, text="fb_no")
 async def inline_fb_no(call: CallbackQuery):
     try:
 

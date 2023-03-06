@@ -11,7 +11,7 @@ class ProfileStateGroup(StatesGroup):
 
 ##################################### - СТАРТ ЛИЧНОГО ЧАТА - #######################################################
 
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), CommandStart())  ## - СТАРТ МЕНЮ ################### 
+@dp.message_handler(CHAT_PRIVATE, CommandStart())  ## - СТАРТ МЕНЮ ################### 
 async def start(message: Message, state: FSMContext) -> None:
     try:    
 
@@ -39,7 +39,7 @@ async def start(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
         print(f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
 #==============================================================================
-@dp.callback_query_handler(text = 'Регистрация 🔸', state='*')
+@dp.callback_query_handler(CHAT_PRIVATE, text = 'Регистрация 🔸', state='*')
 async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
     try:
         if (not db.user_in_database(c.message.chat.id)) or (not db.user_online_in_database(c.message.chat.id)):  # Пользователя нет в БД или он не онлайн
@@ -54,9 +54,8 @@ async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_reg: {ex}')
         print(f'sign_up.py [INFO] Неполадки в start_reg: {ex}')
 #==============================================================================
-@dp.message_handler(content_types=['text'], state=ProfileStateGroup.lang)
+@dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=ProfileStateGroup.lang)
 async def start_lang(message: Message, state: FSMContext) -> None:
-
     try:
         
         if message.text in ['Русский', 'Українська']:
@@ -76,7 +75,7 @@ async def start_lang(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_lang: {ex}')
         print(f'sign_up.py [INFO] Неполадки в start_lang: {ex}')
 #==============================================================================
-@dp.message_handler(content_types=['text'], state=ProfileStateGroup.name)
+@dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=ProfileStateGroup.name)
 async def start_name(message: Message, state: FSMContext) -> None:
 
     try:
@@ -96,7 +95,7 @@ async def start_name(message: Message, state: FSMContext) -> None:
         await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_name: {ex}')
         print(f'sign_up.py [INFO] Неполадки в start_name: {ex}')
 #==============================================================================
-@dp.message_handler(content_types=['text'], state=ProfileStateGroup.gender)
+@dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=ProfileStateGroup.gender)
 async def start_gender(message: Message, state: FSMContext) -> None:
     try:
         if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️', "Я девушка 👱🏼‍♀️", "Я дівчина 👱🏼‍♀️"]:
@@ -118,7 +117,7 @@ async def start_gender(message: Message, state: FSMContext) -> None:
 
 ##################################### - СТАРТ ГРУППОВОГО ЧАТА -  ###################################################
 
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.GROUP), CommandStart())  ## - СТАРТ МЕНЮ ################### 
+@dp.message_handler(CHAT_GROUP, CommandStart())  ## - СТАРТ МЕНЮ ################### 
 async def start_group(message: Message, state: FSMContext) -> None:
     try:    
         if (not db.user_in_database(message.chat.id)) or (not db.user_online_in_database(message.chat.id)):  # Пользователя нет в БД или он не онлайн

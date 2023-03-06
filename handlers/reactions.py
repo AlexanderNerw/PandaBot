@@ -1,13 +1,13 @@
 from handlers.support.importing import *
 
-@dp.message_handler(commands=['name'])
+@dp.message_handler(CHAT_PRIVATE, commands=['name'])
 async def input_name(message):
     if (db.getting(message.from_user.id, 'language') == 'ru'):
         await message.answer("Как мне тебя называть?")
     else:
         await message.answer("Як мені до тебе звертатись?")
 
-@dp.message_handler(ChatTypeFilter(chat_type=ChatType.PRIVATE), content_types=['text'])
+@dp.message_handler(CHAT_PRIVATE, content_types=['text'])
 async def reaction(message):
 
     text_user = (message.text).lower()

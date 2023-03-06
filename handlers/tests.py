@@ -9,7 +9,7 @@ class AnswerTest(StatesGroup):  ## -  МАШИНА СОСТРОЯНИЙ ДЛЯ �
     TBB = State()
     TTB = State()
 
-@dp.callback_query_handler(text='back_menu_test', state='*')   ############################### -  ВОЗВРАТ НАЗАД ОТ ТЕСТОВ
+@dp.callback_query_handler(CHAT_PRIVATE, text='back_menu_test', state='*')   ############################### -  ВОЗВРАТ НАЗАД ОТ ТЕСТОВ
 async def question_back(call: CallbackQuery, state: FSMContext):
     try:
         await state.reset_data()
@@ -91,7 +91,6 @@ try: # TEST DEPRESSION BEKA
 except Exception as ex: # TEST DEPRESSION BEKA 
     print(f'tests.py [INFO] Неполадки в Тесте Депрессии Бека: {ex}')
 
-
 try:  # ТЕСТ ТРЕВОЖНОСТИ БЕКА
 
     @dp.callback_query_handler(text='test_worry_beka')                          ## МЕНЮ ТЕСТ ТРЕВОЖНОСТИ БЕКА
@@ -153,7 +152,6 @@ try:  # ТЕСТ ТРЕВОЖНОСТИ БЕКА
 #===============================================        
 except Exception as ex: # TEST DEPRESSION BEKA 
     print(f'tests.py [INFO] Неполадки в Тесте Тревожности Бека: {ex}')
-
 
 try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
 
@@ -222,7 +220,6 @@ except Exception as ex: # TEST DEPRESSION BEKA
 ############################################################################################### - МЕНЮ ТЕСТОВ
 async def tests(chat_id, message_id):
     try:
-        
         await bot.delete_message(chat_id, message_id)
         await bot.send_message(chat_id, f"🧾 " + general_text[f"{db.getting(chat_id, 'language')}_list_tests"],
         parse_mode='html', reply_markup=menu_all_test[db.getting(chat_id, 'language')])
