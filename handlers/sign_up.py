@@ -35,9 +35,7 @@ async def start(message: Message, state: FSMContext) -> None:
             await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.chat.id, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
             await menu.toMenu(message)
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
-        print(f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
+    except Exception as ex: await exceptions("sign_up.py", 'start', ex)
 #==============================================================================
 @dp.callback_query_handler(CHAT_PRIVATE, text = 'Регистрация 🔸', state='*')
 async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
@@ -50,9 +48,7 @@ async def start_reg(c: CallbackQuery, state: FSMContext) -> None:
             await ProfileStateGroup.start.set()
             await ProfileStateGroup.next()
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_reg: {ex}')
-        print(f'sign_up.py [INFO] Неполадки в start_reg: {ex}')
+    except Exception as ex: await exceptions("sign_up.py", 'start_reg', ex)
 #==============================================================================
 @dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=ProfileStateGroup.lang)
 async def start_lang(message: Message, state: FSMContext) -> None:
@@ -71,9 +67,7 @@ async def start_lang(message: Message, state: FSMContext) -> None:
         else:
             await message.reply(start_sign_up['ru_dont_know_start'])
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_lang: {ex}')
-        print(f'sign_up.py [INFO] Неполадки в start_lang: {ex}')
+    except Exception as ex: await exceptions("sign_up.py", 'start_lang', ex)
 #==============================================================================
 @dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=ProfileStateGroup.name)
 async def start_name(message: Message, state: FSMContext) -> None:
@@ -91,9 +85,7 @@ async def start_name(message: Message, state: FSMContext) -> None:
             else:
                 await message.reply(start_sign_up[f"{data['lang']}_start_too_long_name"])
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_name: {ex}')
-        print(f'sign_up.py [INFO] Неполадки в start_name: {ex}')
+    except Exception as ex: await exceptions("sign_up.py", 'start_name', ex)
 #==============================================================================
 @dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=ProfileStateGroup.gender)
 async def start_gender(message: Message, state: FSMContext) -> None:
@@ -110,9 +102,7 @@ async def start_gender(message: Message, state: FSMContext) -> None:
         else:
             await message.reply(start_sign_up[f"{data['lang']}_dont_know_start"])
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки в start_gender: {ex}')
-        print(f'sign_up.py [INFO] Неполадки в start_gender: {ex}')
+    except Exception as ex: await exceptions("sign_up.py", 'start_gender', ex)
 
 
 ##################################### - СТАРТ ГРУППОВОГО ЧАТА -  ###################################################
@@ -124,17 +114,16 @@ async def start_group(message: Message, state: FSMContext) -> None:
 
             db.add_subs(message.chat.id)
             if message.from_user.language_code in ['ru','uk']:
-                await message.answer(message.from_user.id,
-                                        general_text[f'{message.from_user.language_code}_hello'] + f" <b>{message.chat.first_name}</b>! 😉"
-                                     +  start_sign_up[f'{message.from_user.language_code}_bot_start'], parse_mode='html', reply_markup=
-                                        InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                        InlineKeyboardButton("Регистрация 🔸" if message.from_user.language_code == 'ru' else "Регiстрацiя 🔸", callback_data='Регистрация 🔸')))
+                await message.answer(       message.from_user.id,
+                                            general_text[f'{message.from_user.language_code}_hello'] + f" <b>{message.chat.first_name}</b>! 😉"
+                                         +  start_sign_up[f'{message.from_user.language_code}_bot_start'], parse_mode='html', reply_markup=
+                                            InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                                            InlineKeyboardButton("Регистрация 🔸" if message.from_user.language_code == 'ru' else "Регiстрацiя 🔸", callback_data='Регистрация 🔸')))
 
-            else:
-                await message.answer(   general_text[f'ru_hello'] + f"<b>{message.chat.first_name}</b>! 😉"
-                                     +  start_sign_up['ru_bot_start'], parse_mode='html', reply_markup=
-                                        InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
-                                        InlineKeyboardButton("Регистрация 🔸", callback_data='Регистрация 🔸')))
+            else: await message.answer(     general_text[f'ru_hello'] + f"<b>{message.chat.first_name}</b>! 😉"
+                                         +  start_sign_up['ru_bot_start'], parse_mode='html', reply_markup=
+                                            InlineKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True).add(
+                                            InlineKeyboardButton("Регистрация 🔸", callback_data='Регистрация 🔸')))
 
             await ProfileStateGroup.start.set()
 
@@ -144,9 +133,7 @@ async def start_group(message: Message, state: FSMContext) -> None:
             await message.answer(f"{general_text[f'{lang}_hello']}, <b>{db.getting(message.from_user.id, 'username')}</b>! {start_sign_up[f'{lang}_again_bot_start']}", parse_mode='html')
             await menu.toMenu(message)
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
-        print(f'sign_up.py [INFO] Неполадки со start-menu: {ex}')
+    except Exception as ex: await exceptions("sign_up.py", 'start_group', ex)
 
 
 

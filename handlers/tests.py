@@ -32,26 +32,30 @@ try: # TEST DEPRESSION BEKA
     # МЕНЮ ТЕСТ ДЕПРЕССИИ ТЕСТА ДЕПРЕССИИ БЕКА
     @dp.callback_query_handler(text='test_depression_beka')
     async def menu_test_depression_beka(call: CallbackQuery) -> None:
-        
-        await bot.edit_message_text(test_depression_beka_result[db.getting(call.message.chat.id, 'language')],
-        call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=button_test)
-        db.adding(call.message.chat.id, 'notice', 0)
-        await AnswerTest.TDB.set()
+        try:
+            await bot.edit_message_text(test_depression_beka_result[db.getting(call.message.chat.id, 'language')],
+            call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=button_test)
+            db.adding(call.message.chat.id, 'notice', 0)
+            await AnswerTest.TDB.set()
+
+        except Exception as ex: await exceptions("tests.py", 'menu_test_depression_beka', ex)
         
     # ВОПРОС 1
     @dp.callback_query_handler(text='yes_test', state=AnswerTest.TDB)
     async def question1_TDB(call: CallbackQuery, state: FSMContext):
+        try:
+            async with state.proxy() as data:
+                await state.reset_data()
+                data['answerLang'] = db.getting(call.message.chat.id, 'language')
+                data['answerNum'] = 1 
+                data['answerEnd'] = 0
 
-        async with state.proxy() as data:
-            await state.reset_data()
-            data['answerLang'] = db.getting(call.message.chat.id, 'language')
-            data['answerNum'] = 1 
-            data['answerEnd'] = 0
+            db.adding(call.message.chat.id, 'TDBeka', 'TDBeka: ', database='answer_test')
 
-        db.adding(call.message.chat.id, 'TDBeka', 'TDBeka: ', database='answer_test')
+            await bot.edit_message_text(test_depression_beka[f"answer_{data['answerNum']}_{data['answerLang']}"],
+            call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=one_two_three_four)
 
-        await bot.edit_message_text(test_depression_beka[f"answer_{data['answerNum']}_{data['answerLang']}"],
-        call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=one_two_three_four)
+        except Exception as ex: await exceptions("tests.py", 'menu_test_depression_beka', ex)
  
     # ОБЩАЯ ФОРМА ДЛЯ ВОПРОСОВ БЕКА
     @dp.callback_query_handler(text=['1', '2', '3', '4'], state=AnswerTest.TDB)
@@ -86,34 +90,39 @@ try: # TEST DEPRESSION BEKA
 
         except Exception as ex:
             if str(ex) != 'Message to delete not found':
-                print(f'tests.py [INFO] Неполадки в {data["answerNum"]} questions_TDB Теста Депрессии Бека: {ex}')
+                await exceptions("tests.py", 'questions_TDB', ex)
 #=============================================== 
 except Exception as ex: # TEST DEPRESSION BEKA 
-    print(f'tests.py [INFO] Неполадки в Тесте Депрессии Бека: {ex}')
+    print(f'tests.py [INFO] Неполадки в Где то в Тесте Депрессии Бека: {ex}')
 
 try:  # ТЕСТ ТРЕВОЖНОСТИ БЕКА
 
     @dp.callback_query_handler(text='test_worry_beka')                          ## МЕНЮ ТЕСТ ТРЕВОЖНОСТИ БЕКА
     async def menu_test_worry_beka(call: CallbackQuery) -> None:
-        
-        await bot.edit_message_text(test_worry_beka_result[db.getting(call.message.chat.id, 'language')],
-        call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=button_test)
-        db.adding(call.message.chat.id, 'notice', 0)
-        await AnswerTest.TTB.set()
+        try:
+            await bot.edit_message_text(test_worry_beka_result[db.getting(call.message.chat.id, 'language')],
+            call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=button_test)
+            db.adding(call.message.chat.id, 'notice', 0)
+            await AnswerTest.TTB.set()
+            
+        except Exception as ex: await exceptions("tests.py", 'menu_test_worry_beka', ex)        
 
     @dp.callback_query_handler(text='yes_test', state=AnswerTest.TTB)           ## ВОПРОС 1
     async def question1_TTB(call: CallbackQuery, state: FSMContext):
-        async with state.proxy() as data:
+        try:
+            async with state.proxy() as data:
 
-            await state.reset_data()
-            data['answerLang'] = db.getting(call.message.chat.id, 'language')
-            data['answerNum'] = 1 
-            data['answerEnd'] = 0
-        
-        db.adding(call.message.chat.id, 'TTBeka', 'TTBeka: ', database='answer_test')
-        await bot.edit_message_text(    test_worry_beka[f"answer_start_{data['answerLang']}"]
-                                    +   test_worry_beka[f"answer_{data['answerNum']}_{data['answerLang']}"],
-        call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=one_two_three_four_TTB[data['answerLang']])
+                await state.reset_data()
+                data['answerLang'] = db.getting(call.message.chat.id, 'language')
+                data['answerNum'] = 1 
+                data['answerEnd'] = 0
+            
+            db.adding(call.message.chat.id, 'TTBeka', 'TTBeka: ', database='answer_test')
+            await bot.edit_message_text(    test_worry_beka[f"answer_start_{data['answerLang']}"]
+                                        +   test_worry_beka[f"answer_{data['answerNum']}_{data['answerLang']}"],
+            call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=one_two_three_four_TTB[data['answerLang']])
+
+        except Exception as ex: await exceptions("tests.py", 'question1_TTB', ex)
  
     @dp.callback_query_handler(text=['1', '2', '3', '4'], state=AnswerTest.TTB) ## ОБЩАЯ ФОРМА ДЛЯ ВОПРОСОВ ТЕСТА ТРЕВОЖНОСТИ БЕКА
     async def questions_TTB(call: CallbackQuery, state: FSMContext): 
@@ -146,7 +155,7 @@ try:  # ТЕСТ ТРЕВОЖНОСТИ БЕКА
 
         except Exception as ex:
             if str(ex) != 'Message to delete not found':
-                print(f'tests.py [INFO] Неполадки в questions_TDB Теста Тревожности Бека: {ex}')
+                await exceptions("tests.py", 'questions_TTB', ex)
 
         finally: await call.answer()
 #===============================================        
@@ -157,24 +166,28 @@ try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
 
     @dp.callback_query_handler(text='test_hopeless_beka') # МЕНЮ ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
     async def menu_test_hopeless_beka(call: CallbackQuery) -> None:
-        
-        await bot.edit_message_text(test_depression_beka_result[db.getting(call.message.chat.id, 'language')],
-        call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=button_test)
-        db.adding(call.message.chat.id, 'notice', 0)
-        await AnswerTest.TBB.set()
+        try:
+            await bot.edit_message_text(test_depression_beka_result[db.getting(call.message.chat.id, 'language')],
+            call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=button_test)
+            db.adding(call.message.chat.id, 'notice', 0)
+            await AnswerTest.TBB.set()
+
+        except Exception as ex: await exceptions("tests.py", 'menu_test_hopeless_beka', ex)
     #==============================================================#
     @dp.callback_query_handler(text='yes_test', state=AnswerTest.TBB) # ВОПРОС 1
     async def question1_TBB(call: CallbackQuery, state: FSMContext):
+        try:
+            async with state.proxy() as data:
+                await state.reset_data()
+                data['answerLang'] = db.getting(call.message.chat.id, 'language')
+                data['answerNum'] = 1 
+                data['answerEnd'] = 0
 
-        async with state.proxy() as data:
-            await state.reset_data()
-            data['answerLang'] = db.getting(call.message.chat.id, 'language')
-            data['answerNum'] = 1 
-            data['answerEnd'] = 0
+            db.adding(call.message.chat.id, 'TBBeka', 'TBBeka: ', database='answer_test')
+            await bot.edit_message_text(test_worry_beka[f"answer_{data['answerNum']}_{data['answerLang']}"],
+            call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=one_two_three_four_TBB[data['answerLang']])
 
-        db.adding(call.message.chat.id, 'TBBeka', 'TBBeka: ', database='answer_test')
-        await bot.edit_message_text(test_worry_beka[f"answer_{data['answerNum']}_{data['answerLang']}"],
-        call.message.chat.id, call.message.message_id, parse_mode='html', reply_markup=one_two_three_four_TBB[data['answerLang']])
+        except Exception as ex: await exceptions("tests.py", 'question1_TBB', ex)
     #==============================================================#
     @dp.callback_query_handler(text=['1', '2'], state=AnswerTest.TBB) # ОБЩАЯ ФОРМА ДЛЯ ВОПРОСОВ ТЕСТА БЕЗНАДЁЖНОСТИ БЕКА
     async def questions_TBB(call: CallbackQuery, state: FSMContext): 
@@ -210,7 +223,7 @@ try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
 
         except Exception as ex:
             if str(ex) != 'Message to delete not found':
-                print(f'tests.py [INFO] Неполадки в questions_TDB Теста Депрессии Бека: {ex}')
+                await exceptions("tests.py", 'question1_TBB', ex)
 
         finally: await call.answer()
 #=============================================== 
@@ -225,7 +238,5 @@ async def tests(chat_id, message_id):
         parse_mode='html', reply_markup=menu_all_test[db.getting(chat_id, 'language')])
 
     except Exception as ex: 
-        await bot.send_message(ADMIN[1], f'tests.py [INFO] Неполадки в Меню Тестов: {ex}' )
-        print(f'tests.py [INFO] Неполадки в Меню Тестов: {ex}')
         if str(ex) != 'Message to delete not found':
-            print(f'tests.py [INFO] Неполадки в questions_TDB Теста Тревожности Бека: {ex}')
+            await exceptions("tests.py", 'tests', ex)

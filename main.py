@@ -1,13 +1,11 @@
 import asyncio, handlers.sign_up, handlers.callback_query
 from aiogram.dispatcher.filters.builtin import CommandHelp
 from handlers.support.importing import *
-from aiogram import executor
 
 # АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
 
 @dp.message_handler(CHAT_PRIVATE, CommandHelp())                          ## ПАНЕЛЬ ПОМОЩИ ЮЗЕРУ
 async def help_panel(message: Message) -> None:
-
     if (db.user_in_database(message.chat.id)):
         lang = db.getting(message.chat.id, 'language')
         await message.answer(general_text[f'{lang}_help_menu'], parse_mode='html')
@@ -16,7 +14,6 @@ async def help_panel(message: Message) -> None:
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['negr'])                                                    ## ПАНЕЛЬ ПОМОЩИ АДМИНУ
 async def admin_panel(message: Message) -> None:
-    print(message)
     try:
         if message.from_user.id in ADMIN:
             await message.answer('Hi, my lord. 🤴')
@@ -24,9 +21,7 @@ async def admin_panel(message: Message) -> None:
         else:
             await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
             await menu.toMenu(message)
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'main.py [INFO] Неполадки в admin_panel: {ex}')
-        print(f'main.py [INFO] Неполадки в admin_panel: {ex}')
+    except Exception as ex: await exceptions("main.py", 'admin_panel', ex)
 
 ################################################### - ASK from ADMIN to USER ######################################
 class TextToSend(StatesGroup):
@@ -54,9 +49,8 @@ async def send_cancel(message: Message, state: FSMContext) -> None:
         await state.reset_data()
         await state.finish()
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_cancel: {ex}")
-        print(f"main.py [INFO] Неполадки в ask_cancel: {ex}")
+    except Exception as ex: await exceptions("main.py", 'send_cancel', ex)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['mega_send'])                                               ## ГЛОБАЛЬНАЯ РАССЫЛКА СООБЩЕНИЙ
 async def mega_send(message: Message, state: FSMContext) -> None:
@@ -72,9 +66,8 @@ async def mega_send(message: Message, state: FSMContext) -> None:
                 data['GO_SEND'] = False
                 data['id_user'] = []
 
-        except Exception as ex:
-            await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в mega_sending: {ex}")
-            print(f"main.py [INFO] Неполадки в mega_sending: {ex}")
+        except Exception as ex: await exceptions("main.py", 'mega_send', ex)
+
 
     else:
         await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
@@ -92,21 +85,18 @@ async def send(message: Message, state: FSMContext) -> None:
                 data['photo_num'] = 0
                 data['GO_SEND'] = False
                 data['id_user'] = user_id
+                if (message.text).strip() != '/send':
+                    if (db.user_in_database(message.text[6:19])):
+                        await bot.send_message(message.chat.id, f"Message to user: <b>{db.getting(message.text[6:19], 'username')}</b>- id: {message.text[6:19]}, \
+                        \nOn <b> {db.getting(message.text[6:19], 'language')} </b> Message:", parse_mode='html'), await TextToSend.TEXT.set()
 
-                if (db.user_in_database(message.text[6:19])):
-                    await bot.send_message(message.chat.id, f"Message to user: <b>{db.getting(message.text[6:19], 'username')}</b>- id: {message.text[6:19]}, \
-                    \nOn <b> {db.getting(message.text[6:19], 'language')} </b> Message:", parse_mode='html')
-                    await TextToSend.TEXT.set()
-
-                else:
-                    await bot.send_message(message.chat.id, "This user is not in database")
-
+                    else: await bot.send_message(message.chat.id, "This user is not in database")
+                else: await bot.send_message(message.chat.id, "Empty ID user. Please text: /send `1082803262`", parse_mode= "Markdown")
 
         else:  await message.answer('Кудааа мы лезем? Не положено, давай в меню.'), await menu.toMenu(message)
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Непладки в send: {ex}")
-        print(f"main.py [INFO] Неполадки в send: {ex}")
+    except Exception as ex: await exceptions("main.py", 'send', ex)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, content_types=['photo'], state=TextToSend.TEXT)                       ## ЕСЛИ В РАССЫЛКЕ ФОТО
 async def toSend_photo(message: Message, state: FSMContext) -> None:
@@ -116,9 +106,8 @@ async def toSend_photo(message: Message, state: FSMContext) -> None:
             data[f"photo{data['photo_num']}"] = message.photo[0].file_id
             await bot.send_message(message.chat.id, "Okay, now send text under this photo(s)")
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в toSend_photo: {ex}")
-        print(f"main.py [INFO] Неполадки в toSend_photo: {ex}")
+    except Exception as ex: await exceptions("main.py", 'toSend_photo', ex)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=TextToSend.TEXT)                        ## ЕСЛИ В РАССЫЛКЕ ТЕКСТ
 async def toSend_text(message: Message, state: FSMContext) -> None:
@@ -131,9 +120,8 @@ async def toSend_text(message: Message, state: FSMContext) -> None:
                 except: pass
 
             if (data['GO_SEND'] == False):
-
                 data['TEXT'] = message.text
-                
+
                 if data['photo_num'] > 1: await bot.send_media_group(message.chat.id, media=list_photo)
                 if len(data['id_user']) > 1 or len(data['id_user']) == 0:
                     await bot.send_message(message.chat.id, f"Your Message: \n\n{data['TEXT']}\n\nOkay, send? Can rewrite", reply_markup=InlineKeyboardMarkup(row_width=2)
@@ -168,14 +156,13 @@ async def toSend_text(message: Message, state: FSMContext) -> None:
                         print(f"main.py [INFO] Неполадки в toSend_text в инд. рассылке: id - {user} | Ошибка: {ex}")
                         await bot.send_message(f"main.py [INFO] Неполадки в toSend_text в общей рассылке: id - {user} | Ошибка: {ex}")
                     finally:
-                        await bot.delete_message(message.chat.id, message.message_id)
+                        await bot.delete_message(message.chat.id, message.message_id), await state.reset_data()
                         await bot.send_message(message.chat.id, 'Сообщение отправлено 〽️', reply_markup=ReplyKeyboardRemove() )
-                        await state.reset_data(), await state.finish()                      
+                        await state.finish()                      
 
                 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в toSend_text: {ex}")
-        print(f"main.py [INFO] Неполадки в toSend_text: {ex}")
+    except Exception as ex: await exceptions("main.py", 'toSend_text', ex)
+
 #------------------------------------------------------------------------------
 @dp.callback_query_handler(CHAT_PRIVATE, text=['OnlyRus', 'OnlyUkr', 'SEND'], state=TextToSend.TEXT)    ## ОПРЕДЕЛЕНИЕ ЯЗЫКА И ОТПРАВКИ
 async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
@@ -187,17 +174,16 @@ async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
                 await toSend_text(c.message, state)
 
             elif c.data == 'OnlyRus':
+                data['GO_SEND'] = True
                 data['id_user'] = db.get_all_id('ru')
                 await c.answer("Отсортировано по русскому языку")
 
             elif c.data == 'OnlyUkr':
+                data['GO_SEND'] = True
                 data['id_user'] = db.get_all_id('uk')
                 await c.answer("Отсортировано по украинскому языку")
             
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ChoiseWhoneSend: {ex}")
-        print(f"main.py [INFO] Неполадки в ChoiseWhoneSend: {ex}")
-
+    except Exception as ex: await exceptions("main.py", 'ChoiseWhoneSend', ex)
 
 #################################################### - ASK from USER to ADMIN ######################################
 class AskAdmin(StatesGroup):
@@ -205,17 +191,16 @@ class AskAdmin(StatesGroup):
 
 @dp.callback_query_handler(CHAT_PRIVATE, text='go_back', state=AskAdmin)                                ## ОТМЕНА ВОПРОСА АДМИНУ
 async def ask_cancel(call: CallbackQuery, state: FSMContext) -> None:
-
     try:
+
         lang = db.getting(call.message.from_user.id, 'language')
         await bot.send_message(call.message.chat.id, general_text[f'{lang}_ask_admin_no'])
         await state.reset_data()
         await state.finish()
         await menu.toMenu(call.message)
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_cancel: {ex}")
-        print(f"main.py [INFO] Неполадки в ask_cancel: {ex}")
+    except Exception as ex: await exceptions("main.py", 'ask_cancel', ex)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['ask'])                                                     ## ЗАДАТЬ ВОПРОС АДМИНУ
 async def ask_user(message: Message) -> None:
@@ -231,9 +216,8 @@ async def ask_user(message: Message) -> None:
                                    reply_markup=InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(text='Назад', callback_data='go_back')))
             await AskAdmin.ask.set()
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_user: {ex}")
-        print(f"main.py [INFO] Неполадки в ask_user: {ex}")
+    except Exception as ex: await exceptions("main.py", 'ask_user', ex)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=AskAdmin.ask)                           ## ОТПРАВКА ASK 
 async def ask_user_text(message: Message, state: FSMContext) -> None:
@@ -246,9 +230,7 @@ async def ask_user_text(message: Message, state: FSMContext) -> None:
         await state.finish()
         await menu.toMenu(message)
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки в ask_user_text: {ex}")
-        print(f"main.py [INFO] Неполадки в ask_user_text: {ex}")
+    except Exception as ex: await exceptions("main.py", 'ask_user_text', ex)
 
 
 ################################################# - FEEDBACK and TEST(pizda) and POH ###############################
@@ -259,9 +241,7 @@ async def feedback(message: Message) -> None:
         lang = db.getting(message.chat.id, 'language')
         await message.answer(general_text[f'{lang}_feedback_yes'], reply_markup=feedback_button[lang])
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f'main.py [INFO] Неполдаки в начале feedback: {ex}')
-        print(f"main.py [INFO] Неполадки в начале feedback: {ex}")
+    except Exception as ex: await exceptions("main.py", 'feedback', ex)
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['poh'])                                                     ## ПРОСТО ПНУТЬ АДМИНА
 async def poh(message: Message):
@@ -272,9 +252,7 @@ async def poh(message: Message):
         if lang == 'uk':    await message.answer('Все зроблено босс. Я його пнув 😀')
         else:               await message.answer('Всё сделано босс. Я его пнул 😀')
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с poh: {ex}")
-        print(f"main.py [INFO] Неполадки с poh: {ex}")
+    except Exception as ex: await exceptions("main.py", 'poh', ex)
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['cucumber'])                                                ## ДЛЯ ТЕСТА ФУНКЦИЙ
 async def cucumber(message: Message):
@@ -284,15 +262,8 @@ async def cucumber(message: Message):
         await message.answer(f"{test_hopeless_beka_result[f'{lang}_4-8']}\n\n", parse_mode='html')
         await message.answer(f"{test_hopeless_beka_result[f'{lang}_9-14']}\n\n", parse_mode='html')
         await message.answer(f"{test_hopeless_beka_result[f'{lang}_15-20']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}0-9']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}10-15']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}16-19']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}20-29']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}30-63']}\n\n", parse_mode='html')
 
-    except Exception as ex:
-        await bot.send_message(ADMIN[1], f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
-        print(f"main.py [INFO] Неполадки с test-panel pizda: {ex}")
+    except Exception as ex: await exceptions("main.py", 'cucumber', ex)
 #------------------------------------------------------------------------------
 async def main():                                                                        ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
