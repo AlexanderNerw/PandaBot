@@ -192,7 +192,6 @@ try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
     @dp.callback_query_handler(text=['1', '2'], state=AnswerTest.TBB) # ОБЩАЯ ФОРМА ДЛЯ ВОПРОСОВ ТЕСТА БЕЗНАДЁЖНОСТИ БЕКА
     async def questions_TBB(call: CallbackQuery, state: FSMContext): 
         try:
-            print(type(call.data))
             async with state.proxy() as data:
                 if data['answerNum'] in [2, 4, 7, 9, 11, 12, 15, 16, 17, 18, 20]:
                     if call.data == '2': data['answerEnd'] += 1
@@ -215,7 +214,7 @@ try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
                     elif data['answerEnd'] >= 15:                               data['text'] = '15–20'
 
                     await bot.send_message(call.message.chat.id, f"<b>Ваш результат: {data['answerEnd']} {'из 20 баллов' if data['answerLang'] == 'ru' else 'з 20 балів'}</b>\n\n"
-                                        + test_worry_beka_result[f"{data['answerLang']}_{data['text']}"], reply_markup=go_to_menu_safe, parse_mode='html')
+                                        + test_hopeless_beka_result[f"{data['answerLang']}_{data['text']}"], reply_markup=go_to_menu_safe, parse_mode='html')
                     db.addingEndStart(call.message.chat.id, 'TBB', f"{data['answerEnd']} ", True)
                     db.adding(call.message.chat.id, 'notice', 1)
                     await state.reset_data()
@@ -223,7 +222,7 @@ try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
 
         except Exception as ex:
             if str(ex) != 'Message to delete not found':
-                await exceptions("tests.py", 'question1_TBB', ex)
+                await exceptions("tests.py", 'questions_TBB', ex)
 
         finally: await call.answer()
 #=============================================== 

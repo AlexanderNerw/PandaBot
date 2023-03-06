@@ -258,10 +258,12 @@ async def poh(message: Message):
 async def cucumber(message: Message):
     try:
         lang = db.getting(message.chat.id, 'language')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}_0-3']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}_4-8']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}_9-14']}\n\n", parse_mode='html')
-        await message.answer(f"{test_hopeless_beka_result[f'{lang}_15-20']}\n\n", parse_mode='html')
+        #await bot.send_message("459849194", f"{test_hopeless_beka_result[f'{lang}_0-3']}\n\n", parse_mode='html')
+        await bot.send_message(message.chat.id, f"{test_hopeless_beka_result[f'{lang}_0-3']}\n\n", parse_mode='html')
+        # await message.answer(f"{test_hopeless_beka_result[f'{lang}_0-3']}\n\n", parse_mode='html')
+        # await message.answer(f"{test_hopeless_beka_result[f'{lang}_4-8']}\n\n", parse_mode='html')
+        # await message.answer(f"{test_hopeless_beka_result[f'{lang}_9-14']}\n\n", parse_mode='html')
+        # await message.answer(f"{test_hopeless_beka_result[f'{lang}_15-20']}\n\n", parse_mode='html')
 
     except Exception as ex: await exceptions("main.py", 'cucumber', ex)
 #------------------------------------------------------------------------------
