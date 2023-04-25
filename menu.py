@@ -1,6 +1,6 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineQuery
 import hashlib, random, uuid, handlers.sign_up
-from handlers.support.importing import *
+from handlers.support.importing import * 
 
 ######################################################################################### - ГЛАВНОЕ МЕНЮ ЛИЧНОГО ЧАТА
 @dp.message_handler(CHAT_PRIVATE, commands=['menu'])                                   ##   ГЛАВНОЕ МЕНЮ
