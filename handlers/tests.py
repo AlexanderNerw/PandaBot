@@ -6,7 +6,7 @@ from support.querry_db import db
 from support.config import *
 from support.dialogs import *
 from support.keyboards import *
-
+import menu, time
 
 class AnswerTest(StatesGroup):  ## -  МАШИНА СОСТРОЯНИЙ ДЛЯ ТЕСТОВ
     answerNum = State()
@@ -101,7 +101,7 @@ try: # TEST DEPRESSION BEKA
                 await exceptions("tests.py", 'questions_TDB', ex)
 #=============================================== 
 except Exception as ex: # TEST DEPRESSION BEKA 
-    print(f'tests.py [INFO] Неполадки в Где то в Тесте Депрессии Бека: {ex}')
+    print(f'tests.py [INFO] [ {time.asctime()} ] Неполадки в Где то в Тесте Депрессии Бека: {ex}')
 
 try:  # ТЕСТ ТРЕВОЖНОСТИ БЕКА
 
@@ -168,7 +168,7 @@ try:  # ТЕСТ ТРЕВОЖНОСТИ БЕКА
         finally: await call.answer()
 #===============================================        
 except Exception as ex: # TEST DEPRESSION BEKA 
-    print(f'tests.py [INFO] Неполадки в Тесте Тревожности Бека: {ex}')
+    print(f'tests.py [INFO] [ {time.asctime()} ] Неполадки в Тесте Тревожности Бека: {ex}')
 
 try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
 
@@ -235,7 +235,7 @@ try:  # ТЕСТ БЕЗНАДЁЖНОСТИ БЕКА
         finally: await call.answer()
 #=============================================== 
 except Exception as ex: # TEST DEPRESSION BEKA 
-    print(f'tests.py [INFO] Неполадки в Тесте Безнадёжности Бека: {ex}')
+    print(f'tests.py [INFO] [ {time.asctime()} ] Неполадки в Тесте Безнадёжности Бека: {ex}')
 
 ############################################################################################### - МЕНЮ ТЕСТОВ
 async def tests(chat_id, message_id):

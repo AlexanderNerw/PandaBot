@@ -2,6 +2,7 @@ from support.querry_db import db
 from support.config import *
 import random, menu
 
+#===========================================================#
 @dp.message_handler(CHAT_PRIVATE, commands=['name'])
 async def input_name(message):
     if (db.getting(message.from_user.id, 'language') == 'ru'):
@@ -9,6 +10,7 @@ async def input_name(message):
     else:
         await message.answer("Як мені до тебе звертатись?")
 
+#===========================================================#
 @dp.message_handler(CHAT_PRIVATE, content_types=['text'])
 async def reaction(message):
 
@@ -18,7 +20,7 @@ async def reaction(message):
     try:
         if lang in ['ru', 'uk']:
 
-        # РАЗГОВОР ******************************************************************            
+        # РАЗГОВОР =========================================            
         
             if text_user in ["как дела?", "как настроение?"]: await message.answer('Всё отлично, спасибо :)')
             #---------------------------------------------------
@@ -26,7 +28,7 @@ async def reaction(message):
             #---------------------------------------------------
             elif text_user in ["меню", "menu"]: await menu.toMenu(message)
 
-            # ПРИМОЧКИ ******************************************************************
+            # ПРИМОЧКИ ====================================
 
             else: await message.answer('Я не знаю что ответить :(') 
 

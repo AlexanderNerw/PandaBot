@@ -142,9 +142,6 @@ async def start_group(message: Message, state: FSMContext) -> None:
     except Exception as ex: await exceptions("sign_up.py", 'start_group', ex)
 
 
-
-
-
 def register(dp : Dispatcher):
     dp.register_message_handler(start, CommandStart(), ChatTypeFilter(chat_type=ChatType.PRIVATE))
     dp.register_message_handler(start_lang, content_types=['text'], state=ProfileStateGroup.lang)

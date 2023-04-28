@@ -8,11 +8,6 @@ from support.dialogs import *
 from support.keyboards import *
 
 
-from aiogram.types import Message, ChatType, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ContentType, MediaGroup, Chat
-
-
-CHAT_GROUP = ChatTypeFilter(chat_type=ChatType.GROUP)
-
 ######################################################################################### - ГЛАВНОЕ МЕНЮ ЛИЧНОГО ЧАТА
 @dp.message_handler(CHAT_PRIVATE, commands=['menu'])                                   ##   ГЛАВНОЕ МЕНЮ
 async def toMenu(message) -> None: 
@@ -43,7 +38,7 @@ async def toMenuWithout(c: CallbackQuery) -> None:
 
 
 ######################################################################################### - ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
-@dp.message_handler(CHAT_GROUP, commands=['menu'])                                   ##   ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
+@dp.message_handler(CHAT_GROUP, commands=['menu'])                                     ##   ГЛАВНОЕ МЕНЮ ГРУППОВОГО ЧАТА
 async def toMenu_group(message) -> None: 
     try:
         print(message)

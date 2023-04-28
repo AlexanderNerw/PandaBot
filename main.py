@@ -7,9 +7,7 @@ from support.config import *
 from support.dialogs import *
 from support.keyboards import *
 from support.querry_db import db
-import handlers, support, asyncio, menu
-
-CHAT_PRIVATE = ChatTypeFilter(chat_type=ChatType.PRIVATE)
+import handlers, asyncio, menu
 
 # АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
 
