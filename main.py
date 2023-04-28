@@ -1,7 +1,7 @@
-from aiogram.types import Message, CallbackQuery, MediaGroup, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
+from aiogram.types import Message, CallbackQuery, MediaGroup, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove, BotCommand
 from aiogram.dispatcher.filters.builtin import CommandHelp, ChatTypeFilter, ChatType
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher import FSMContext, dispatcher
 from aiogram import executor
 from support.config import *
 from support.dialogs import *
@@ -278,15 +278,20 @@ async def cucumber(message: Message):
     except Exception as ex: await exceptions("main.py", 'cucumber', ex)
 
 #------------------------------------------------------------------------------
-async def main():                                                                        ## START POLLING
+async def set_default_command(dp):
+    await dp.bot.set_my_commands(
+        [   
+            BotCommand("start", "Start bot"),
+            BotCommand("menu", "Go to menu"),
+            BotCommand("help", "Help-panel")
+        ]
+    )
+
+async def main(dispatcher):                                                                        ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
-    await executor.start_polling(dp)
-    bot.send_message(ADMIN[1], "[INFO] [ " + time.asctime() + " ] Bot was launched successfully.")
-
-    # photo = open('photo_2023-02-14_14-42-31.jpg', 'rb')
-    # for user in users:
-    # await bot.send_message(user, f'Вітаю тебе зі святом', reply_markup=go_to_menu_safe)
-    # await bot.send_message(720526928, depression_beka_result['uk20-29'], reply_markup=go_to_menu_safe)
-
+    await set_default_command(dispatcher)
+    await bot.send_message(ADMIN[0], "[INFO] Bot was launched successfully.")
+    print("[INFO] [" + time.asctime() + "] Bot was launched successfully.")
+  
 if __name__ == '__main__': 
-    asyncio.run(main())
+    executor.start_polling(dp, skip_updates=True, on_startup=main)

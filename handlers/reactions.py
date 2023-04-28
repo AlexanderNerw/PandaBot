@@ -29,11 +29,12 @@ async def reaction(message):
             elif text_user in ["меню", "menu"]: await menu.toMenu(message)
 
             # ПРИМОЧКИ ====================================
-
             else: await message.answer('Я не знаю что ответить :(') 
-
+        
         else:
-            db.adding(message.from_user.id, 'language', 'ru')
-            await reaction(message)
+            try: 
+                if(db.adding(message.from_user.id, 'language', 'ru')): await reaction(message)
+                else: await exceptions("reaction.py", "reaction", f"Problems database getting/adding language at id `{message.chat.id}`")
+            except Exception as ex: await exceptions("reaction.py", "reaction", ex)
 
     except Exception as ex: await exceptions("reactions.py", 'reaction', ex)

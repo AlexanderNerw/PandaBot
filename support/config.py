@@ -17,11 +17,11 @@ CHAT_GROUP = ChatTypeFilter(chat_type=ChatType.GROUP)
 #    
 async def exceptions(file: str, func: str, exception: str):            
     try:                                                                                               
-        await bot.send_message(ADMIN[1], f"[INFO] File: {file} | Func: {func}() \nError: {exception}")
+        await bot.send_message(ADMIN[0], f"[INFO] File: {file} | Func: {func}() \nError: {exception}")
         print(f"[INFO] [{time.asctime()}] File: {file} | Func: {func}: \nError: {exception}")         
    
     except Exception as ex:
-        await bot.send_message(ADMIN[1], f"[INFO] File: config.py | Func: exceptions() \nError: {ex}")
+        await bot.send_message(ADMIN[0], f"[INFO] File: config.py | Func: exceptions() \nError: {ex}")
         print(f"[INFO] [{time.asctime()}] File: config.py | Func: exceptions() \nError: {ex}")
 
 #====================================================================================================#   BOT INFO
