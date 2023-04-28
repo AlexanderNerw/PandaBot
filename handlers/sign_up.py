@@ -8,7 +8,6 @@ from support.dialogs import *
 from support.keyboards import *
 import menu
 
-
 # Машина сострояний
 class ProfileStateGroup(StatesGroup):
     start = State()
