@@ -72,6 +72,7 @@ async def mega_send(message: Message, state: FSMContext) -> None:
     else:
         await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
         await menu.toMenu(message)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['send'])                                                    ## ЛИЧНОЕ СООБЩЕНИе ЮЗЕРУ
 async def send(message: Message, state: FSMContext) -> None:
@@ -242,6 +243,7 @@ async def feedback(message: Message) -> None:
         await message.answer(general_text[f'{lang}_feedback_yes'], reply_markup=feedback_button[lang])
 
     except Exception as ex: await exceptions("main.py", 'feedback', ex)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['poh'])                                                     ## ПРОСТО ПНУТЬ АДМИНА
 async def poh(message: Message):
@@ -253,6 +255,7 @@ async def poh(message: Message):
         else:               await message.answer('Всё сделано босс. Я его пнул 😀')
 
     except Exception as ex: await exceptions("main.py", 'poh', ex)
+
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['cucumber'])                                                ## ДЛЯ ТЕСТА ФУНКЦИЙ
 async def cucumber(message: Message):
@@ -266,6 +269,7 @@ async def cucumber(message: Message):
         # await message.answer(f"{test_hopeless_beka_result[f'{lang}_15-20']}\n\n", parse_mode='html')
 
     except Exception as ex: await exceptions("main.py", 'cucumber', ex)
+
 #------------------------------------------------------------------------------
 async def main():                                                                        ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
