@@ -1,5 +1,5 @@
 from aiogram.dispatcher.filters.builtin import CommandStart, ChatTypeFilter
-from handlers.support.importing import *
+from support.importing import *
 
 
 # Машина сострояний

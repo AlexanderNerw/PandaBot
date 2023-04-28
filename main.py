@@ -1,6 +1,8 @@
 import asyncio, handlers.sign_up, handlers.callback_query
 from aiogram.dispatcher.filters.builtin import CommandHelp
-from handlers.support.importing import *
+from support.importing import *
+from aiogram import executor
+import handlers, support
 
 # АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
 
@@ -275,7 +277,7 @@ async def main():                                                               
     await bot.delete_webhook(drop_pending_updates=True)
     #users = db.get_all_id()
     #print(users)
-    await dp.start_polling(bot)
+    await executor.start_polling(dp)
 
 
     # photo = open('photo_2023-02-14_14-42-31.jpg', 'rb')
