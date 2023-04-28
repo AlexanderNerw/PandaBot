@@ -1,5 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
 
 start_sign_up = { # ПРИ СТАРТЕ И РЕГИСТРАЦИИ
                  'ru_bot_start':          '\nЯ твой бот-друг, можешь звать меня Панда 🐼.\n\nДавай сначала разберёмся как к тебе обращаться :)\n\n'
@@ -1026,10 +1024,13 @@ inline_mode_name_sex = ['Александром', 'Сашей', 'Алексее�
 
 inline_mode_answer_random = ["Мне кажется, что да", "Я так не думаю", "Нет, это невозможно", "Вполне возможно", "Скорее всего, нет", "Точно нет!", "Уверенное да!", "Хрен его знает"]
 
-#all_jokes = []
-with open("handlers\support\jokes.txt", "r") as f:
-       all_jokes = f.readlines()
 
+#import requests
+#from bs4 import BeautifulSoup
+
+#all_jokes = []
+#with open("handlers\support\jokes.txt", "r") as f:
+       #all_jokes = f.readlines()
 
 # for i in range(1, 31):
 #          request = requests.get(f"https://4tob.ru/anekdots/tag/short/page{i}")

@@ -7,7 +7,6 @@ from handlers.support.querry_db import db
 from handlers.support.keyboards import *
 from handlers.support.dialogs import *
 
-
 CHAT_PRIVATE = ChatTypeFilter(chat_type=ChatType.PRIVATE)
 CHAT_GROUP = ChatTypeFilter(chat_type=ChatType.GROUP)
 
