@@ -1,4 +1,12 @@
-from handlers.support.importing import *
+from aiogram.dispatcher.filters.builtin import ChatTypeFilter, ChatType
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.dispatcher import FSMContext
+from aiogram.types import CallbackQuery
+from support.querry_db import db
+from support.config import *
+from support.dialogs import *
+from support.keyboards import *
+
 
 class AnswerTest(StatesGroup):  ## -  МАШИНА СОСТРОЯНИЙ ДЛЯ ТЕСТОВ
     answerNum = State()

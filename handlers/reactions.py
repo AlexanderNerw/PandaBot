@@ -1,6 +1,6 @@
-from handlers.support.importing import *
-from bs4 import BeautifulSoup
-import requests, random
+from support.querry_db import db
+from support.config import *
+import random, menu
 
 @dp.message_handler(CHAT_PRIVATE, commands=['name'])
 async def input_name(message):
@@ -18,11 +18,11 @@ async def reaction(message):
     try:
         if lang in ['ru', 'uk']:
 
-            # РАЗГОВОР ******************************************************************            
-            #---------------------------------------------------
+        # РАЗГОВОР ******************************************************************            
+        
             if text_user in ["как дела?", "как настроение?"]: await message.answer('Всё отлично, спасибо :)')
             #---------------------------------------------------
-            elif "анекдот" in text_user: await bot.send_message(message.chat.id, general_text[f"{lang}_joke_for_like"] + all_jokes[random.randint(0,888)], parse_mode='html')
+            #elif "анекдот" in text_user: await bot.send_message(message.chat.id, general_text[f"{lang}_joke_for_like"] + all_jokes[random.randint(0,888)], parse_mode='html')
             #---------------------------------------------------
             elif text_user in ["меню", "menu"]: await menu.toMenu(message)
 

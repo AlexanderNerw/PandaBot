@@ -1,5 +1,12 @@
-from aiogram.dispatcher.filters.builtin import CommandStart, ChatTypeFilter
-from support.importing import *
+from aiogram.dispatcher.filters.builtin import CommandStart, ChatTypeFilter, ChatType
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.dispatcher import FSMContext
+from aiogram.types import Message
+from support.querry_db import db
+from support.config import *
+from support.dialogs import *
+from support.keyboards import *
+import menu
 
 
 # Машина сострояний

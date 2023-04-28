@@ -1,5 +1,5 @@
 import pymysql
-try: from handlers.support.config import *
+try: from support.config import *
 except: from config import *
 
 

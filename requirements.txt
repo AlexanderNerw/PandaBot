@@ -1,2 +1,2 @@
-aiogram
-pymysql
+aiogram~=2.25.1
+pymysql~=1.0.3

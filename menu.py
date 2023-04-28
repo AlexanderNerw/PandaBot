@@ -1,6 +1,17 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineQuery
+from aiogram.dispatcher.filters.builtin import ChatTypeFilter, ChatType
 import hashlib, random, uuid, handlers.sign_up
-from handlers.support.importing import * 
+from aiogram.dispatcher import FSMContext
+from support.querry_db import db
+from support.config import *
+from support.dialogs import *
+from support.keyboards import *
+
+
+from aiogram.types import Message, ChatType, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, ContentType, MediaGroup, Chat
+
+
+CHAT_GROUP = ChatTypeFilter(chat_type=ChatType.GROUP)
 
 ######################################################################################### - ГЛАВНОЕ МЕНЮ ЛИЧНОГО ЧАТА
 @dp.message_handler(CHAT_PRIVATE, commands=['menu'])                                   ##   ГЛАВНОЕ МЕНЮ

@@ -1,8 +1,15 @@
-import asyncio, handlers.sign_up, handlers.callback_query
-from aiogram.dispatcher.filters.builtin import CommandHelp
-from support.importing import *
+from aiogram.types import Message, CallbackQuery, MediaGroup, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
+from aiogram.dispatcher.filters.builtin import CommandHelp, ChatTypeFilter, ChatType
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.dispatcher import FSMContext
 from aiogram import executor
-import handlers, support
+from support.config import *
+from support.dialogs import *
+from support.keyboards import *
+from support.querry_db import db
+import handlers, support, asyncio, menu
+
+CHAT_PRIVATE = ChatTypeFilter(chat_type=ChatType.PRIVATE)
 
 # АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
 
@@ -275,16 +282,13 @@ async def cucumber(message: Message):
 #------------------------------------------------------------------------------
 async def main():                                                                        ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
-    #users = db.get_all_id()
-    #print(users)
     await executor.start_polling(dp)
-
+    bot.send_message(ADMIN[1], "[INFO] [ " + time.asctime() + " ] Bot was launched successfully.")
 
     # photo = open('photo_2023-02-14_14-42-31.jpg', 'rb')
     # for user in users:
     # await bot.send_message(user, f'Вітаю тебе зі святом', reply_markup=go_to_menu_safe)
     # await bot.send_message(720526928, depression_beka_result['uk20-29'], reply_markup=go_to_menu_safe)
 
-if __name__ == '__main__':
-    import handlers.reactions    
+if __name__ == '__main__': 
     asyncio.run(main())
