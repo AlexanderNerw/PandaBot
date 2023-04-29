@@ -8,45 +8,47 @@ class QuerryDB:
     def __init__(self):
         """ Connection to DataBase """
 
-        # try:
+        try:
 
-        #     self.connection = pymysql.connect(
-        #         host=host,
-        #         port=3306,
-        #         user=user,
-        #         password=password,
-        #         database=db_name,
-        #         cursorclass=pymysql.cursors.DictCursor)
+            self.connection = pymysql.connect(
+                host=host,
+                port=3306,
+                user=user,
+                password=password,
+                database=db_name,
+                cursorclass=pymysql.cursors.DictCursor)
 
-        #     self.database_table_name = 'testbase'
+            self.database_table_name = 'testbase'
 
-        #     print("querry_db.py [INFO] Database Succes Connection")
+            print("querry_db.py [INFO] Database Succes Connection")
 
-        #     with self.connection.cursor() as cursor:
+            with self.connection.cursor() as cursor:
 
-        #         querry1 = f"CREATE TABLE IF NOT EXISTS pandabase.answer_test \
-        #                         (id INT NOT NULL AUTO_INCREMENT, \
-        #                         user_id VARCHAR(12) NOT NULL, \
-        #                         TDBeka VARCHAR(255) DEFAULT 'TDBeka', \
-        #                         TTBeka VARCHAR(255) DEFAULT 'TTBeka', \
-        #                         TBBeka VARCHAR(255) DEFAULT 'TBBeka', PRIMARY KEY (id));"
+                querry1 = f"CREATE TABLE IF NOT EXISTS pandabase.answer_test \
+                                (id INT NOT NULL AUTO_INCREMENT, \
+                                user_id VARCHAR(12) NOT NULL, \
+                                TDBeka VARCHAR(255) DEFAULT 'TDBeka', \
+                                TTBeka VARCHAR(255) DEFAULT 'TTBeka', \
+                                TBBeka VARCHAR(255) DEFAULT 'TBBeka', PRIMARY KEY (id));"
 
-        #         querry = f"CREATE TABLE IF NOT EXISTS pandabase.{self.database_table_name} \
-        #                         (id INT NOT NULL AUTO_INCREMENT, \
-        #                         user_id VARCHAR(12) NOT NULL, \
-        #                         status TINYINT(1) DEFAULT 0, \
-        #                         notice TINYINT(1) DEFAULT 1, \
-        #                         username VARCHAR(30) NULL, \
-        #                         gender VARCHAR(6) DEFAULT 'man', \
-        #                         language VARCHAR(3) DEFAULT 'ru', PRIMARY KEY (id));"
+                querry = f"CREATE TABLE IF NOT EXISTS pandabase.{self.database_table_name} \
+                                (id INT NOT NULL AUTO_INCREMENT, \
+                                user_id VARCHAR(12) NOT NULL, \
+                                status TINYINT(1) DEFAULT 0, \
+                                notice TINYINT(1) DEFAULT 1, \
+                                username VARCHAR(30) NULL, \
+                                gender VARCHAR(6) DEFAULT 'man', \
+                                language VARCHAR(3) DEFAULT 'ru', PRIMARY KEY (id));"
 
-        #         cursor.execute(querry1)
-        #         cursor.execute(querry)
-        #         self.connection.commit()
-        #         self.connection.close()
+                cursor.execute(querry1)
+                cursor.execute(querry)
+                try:
+                    self.connection.commit()
+                    self.connection.close()
+                except Exception as ex: print(ex)
 
-        # except Exception as ex:
-        #     print(f"querry_db.py [INFO] [{time.asctime()}] Problems in Database Connection: {ex}")
+        except Exception as ex:
+            print(f"querry_db.py [INFO] [{time.asctime()}] Problems in Database Connection: {ex}")
 
 ####################### ДОБАВЛЕНИЕ #################################
 
@@ -207,5 +209,6 @@ class QuerryDB:
 db = QuerryDB()
 
 #print(db.get_all_info())
+print(1)
 #db.addingInEnd(1082803262, 'text_to_send', 5)
 # a.delete_person('1082803262')

@@ -1,10 +1,10 @@
 from aiogram.dispatcher.filters.builtin import ChatTypeFilter, ChatType
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram import Bot, Dispatcher
-import logging, time
+import logging, time, os
 
 # Уровень логов
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s] %(message)s')
 storage = MemoryStorage()
 
 #===================================================================#   INFO
@@ -32,8 +32,8 @@ dp = Dispatcher(bot, storage = storage)
 
 #====================================================================#     SERVER DATABSE INFO   
 #   
-host = '127.0.0.1' # localhost - 127.0.0.1
-user = 'root'
-password = 'sanik888'
+host = 'localhost' # localhost - 109.94.209.115 - nerw-studio.pp.ua.org
+user = 'alexnerw'
+password = 'nerviothink5'
 db_name = 'pandabase' # subscribers
 port = 3306

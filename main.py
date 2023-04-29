@@ -193,7 +193,7 @@ async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
             
     except Exception as ex: await exceptions("main.py", 'ChoiseWhoneSend', ex)
 
-#################################################### - ASK from USER to ADMIN ######################################
+#################################################### - ASK from USER to ADMIN ############################
 class AskAdmin(StatesGroup):
     ask = State()
 
@@ -241,7 +241,7 @@ async def ask_user_text(message: Message, state: FSMContext) -> None:
     except Exception as ex: await exceptions("main.py", 'ask_user_text', ex)
 
 
-################################################# - FEEDBACK and TEST(pizda) and POH ###############################
+################################################# - FEEDBACK and TEST(pizda) and POH #####################
 
 @dp.message_handler(CHAT_PRIVATE, commands=["feedback"])                                                ## ОБРАТНАЯ СВЯЗЬ -> callback_querry.py (fb_yes, fb_no)
 async def feedback(message: Message) -> None:
@@ -286,12 +286,13 @@ async def set_default_command(dp):
             BotCommand("help", "Help-panel")
         ]
     )
+async def on_shutdown(dp):                                                                      ## STOP POLLING
+    await bot.close()
 
-async def main(dispatcher):                                                                        ## START POLLING
+async def on_startup(dispatcher):                                                               ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
     await set_default_command(dispatcher)
     await bot.send_message(ADMIN[0], "[INFO] Bot was launched successfully.")
-    print("[INFO] [" + time.asctime() + "] Bot was launched successfully.")
   
 if __name__ == '__main__': 
-    executor.start_polling(dp, skip_updates=True, on_startup=main)
+    executor.start_polling(dp, on_shutdown=on_shutdown, skip_updates=True, on_startup=on_startup)
