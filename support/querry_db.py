@@ -13,7 +13,7 @@ class QuerryDB:
                 port=       3306,
                 user=       os.getenv('user'),
                 password=   os.getenv('password'),
-                database=   'pandabase',
+                database=   'pandabase', # pandabase
                 cursorclass=pymysql.cursors.DictCursor)
 
             self.database_table_name = 'testbase'

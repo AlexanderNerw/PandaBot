@@ -284,8 +284,6 @@ async def set_default_command(dp):
             BotCommand("help", "Help-panel")
         ]
     )
-async def on_shutdown(dp):                                                                      ## STOP POLLING
-    await bot.close()
 
 async def on_startup(dispatcher):                                                               ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
@@ -293,4 +291,4 @@ async def on_startup(dispatcher):                                               
     await bot.send_message(ADMIN, "[INFO] Bot was launched successfully.")
   
 if __name__ == '__main__': 
-    executor.start_polling(dp, on_shutdown=on_shutdown, skip_updates=True, on_startup=on_startup)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
