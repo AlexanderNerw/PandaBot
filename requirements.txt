@@ -1,5 +1,8 @@
+web: python3 main.py
+
 aiogram~=2.25.1
-pymysql~=1.0.3
-python-dotenv~=1.0.0
+pymysql
+python-dotenv
+flask
 
 # pip install -r requirements.txt

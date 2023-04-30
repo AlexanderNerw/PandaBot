@@ -287,8 +287,10 @@ async def set_default_command(dp):
 
 async def on_startup(dispatcher):                                                               ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
+    await bot.set_webhook(url=APP_URL)
     await set_default_command(dispatcher)
     await bot.send_message(ADMIN, "[INFO] Bot was launched successfully.")
-  
+
+
 if __name__ == '__main__': 
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

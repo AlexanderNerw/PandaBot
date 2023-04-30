@@ -5,6 +5,7 @@ import logging, time, os
 from dotenv import load_dotenv
 from support.keyboards import *
 from support.dialogs import *
+from flask import Flask, request
 
 # Уровень логов
 logging.basicConfig(level=logging.INFO, format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s] %(message)s')
@@ -13,7 +14,10 @@ load_dotenv()
 
 #===================================================================#   INFO
 
+TOKEN = os.getenv("TOKEN")
+PORT = os.getenv("PORT", 5000)
 ADMIN = os.getenv('ADMIN')
+APP_URL = os.getenv('APP_URL')
 CHAT_PRIVATE = ChatTypeFilter(chat_type=ChatType.PRIVATE)
 CHAT_GROUP = ChatTypeFilter(chat_type=ChatType.GROUP)
 
@@ -30,5 +34,6 @@ async def exceptions(file: str, func: str, exception: str):
 
 #====================================================================================================#   BOT INFO
 
-bot = Bot(token = os.getenv("TOKEN"))
+bot = Bot(token = TOKEN)
 dp = Dispatcher(bot, storage = storage)
+server = Flask(__name__)
