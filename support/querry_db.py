@@ -1,7 +1,5 @@
-import pymysql, time
-try: from support.config import *
-except: from config import *
-
+import pymysql,  os, time
+from dotenv import load_dotenv
 
 class QuerryDB:
 
@@ -9,13 +7,13 @@ class QuerryDB:
         """ Connection to DataBase """
 
         try:
-
+            load_dotenv()
             self.connection = pymysql.connect(
-                host=host,
-                port=3306,
-                user=user,
-                password=password,
-                database=db_name,
+                host=       os.getenv('host'),
+                port=       3306,
+                user=       os.getenv('user'),
+                password=   os.getenv('password'),
+                database=   'pandabase',
                 cursorclass=pymysql.cursors.DictCursor)
 
             self.database_table_name = 'testbase'
@@ -209,6 +207,5 @@ class QuerryDB:
 db = QuerryDB()
 
 #print(db.get_all_info())
-print(1)
 #db.addingInEnd(1082803262, 'text_to_send', 5)
 # a.delete_person('1082803262')

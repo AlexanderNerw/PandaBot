@@ -1,12 +1,10 @@
-from aiogram.types import Message, CallbackQuery, MediaGroup, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove, BotCommand
-from aiogram.dispatcher.filters.builtin import CommandHelp, ChatTypeFilter, ChatType
+from aiogram.types import Message, CallbackQuery, MediaGroup, BotCommand
+from aiogram.dispatcher.filters.builtin import CommandHelp
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.dispatcher import FSMContext, dispatcher
+from aiogram.dispatcher import FSMContext
+from support.querry_db import db
 from aiogram import executor
 from support.config import *
-from support.dialogs import *
-from support.keyboards import *
-from support.querry_db import db
 import handlers, asyncio, menu
 
 # АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
@@ -217,7 +215,7 @@ async def ask_user(message: Message) -> None:
         name = message.from_user.first_name
 
         if (message.text).strip() != '/ask':
-            await bot.send_message(ADMIN[1], f'{name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text[5:]}')
+            await bot.send_message(ADMIN, f'{name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text[5:]}')
             await bot.send_message(message.chat.id, general_text[f'{lang}_send_ask'])
         else:
             await bot.send_message(message.chat.id, general_text[f'{lang}_empty_ask'],
@@ -232,7 +230,7 @@ async def ask_user_text(message: Message, state: FSMContext) -> None:
     try:
         lang = db.getting(message.from_user.id, 'language')
         name = message.from_user.first_name
-        await bot.send_message(ADMIN[1], f'{message.from_user.first_name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text}')
+        await bot.send_message(ADMIN, f'{message.from_user.first_name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text}')
         await bot.send_message(message.chat.id, f"{general_text[f'{lang}_send_ask']}")
         await state.reset_data()
         await state.finish()
@@ -256,7 +254,7 @@ async def feedback(message: Message) -> None:
 async def poh(message: Message):
     try:
         lang = db.getting(message.from_user.id, 'language')
-        await bot.send_message(ADMIN[1], f"@{message.chat.username}: {db.getting(message.from_user.id, 'username')}, {message.chat.id} тебя пнул :)")
+        await bot.send_message(ADMIN, f"@{message.chat.username}: {db.getting(message.from_user.id, 'username')}, {message.chat.id} тебя пнул :)")
 
         if lang == 'uk':    await message.answer('Все зроблено босс. Я його пнув 😀')
         else:               await message.answer('Всё сделано босс. Я его пнул 😀')
@@ -292,7 +290,7 @@ async def on_shutdown(dp):                                                      
 async def on_startup(dispatcher):                                                               ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
     await set_default_command(dispatcher)
-    await bot.send_message(ADMIN[0], "[INFO] Bot was launched successfully.")
+    await bot.send_message(ADMIN, "[INFO] Bot was launched successfully.")
   
 if __name__ == '__main__': 
     executor.start_polling(dp, on_shutdown=on_shutdown, skip_updates=True, on_startup=on_startup)

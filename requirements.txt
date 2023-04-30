@@ -1,2 +1,5 @@
 aiogram~=2.25.1
 pymysql~=1.0.3
+python-dotenv~=1.0.0
+
+# pip install -r requirements.txt

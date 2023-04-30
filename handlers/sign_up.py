@@ -1,12 +1,11 @@
-from aiogram.dispatcher.filters.builtin import CommandStart, ChatTypeFilter, ChatType
+from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 from support.querry_db import db
 from support.config import *
-from support.dialogs import *
-from support.keyboards import *
 import menu
+
 
 # Машина сострояний
 class ProfileStateGroup(StatesGroup):
@@ -100,7 +99,7 @@ async def start_gender(message: Message, state: FSMContext) -> None:
 
             async with state.proxy() as data: 
                 db.adding(message.from_user.id, 'gender', 'man' if message.text in ['Я парень 🧔🏽‍♂️', 'Я хлопець 🧔🏽‍♂️'] else 'woman')
-                await bot.send_message(ADMIN[1], '[INFO] Новый зарегистрированный пользователь')
+                await bot.send_message(ADMIN, '[INFO] Новый зарегистрированный пользователь')
                 await message.answer(general_text[f"{data['lang']}_to_menu"], reply_markup=ReplyKeyboardRemove())
                 db.adding(message.chat.id, 'status', 1)
                 await state.finish(), await menu.toMenu(message)

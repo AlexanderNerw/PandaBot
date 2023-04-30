@@ -1,12 +1,9 @@
-from aiogram.dispatcher.filters.builtin import ChatTypeFilter, ChatType
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 from support.querry_db import db
 from support.config import *
-from support.dialogs import *
-from support.keyboards import *
-import menu, time
+
 
 class AnswerTest(StatesGroup):  ## -  МАШИНА СОСТРОЯНИЙ ДЛЯ ТЕСТОВ
     answerNum = State()
@@ -30,7 +27,7 @@ async def question_back(call: CallbackQuery, state: FSMContext):
             await tests(call.message.chat.id, call.message.message_id+1)
 
     except Exception as ex: 
-        await bot.send_message(ADMIN[1], f'tests.py [INFO] Неполадки в question_back: {ex}')
+        await bot.send_message(ADMIN, f'tests.py [INFO] Неполадки в question_back: {ex}')
         print(f'tests.py [INFO] Неполадки в question_back: {ex}')
 
 ############################################################################################## - ФОРМЫ ТЕСТОВ

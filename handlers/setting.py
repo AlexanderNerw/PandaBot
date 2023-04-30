@@ -3,8 +3,6 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 from support.querry_db import db
 from support.config import *
-from support.dialogs import *
-from support.keyboards import *
 import menu
 
 @dp.callback_query_handler(text='menu_setting')

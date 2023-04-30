@@ -1,11 +1,8 @@
 from aiogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineQuery
-from aiogram.dispatcher.filters.builtin import ChatTypeFilter, ChatType
 import hashlib, random, uuid, handlers.sign_up
 from aiogram.dispatcher import FSMContext
 from support.querry_db import db
 from support.config import *
-from support.dialogs import *
-from support.keyboards import *
 
 
 ######################################################################################### - ГЛАВНОЕ МЕНЮ ЛИЧНОГО ЧАТА
