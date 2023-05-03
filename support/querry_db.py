@@ -22,14 +22,14 @@ class QuerryDB:
 
             with self.connection.cursor() as cursor:
 
-                querry1 = f"CREATE TABLE IF NOT EXISTS pandabase.answer_test \
+                querry1 = f"CREATE TABLE IF NOT EXISTS answer_test \
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
                                 TDBeka VARCHAR(255) DEFAULT 'TDBeka', \
                                 TTBeka VARCHAR(255) DEFAULT 'TTBeka', \
                                 TBBeka VARCHAR(255) DEFAULT 'TBBeka', PRIMARY KEY (id));"
 
-                querry = f"CREATE TABLE IF NOT EXISTS pandabase.{self.database_table_name} \
+                querry = f"CREATE TABLE IF NOT EXISTS {self.database_table_name} \
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
                                 status TINYINT(1) DEFAULT 0, \
@@ -58,8 +58,10 @@ class QuerryDB:
                 cursor.execute(f'SELECT * FROM {self.database_table_name} WHERE user_id = {user_id};')
                 result = cursor.fetchone()                
                 if (True if result == None else False):
-                    cursor.execute(f"INSERT INTO pandabase.{self.database_table_name} (user_id) VALUES ({user_id});")
-                    cursor.execute(f"INSERT INTO pandabase.answer_test (user_id) VALUES ({user_id});")
+                    cursor.execute(f"INSERT INTO {self.database_table_name} (user_id) VALUES ({user_id});")
+                    cursor.execute(f"INSERT INTO answer_test (user_id) VALUES ({user_id});")
+                    self.connection.commit()
+                    self.connection.close()
                     return True
 
         except Exception as ex:
@@ -74,7 +76,9 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    f'UPDATE pandabase.{database} SET {info1} = "{info2}" WHERE `user_id` = {user_id};')
+                    f'UPDATE {database} SET {info1} = "{info2}" WHERE `user_id` = {user_id};')
+                self.connection.commit()
+                self.connection.close()
                 return True
 
         except Exception as ex:
@@ -87,8 +91,10 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
 
-                if (not reserse): cursor.execute(f"UPDATE pandabase.answer_test SET {info1} = CONCAT({info1}, '{info2}')  WHERE user_id = {user_id};")
-                else: cursor.execute(f"UPDATE pandabase.answer_test SET {info1} = CONCAT('{info2}', {info1})  WHERE user_id = {user_id};")
+                if (not reserse): cursor.execute(f"UPDATE answer_test SET {info1} = CONCAT({info1}, '{info2}')  WHERE user_id = {user_id};")
+                else: cursor.execute(f"UPDATE answer_test SET {info1} = CONCAT('{info2}', {info1})  WHERE user_id = {user_id};")
+                self.connection.commit()
+                self.connection.close()
                 return True
 
         except Exception as ex:
@@ -104,6 +110,7 @@ class QuerryDB:
             with self.connection.cursor() as cursor:
                 cursor.execute(f'SELECT {info} FROM {database} WHERE user_id = {user_id} LIMIT 1') # self.database_table_name
             result = cursor.fetchone()
+            self.connection.close()
             return result[info]
             
         except Exception as ex: print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (getting): {ex}")
@@ -116,7 +123,8 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(f'SELECT * FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
-                result = cursor.fetchone()              
+                result = cursor.fetchone()     
+                self.connection.close()         
                 return False if result == None else True
 
         except Exception as ex: print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (user_in_database): {ex}")
@@ -128,7 +136,8 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute( f'SELECT status FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
-                result = cursor.fetchone()                
+                result = cursor.fetchone() 
+                self.connection.close()              
                 return False if result == None else bool(result['status'])
 
         except Exception as ex:
@@ -141,7 +150,8 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(f'SELECT notice FROM `{self.database_table_name}` WHERE `user_id` = {user_id};')
-                result = cursor.fetchone()                
+                result = cursor.fetchone()
+                self.connection.close()              
                 return False if result == None else bool(result['notice'])
 
         except Exception as ex:
@@ -157,6 +167,7 @@ class QuerryDB:
                 if language in ['uk', 'ru']:    cursor.execute(f"SELECT user_id FROM {self.database_table_name} WHERE (notice = 1) AND (language = '{language}')")
                 else:                           cursor.execute(f'SELECT user_id FROM {self.database_table_name} WHERE (notice = 1)')
                 result = cursor.fetchall()
+                self.connection.close()
                 users = set()
                 
                 for i in result:
@@ -172,8 +183,8 @@ class QuerryDB:
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f'SELECT user_id, username, gender, language FROM {self.database_table_name};')
+                cursor.execute(f'SELECT user_id, username, gender, language FROM {self.database_table_name};')
+                self.connection.close()
                 result = cursor.fetchall()
 
         except Exception as ex:print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (get_all_info): {ex}")
@@ -185,6 +196,7 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(f'SELECT * FROM {database} WHERE user_id = {user_id};')
+                self.connection.close()
                 result = cursor.fetchall()
 
         except Exception as ex: print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (get_person): {ex}")
@@ -195,8 +207,8 @@ class QuerryDB:
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
-                cursor.execute(
-                    f'DELETE FROM {self.database_table_name} WHERE user_id = {user_id};')
+                cursor.execute(f'DELETE FROM {self.database_table_name} WHERE user_id = {user_id};')
+                self.connection.close()
 
         except Exception as ex:
             print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (delete_person): {ex}")
