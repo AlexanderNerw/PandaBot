@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 from support.querry_db import db
 from aiogram import executor
 from support.config import *
-import handlers, asyncio, menu
+import handlers, asyncio, menu, aiogram
 
 # АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
 
@@ -287,10 +287,18 @@ async def set_default_command(dp):
 
 async def on_startup(dispatcher):                                                               ## START POLLING
     await bot.delete_webhook(drop_pending_updates=True)
-    #await bot.set_webhook(url=APP_URL)
+    await bot.set_webhook(url=APP_URL)
     await set_default_command(dispatcher)
+    await server.run(host='0.0.0.0', port=int(PORT))
     await bot.send_message(ADMIN, "[INFO] Bot was launched successfully.")
 
+@server.route(f"/{TOKEN}", methods = ["POST"])
+def redirect_message():
+    json_string = request.get_data().decode("utf-8")
+    update = aiogram.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "!", 200
 
 if __name__ == '__main__': 
-    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
+    asyncio.run(on_startup)
+    #executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
