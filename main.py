@@ -277,7 +277,7 @@ async def cucumber(message: Message):
 
 #------------------------------------------------------------------------------
 async def set_default_command(dp):
-    await dp.bot.set_my_commands(
+    await bot.set_my_commands(
         [   
             BotCommand("start", "Start bot"),
             BotCommand("menu", "Go to menu"),
