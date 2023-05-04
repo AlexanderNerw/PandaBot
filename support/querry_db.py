@@ -1,4 +1,4 @@
-import pymysql,  os, time
+import pymysql, os, time
 from dotenv import load_dotenv
 
 class QuerryDB:
