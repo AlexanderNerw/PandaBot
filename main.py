@@ -285,23 +285,25 @@ async def set_default_command(dp):
         ]
     )
 
-
-@server.route(f"/{TOKEN}", methods = ["POST"])
-async def redirect_message():
-    json_string = request.get_data().decode("utf-8")
-    update = aiogram.types.Update.de_json(json_string)
-    await bot.process_new_updates([update])
-    return "!", 200
-
-async def main():                                                               ## START POLLING
-    await bot.delete_webhook(drop_pending_updates=True)
-    await bot.set_webhook(url=APP_URL)
-    #await set_default_command(dispatcher)
-    server.run(host='0.0.0.0', port=int(PORT))
+async def on_startup(dispatcher):                                                               ## START POLLING
+    #await bot.delete_webhook(drop_pending_updates=True)  
+    await set_default_command(dispatcher)
+    await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
     await bot.send_message(ADMIN, "[INFO] Bot was launched successfully.")
+
+async def on_shutdown(dispatcher):                                                               ## STOP POLLING
+    await bot.delete_webhook()
 
 
 if __name__ == '__main__': 
+    aiogram.utils.executor.start_webhook(
+        dispatcher=dp,
+        webhook_path=WEBHOOK_PATH,
+        skip_updates=True,
+        on_startup=on_startup,
+        on_shutdown=on_shutdown,
+        host='0.0.0.0',
+        port=WEBAPP_PORT,
+    )
 
-    asyncio.run(main())
     #executor.start_polling(dp, skip_updates=True, on_startup=main)
