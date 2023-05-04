@@ -22,7 +22,7 @@ CHAT_GROUP = ChatTypeFilter(chat_type=ChatType.GROUP)
 HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
 WEBAPP_PORT = os.getenv("PORT", 8000)
 
-WEBHOOK_HOST = f'https://{HEROKU_APP_NAME}.herokuapp.com'
+WEBHOOK_HOST = 'https://pandabot.herokuapp.com/'
 WEBHOOK_PATH = f'/webhook/{TOKEN}'
 WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
 #====================================================================================================#   ERRORS  
