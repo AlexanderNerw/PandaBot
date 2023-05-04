@@ -5,7 +5,6 @@ import logging, time, os
 from dotenv import load_dotenv
 from support.keyboards import *
 from support.dialogs import *
-from flask import Flask, request
 
 # Уровень логов
 logging.basicConfig(level=logging.INFO, format=u'%(filename)s [LINE:%(lineno)d] #%(levelname)-8s [%(asctime)s] %(message)s')
@@ -41,4 +40,3 @@ async def exceptions(file: str, func: str, exception: str):
 
 bot = Bot(token = TOKEN)
 dp = Dispatcher(bot, storage = storage)
-server = Flask(__name__)
