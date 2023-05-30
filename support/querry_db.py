@@ -1,7 +1,8 @@
 import pymysql, os, time
 from dotenv import load_dotenv
+from support.config import exceptions
 
-class QuerryDB:
+class QuerryDB: # Database and Querry
 
     def __init__(self):
         """ Connection to DataBase """
@@ -16,13 +17,14 @@ class QuerryDB:
                 database=   os.getenv('database'), # pandabase
                 cursorclass=pymysql.cursors.DictCursor)
 
-            self.database_table_name = 'testbase'
+            self.database_table_name = 'general_user'
+            self.database_answer_test = 'answer_test'
 
             print("querry_db.py [INFO] Database Succes Connection")
 
             with self.connection.cursor() as cursor:
 
-                querry1 = f"CREATE TABLE IF NOT EXISTS answer_test \
+                querry1 = f"CREATE TABLE IF NOT EXISTS {self.database_answer_test} \
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
                                 TDBeka VARCHAR(255) DEFAULT 'TDBeka', \
@@ -45,8 +47,7 @@ class QuerryDB:
                     self.connection.close()
                 except Exception as ex: print(ex)
 
-        except Exception as ex:
-            print(f"querry_db.py [INFO] [{time.asctime()}] Problems in Database Connection: {ex}")
+        except Exception as ex:  exceptions("querry_db.py", 'Database: (init)', ex)
 
 ####################### ДОБАВЛЕНИЕ #################################
 
@@ -60,17 +61,16 @@ class QuerryDB:
                 if (True if result == None else False):
                     cursor.execute(f"INSERT INTO {self.database_table_name} (user_id) VALUES ({user_id});")
                     cursor.execute(f"INSERT INTO answer_test (user_id) VALUES ({user_id});")
-                    self.connection.commit()
-                    self.connection.close()
                     return True
 
         except Exception as ex:
-            print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (add_subs): {ex}")
+            exceptions("querry_db.py", 'Database: (add_subs)', ex)
             return False
-
+        
+        finally: self.connection.commit(), self.connection.close()
 # ------------------------------------------------
 
-    def adding(self, user_id, info1: str, info2: str, database = 'testbase'):
+    def adding(self, user_id, info1: str, info2: str, database = 'general_user'):
         """Добавление какой-то херни"""
         try:
             self.connection.ping()
@@ -82,7 +82,7 @@ class QuerryDB:
                 return True
 
         except Exception as ex:
-            print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (adding): {ex}")
+            exceptions("querry_db.py", 'Database: (adding)', ex)
             return False
 
     def addingEndStart(self, user_id, info1: str, info2: str, reserse = False):
@@ -98,12 +98,12 @@ class QuerryDB:
                 return True
 
         except Exception as ex:
-            print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (addingEndStart): {ex}")
+            exceptions("querry_db.py", 'Database: (adding)', ex)
             return False
 
 ####################### ПОЛУЧЕНИЕ ###################################
 
-    def getting(self, user_id, info, database = 'testbase'):
+    def getting(self, user_id, info, database = 'general_user'):
         """Получение какой-то херни"""
         try:
             self.connection.ping()
@@ -113,7 +113,7 @@ class QuerryDB:
             self.connection.close()
             return result[info]
             
-        except Exception as ex: print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (getting): {ex}")
+        except Exception as ex: exceptions("querry_db.py", 'Database: (getting)', ex)
 
 # ------------------------------------------------
 
@@ -127,10 +127,10 @@ class QuerryDB:
                 self.connection.close()         
                 return False if result == None else True
 
-        except Exception as ex: print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (user_in_database): {ex}")
+        except Exception as ex: exceptions("querry_db.py", 'Database: (user_in_database)', ex)
 
 
-    def user_online_in_database(self, user_id):
+    def user_online(self, user_id):
         """Проверяем есть ли уже юзер в базе"""
         try:
             self.connection.ping()
@@ -140,8 +140,7 @@ class QuerryDB:
                 self.connection.close()              
                 return False if result == None else bool(result['status'])
 
-        except Exception as ex:
-            print( f"querry_db.py [INFO] [{time.asctime()}] Error Database (user_online_in_database): {ex}")
+        except Exception as ex: exceptions("querry_db.py", 'Database: (user_online)', ex)
 
 
     def user_notice(self, user_id):
@@ -154,8 +153,7 @@ class QuerryDB:
                 self.connection.close()              
                 return False if result == None else bool(result['notice'])
 
-        except Exception as ex:
-            print( f"querry_db.py [INFO] [{time.asctime()}] Error Database (user_notice): {ex}")
+        except Exception as ex: exceptions("querry_db.py", 'Database: (user_notice)', ex)
 
 ###################### АДМИНИСТРИРОВАНИЕ ###########################
 
@@ -175,11 +173,11 @@ class QuerryDB:
                     users.add(i['user_id'])
                 return users
 
-        except Exception as ex: print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (get_all_id): {ex}")
+        except Exception as ex: exceptions("querry_db.py", 'Database: (get_all_id)', ex)
 
 
     def get_all_info(self):
-        """ Получение всех записей user_id """
+        """ Получение всех записей информации юзеров """
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
@@ -187,20 +185,20 @@ class QuerryDB:
                 self.connection.close()
                 result = cursor.fetchall()
 
-        except Exception as ex:print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (get_all_info): {ex}")
+        except Exception as ex: exceptions("querry_db.py", 'Database: (get_all_info)', ex)
         finally: return result
 
-    def get_person(self, user_id, database = 'testbase'):
+    def get_person(self, user_id, database = 'general_user'):
         """ Получение всех записей user_id """
         try:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(f'SELECT * FROM {database} WHERE user_id = {user_id};')
-                self.connection.close()
-                result = cursor.fetchall()
+                #result = cursor.fetchall()
+                return list(cursor.fetchall())
 
-        except Exception as ex: print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (get_person): {ex}")
-        finally: return list(result)
+        except Exception as ex:     exceptions("querry_db.py", 'Database: (get_person)', ex)
+        finally:                    self.connection.close()
 
     def delete_person(self, user_id):
         """ Получение всех записей user_id """
@@ -208,10 +206,9 @@ class QuerryDB:
             self.connection.ping()
             with self.connection.cursor() as cursor:
                 cursor.execute(f'DELETE FROM {self.database_table_name} WHERE user_id = {user_id};')
-                self.connection.close()
 
-        except Exception as ex:
-            print(f"querry_db.py [INFO] [{time.asctime()}] Error Database (delete_person): {ex}")
+        except Exception as ex:     exceptions("querry_db.py", 'Database: (delete_person)', ex)
+        finally:                    self.connection.close()
 
 # ------------------------------------------------
 

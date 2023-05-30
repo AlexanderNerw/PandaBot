@@ -16,22 +16,24 @@ load_dotenv()
 TOKEN = os.getenv("TOKEN")
 ADMIN = os.getenv('ADMIN')
 
+LOCAL_DATABASE = { '1082803262' : 'ru' }
+
 CHAT_PRIVATE = ChatTypeFilter(chat_type=ChatType.PRIVATE)
 CHAT_GROUP = ChatTypeFilter(chat_type=ChatType.GROUP)
 
-HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
-WEBAPP_PORT = os.getenv("PORT", 8000)
+# HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
+# WEBAPP_PORT = os.getenv("PORT", 8000)
 
-WEBHOOK_HOST = 'https://pandabot.herokuapp.com/'
-WEBHOOK_PATH = f'/webhook/{TOKEN}'
-WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
+# WEBHOOK_HOST = 'https://pandabot.herokuapp.com/'
+# WEBHOOK_PATH = f'/webhook/{TOKEN}'
+# WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
 #====================================================================================================#   ERRORS  
-#    
+    
 async def exceptions(file: str, func: str, exception: str):            
     try:                                    
         await bot.send_message(ADMIN, f"[INFO] File: {file} | Func: {func}() \nError: {exception}")
         print(f"[INFO] [{time.asctime()}] File: {file} | Func: {func}: \nError: {exception}")         
-   
+    
     except Exception as ex:
         await bot.send_message(ADMIN, f"[INFO] File: config.py | Func: exceptions() \nError: {ex}")
         print(f"[INFO] [{time.asctime()}] File: config.py | Func: exceptions() \nError: {ex}")

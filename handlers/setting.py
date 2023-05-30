@@ -1,9 +1,12 @@
+from support.config import CallbackQuery, dp, settings, general_text, bot, reverse_info, exceptions, \
+     InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 from support.querry_db import db
-from support.config import *
-import menu
+from handlers.menu import toMenu
+
+
 
 @dp.callback_query_handler(text='menu_setting')
 async def inline_menu_setting(c: CallbackQuery) -> None:
@@ -63,7 +66,7 @@ async def set_name(message: Message, state: FSMContext) -> None:
             await bot.send_message(message.chat.id, general_text[f"{db.getting(message.chat.id, 'language')}_to_menu"], reply_markup=ReplyKeyboardRemove())
             
     except Exception as ex: await exceptions("setting.py", 'set_name', ex)
-    finally: await state.finish(), await menu.toMenu(message)
+    finally: await state.finish(), await toMenu(message)
 
 @dp.callback_query_handler(text='setting_notice')
 async def inline_menu_setting_notice(c: CallbackQuery) -> None:
@@ -71,7 +74,6 @@ async def inline_menu_setting_notice(c: CallbackQuery) -> None:
 
         if (db.getting(c.message.chat.id, 'notice') == 1):  db.adding(c.message.chat.id, 'notice', 0)
         else:                                               db.adding(c.message.chat.id, 'notice', 1)
-
         await inline_menu_setting(c)
 
     except Exception as ex: await exceptions("setting.py", 'inline_menu_setting_notice', ex)

@@ -86,10 +86,10 @@ one_two_three_four_TBB = {      # КЛАВ-А ДЛЯ ТЕСТА БЕЗНАДЁЖ
                 InlineKeyboardButton(text='Так, вiрно 🔸', callback_data='2'))
         .add(   InlineKeyboardButton(text='❌', callback_data='back_menu_test')),}
 
-go_to_menu = InlineKeyboardMarkup(row_width=2)                              \
-.add(   InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenu'))
+go_to_menu_without = InlineKeyboardMarkup(row_width=2)                              \
+.add(   InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenu_without'))
 go_to_menu_safe = InlineKeyboardMarkup(row_width=2)                          \
-.add(   InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenuSafe'))
+.add(   InlineKeyboardButton(text='🔸 Меню 🔸', callback_data='toMenu'))
 
 button_test = InlineKeyboardMarkup(row_width=2)                                \
 .add(   InlineKeyboardButton(text='Да, вперед', callback_data='yes_test')) \

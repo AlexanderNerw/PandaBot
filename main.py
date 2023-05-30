@@ -5,17 +5,19 @@ from aiogram.dispatcher import FSMContext
 from support.querry_db import db
 from aiogram import executor
 from support.config import *
-import handlers, asyncio, menu, aiogram
+from handlers import *
+from asyncio import sleep
 
-# АДМИНИСТРИРОВАНИЕ ############################ - ADMIN PANEL and HELP PANEL #########################################################
 
-@dp.message_handler(CHAT_PRIVATE, CommandHelp())                          ## ПАНЕЛЬ ПОМОЩИ ЮЗЕРУ
+################################################## - ADMIN PANEL and HELP PANEL ##########################
+
+@dp.message_handler(CHAT_PRIVATE, CommandHelp())                                                        ## ПАНЕЛЬ ПОМОЩИ ЮЗЕРУ
 async def help_panel(message: Message) -> None:
     if (db.user_in_database(message.chat.id)):
         lang = db.getting(message.chat.id, 'language')
         await message.answer(general_text[f'{lang}_help_menu'], parse_mode='html')
     else:
-        await message.answer('Сначала зарегистрируйся: 🙂'), await handlers.sign_up.start(message, FSMContext)
+        await message.answer('Сначала зарегистрируйся: 🙂'), await sign_up.start(message, FSMContext)
 #------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['negr'])                                                    ## ПАНЕЛЬ ПОМОЩИ АДМИНУ
 async def admin_panel(message: Message) -> None:
@@ -27,8 +29,9 @@ async def admin_panel(message: Message) -> None:
             await message.answer('Кудааа мы лезем? Не положено, давай в меню.')
             await menu.toMenu(message)
     except Exception as ex: await exceptions("main.py", 'admin_panel', ex)
+    
 
-################################################### - ASK from ADMIN to USER ######################################
+################################################### - ASK from ADMIN to USER - ###########################
 class TextToSend(StatesGroup):
     id_user = State()
     photo_num = State()
@@ -143,9 +146,9 @@ async def toSend_text(message: Message, state: FSMContext) -> None:
                 if len(data['id_user']) > 1:
                     for user in data['id_user']:
                         try:
-                            if data['photo_num'] > 1: await asyncio.sleep(0.1), await bot.send_media_group(user, media=list_photo), await bot.send_message(user, f"{data['TEXT']}")
-                            elif data['photo_num'] == 0: await asyncio.sleep(0.1), await bot.send_message(user, f"{data['TEXT']}")
-                            elif data['photo_num'] == 1: await asyncio.sleep(0.1), await bot.send_photo(user, photo= data['photo1'], caption= f"{data['TEXT']}")
+                            if data['photo_num'] > 1: await sleep(0.1), await bot.send_media_group(user, media=list_photo), await bot.send_message(user, f"{data['TEXT']}")
+                            elif data['photo_num'] == 0: await sleep(0.1), await bot.send_message(user, f"{data['TEXT']}")
+                            elif data['photo_num'] == 1: await sleep(0.1), await bot.send_photo(user, photo= data['photo1'], caption= f"{data['TEXT']}")
 
                         except Exception as ex:
                             print(f"main.py [INFO] Неполадки в toSend_text в рассылке: id - {user} | Ошибка: {ex}")
@@ -191,77 +194,10 @@ async def ChoiseWhoneSend(c: CallbackQuery, state: FSMContext) -> None:
             
     except Exception as ex: await exceptions("main.py", 'ChoiseWhoneSend', ex)
 
-#################################################### - ASK from USER to ADMIN ############################
-class AskAdmin(StatesGroup):
-    ask = State()
-
-@dp.callback_query_handler(CHAT_PRIVATE, text='go_back', state=AskAdmin)                                ## ОТМЕНА ВОПРОСА АДМИНУ
-async def ask_cancel(call: CallbackQuery, state: FSMContext) -> None:
-    try:
-
-        lang = db.getting(call.message.from_user.id, 'language')
-        await bot.send_message(call.message.chat.id, general_text[f'{lang}_ask_admin_no'])
-        await state.reset_data()
-        await state.finish()
-        await menu.toMenu(call.message)
-
-    except Exception as ex: await exceptions("main.py", 'ask_cancel', ex)
-
-#------------------------------------------------------------------------------
-@dp.message_handler(CHAT_PRIVATE, commands=['ask'])                                                     ## ЗАДАТЬ ВОПРОС АДМИНУ
-async def ask_user(message: Message) -> None:
-    try:
-        lang = db.getting(message.from_user.id, 'language')
-        name = message.from_user.first_name
-
-        if (message.text).strip() != '/ask':
-            await bot.send_message(ADMIN, f'{name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text[5:]}')
-            await bot.send_message(message.chat.id, general_text[f'{lang}_send_ask'])
-        else:
-            await bot.send_message(message.chat.id, general_text[f'{lang}_empty_ask'],
-                                   reply_markup=InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(text='Назад', callback_data='go_back')))
-            await AskAdmin.ask.set()
-
-    except Exception as ex: await exceptions("main.py", 'ask_user', ex)
-
-#------------------------------------------------------------------------------
-@dp.message_handler(CHAT_PRIVATE, content_types=['text'], state=AskAdmin.ask)                           ## ОТПРАВКА ASK 
-async def ask_user_text(message: Message, state: FSMContext) -> None:
-    try:
-        lang = db.getting(message.from_user.id, 'language')
-        name = message.from_user.first_name
-        await bot.send_message(ADMIN, f'{message.from_user.first_name} - id: {message.chat.id}, @{message.chat.username}\nMessage: {message.text}')
-        await bot.send_message(message.chat.id, f"{general_text[f'{lang}_send_ask']}")
-        await state.reset_data()
-        await state.finish()
-        await menu.toMenu(message)
-
-    except Exception as ex: await exceptions("main.py", 'ask_user_text', ex)
 
 
-################################################# - FEEDBACK and TEST(pizda) and POH #####################
+################################################# - TESTING - ############################################
 
-@dp.message_handler(CHAT_PRIVATE, commands=["feedback"])                                                ## ОБРАТНАЯ СВЯЗЬ -> callback_querry.py (fb_yes, fb_no)
-async def feedback(message: Message) -> None:
-    try:
-        lang = db.getting(message.chat.id, 'language')
-        await message.answer(general_text[f'{lang}_feedback_yes'], reply_markup=feedback_button[lang])
-
-    except Exception as ex: await exceptions("main.py", 'feedback', ex)
-
-#------------------------------------------------------------------------------
-@dp.message_handler(CHAT_PRIVATE, commands=['poh'])                                                     ## ПРОСТО ПНУТЬ АДМИНА
-async def poh(message: Message):
-    try:
-        lang = db.getting(message.from_user.id, 'language')
-        await bot.send_message(ADMIN, f"@{message.chat.username}: {db.getting(message.from_user.id, 'username')}, {message.chat.id} тебя пнул :)")
-
-        if lang == 'uk':    await message.answer('Все зроблено босс. Я його пнув 😀')
-        else:               await message.answer('Всё сделано босс. Я его пнул 😀')
-
-    except Exception as ex: await exceptions("main.py", 'poh', ex)
-
-#------------------------------------------------------------------------------
 @dp.message_handler(CHAT_PRIVATE, commands=['cucumber'])                                                ## ДЛЯ ТЕСТА ФУНКЦИЙ
 async def cucumber(message: Message):
     try:
@@ -275,35 +211,23 @@ async def cucumber(message: Message):
 
     except Exception as ex: await exceptions("main.py", 'cucumber', ex)
 
-#------------------------------------------------------------------------------
-async def set_default_command(dp):
+
+##======================================================================================================##
+async def set_default_command(dp):                                                                      ## DEFAULT COMMAND SET
     await bot.set_my_commands(
         [   
-            BotCommand("start", "Start bot"),
-            BotCommand("menu", "Go to menu"),
-            BotCommand("help", "Help-panel")
+            BotCommand("start", "Start bot  ▶️"),
+            BotCommand("menu", "Go to menu 🔅"),
+            BotCommand("help", "Help-panel ❔")
         ]
     )
 
-async def on_startup(dispatcher):                                                               ## START POLLING
+async def on_startup(dispatcher):                                                                       ## START POLLING
     #await bot.delete_webhook(drop_pending_updates=True)  
     await set_default_command(dispatcher)
-    await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
     await bot.send_message(ADMIN, "[INFO] Bot was launched successfully.")
 
-async def on_shutdown(dispatcher):                                                               ## STOP POLLING
+async def on_shutdown(dispatcher):                                                                      ## STOP POLLING
     await bot.delete_webhook()
 
-
-if __name__ == '__main__': 
-    aiogram.utils.executor.start_webhook(
-        dispatcher=dp,
-        webhook_path=WEBHOOK_PATH,
-        skip_updates=True,
-        on_startup=on_startup,
-        on_shutdown=on_shutdown,
-        host='0.0.0.0',
-        port=WEBAPP_PORT,
-    )
-
-    #executor.start_polling(dp, skip_updates=True, on_startup=main)
+if __name__ == '__main__': executor.start_polling(dp, skip_updates=True, on_startup=on_startup, on_shutdown=on_shutdown)
