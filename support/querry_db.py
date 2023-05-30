@@ -24,28 +24,24 @@ class QuerryDB: # Database and Querry
 
             with self.connection.cursor() as cursor:
 
-                querry1 = f"CREATE TABLE IF NOT EXISTS {self.database_answer_test} \
+                cursor.execute( f"CREATE TABLE IF NOT EXISTS {self.database_answer_test} \
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
                                 TDBeka VARCHAR(255) DEFAULT 'TDBeka', \
                                 TTBeka VARCHAR(255) DEFAULT 'TTBeka', \
-                                TBBeka VARCHAR(255) DEFAULT 'TBBeka', PRIMARY KEY (id));"
+                                TBBeka VARCHAR(255) DEFAULT 'TBBeka', PRIMARY KEY (id));" )
 
-                querry = f"CREATE TABLE IF NOT EXISTS {self.database_table_name} \
+                cursor.execute( f"CREATE TABLE IF NOT EXISTS {self.database_table_name} \
                                 (id INT NOT NULL AUTO_INCREMENT, \
                                 user_id VARCHAR(12) NOT NULL, \
                                 status TINYINT(1) DEFAULT 0, \
                                 notice TINYINT(1) DEFAULT 1, \
                                 username VARCHAR(30) NULL, \
                                 gender VARCHAR(6) DEFAULT 'man', \
-                                language VARCHAR(3) DEFAULT 'ru', PRIMARY KEY (id));"
-
-                cursor.execute(querry1)
-                cursor.execute(querry)
-                try:
-                    self.connection.commit()
-                    self.connection.close()
-                except Exception as ex: print(ex)
+                                language VARCHAR(3) DEFAULT 'ru', PRIMARY KEY (id));")
+                
+                try: self.connection.commit(), self.connection.close()
+                except Exception as ex: exceptions("querry_db.py", 'Database: (init: commit&close)', ex)
 
         except Exception as ex:  exceptions("querry_db.py", 'Database: (init)', ex)
 
